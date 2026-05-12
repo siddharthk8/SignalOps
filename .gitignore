@@ -1,0 +1,98 @@
+# =========================================================
+# Python / Backend
+# =========================================================
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.python-version
+
+# Type checkers / linters / tooling
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.coverage
+.coverage.*
+htmlcov/
+
+# Build / packaging
+build/
+dist/
+site/
+.eggs/
+*.egg
+*.egg-info/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# =========================================================
+# Node / Frontend
+# =========================================================
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+.yarn-cache/
+.next/
+.nuxt/
+.svelte-kit/
+vite.svg
+*.tsbuildinfo
+
+# Frontend build output
+dist/
+build/
+coverage/
+
+# =========================================================
+# Environment & Secrets
+# =========================================================
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# =========================================================
+# Database / Local storage
+# =========================================================
+*.db
+*.sqlite3
+*.sqlite
+*.log
+
+# =========================================================
+# IDEs / Editors
+# =========================================================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# =========================================================
+# Temporary / Cache
+# =========================================================
+tmp/
+temp/
+.cache/
+.cache-loader/
+
+# =========================================================
+# Misc
+# =========================================================
+*.bak
+*.tmp
