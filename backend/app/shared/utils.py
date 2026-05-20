@@ -1,0 +1,41 @@
+from app.enums.common import SourceAppType
+from app.enums.event import (
+    AuthEventType,
+    GenericEventType,
+    OrderEventType,
+    PaymentEventType,
+)
+
+EVENT_DOMAIN_MAP = {
+    "auth-app": AuthEventType,
+    "payment-app": PaymentEventType,
+    "order-app": OrderEventType,
+}
+
+
+def get_all_event_type_values(source_app: SourceAppType) -> list[str]:
+    if source_app == SourceAppType.AUTH_APP:
+        events = [e.value for e in AuthEventType]
+
+    if source_app == SourceAppType.ORDER_APP:
+        events = [e.value for e in OrderEventType]
+
+    else:
+        events = [e.value for e in PaymentEventType]
+
+    generic_events = [e.value for e in GenericEventType]
+    return [*events, *generic_events]
+
+
+def get_events_by_source_app(source_app: SourceAppType):
+    return [e.value for e in EVENT_DOMAIN_MAP[source_app]]
+
+
+def get_event_by_source_app(source_app: SourceAppType, event_value: str):
+    enum_cls = EVENT_DOMAIN_MAP[source_app]
+
+    for event in enum_cls:
+        if event.value == event_value:
+            return event
+
+    return GenericEventType.UNKNOWN
