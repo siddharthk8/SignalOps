@@ -7,7 +7,17 @@ entrypoint = "backend.main:app"
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-src = ["backend"]
+fix = true
+show-fixes = true
+src = ["backend"]               # tells Ruff where source imports live
+include = ["backend/**/*.py"]   # tells Ruff what files to lint/format
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    ".pytest_cache",
+    ".ruff_cache",
+]
 
 [tool.ruff.lint]
 select = [
@@ -16,11 +26,17 @@ select = [
     "I",   # import sorting
     "B",   # flake8-bugbear
     "UP",  # pyupgrade
+    # "SIM",  # simplify
+    "C4",   # comprehensions
+    "RUF",  # Ruff-specific rules
+    "ASYNC",  # async-related rules
+]
+ignore = [
+    "E501",  # line length (including comments)
 ]
 
-ignore = [
-    "E501", # line too long (handled by formatter)
-]
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -34,16 +50,3 @@ line-ending = "lf"
 testpaths = ["backend/tests"]
 pythonpath = ["backend"]
 addopts = "-ra"
-
-# =========================================================
-# Pylint
-# =========================================================
-[tool.pylint.messages_control]
-disable = [
-    "C0114", # missing-module-docstring
-    "C0115", # missing-class-docstring
-    "C0116", # missing-function-docstring
-]
-
-[tool.pylint.format]
-max-line-length = 88
