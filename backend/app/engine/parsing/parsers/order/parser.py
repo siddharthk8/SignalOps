@@ -1,6 +1,6 @@
 from app.engine.parsing.parsers.order.patterns import ORDER_EVENT_PATTERNS
 from app.engine.parsing.parsers.shared.generic_severity import get_generic_severity
-from app.enums.common import Severity
+from app.enums.common import Severity, SourceAppType
 from app.enums.event import GenericEventType, OrderEventType
 from app.schemas.event import SemanticEvent
 from app.schemas.log import LogField
@@ -62,5 +62,8 @@ class OrderParser(BaseParser):
 
     def parse(self, log: LogField, position: int) -> SemanticEvent | None:
         return self.global_parse(
-            log=log, position=position, PATTERNS=ORDER_EVENT_PATTERNS
+            log=log,
+            position=position,
+            PATTERNS=ORDER_EVENT_PATTERNS,
+            source_app=SourceAppType.ORDER_APP,
         )

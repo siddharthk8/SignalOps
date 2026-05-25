@@ -116,7 +116,11 @@ class BaseParser(ABC):
                 candidates.append((event_type, confidence))
 
     def global_parse(
-        self, log: LogField, position: int, PATTERNS: dict[Any, list[list[str]]]
+        self,
+        log: LogField,
+        position: int,
+        PATTERNS: dict[Any, list[list[str]]],
+        source_app: SourceAppType,
     ) -> SemanticEvent | None:
         if isinstance(log, JSONIncomingLog):
             message = log.message or ""
@@ -150,7 +154,7 @@ class BaseParser(ABC):
 
         return SemanticEvent(
             sequence=position,
-            source_app=SourceAppType.ORDER_APP,
+            source_app=source_app,
             event_type=best_event,
             severity=self.get_severity(best_event),
             confidence=self.clamp_confidence(best_conf),
@@ -162,5 +166,6 @@ class BaseParser(ABC):
                 email=utility.get_email(log),
                 session_id=utility.get_session_id(log),
                 request_id=utility.get_request_id(log),
+                token_id=utility.get_token_id(log),
             ),
         )
