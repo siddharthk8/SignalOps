@@ -444,7 +444,6 @@ GENERIC_EVENT_PATTERNS = {
     ],
     GenericEventType.RESOURCE_NOT_FOUND: [
         ["resource", "not", "found"],
-        ["not", "found"],
         ["resource", "missing"],
         ["entity", "not", "found"],
         ["item", "not", "found"],

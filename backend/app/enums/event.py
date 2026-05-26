@@ -121,6 +121,10 @@ class PaymentEventType(StrEnum):
     INVOICE_GENERATED = "invoice_generated"
     INVOICE_PAYMENT_FAILED = "invoice_payment_failed"
 
+    # New
+    REFUND_REQUESTED = "refund_requested"
+    PAYMENT_RETRY = "payment_retry"
+
 
 class OrderEventType(StrEnum):
     # Order Lifecycle
@@ -177,21 +181,19 @@ class OrderEventType(StrEnum):
     HIGH_RISK_ORDER = "high_risk_order"
     BULK_ORDER_ANOMALY = "bulk_order_anomaly"
 
+    # new
+    CHECKOUT_STARTED = "checkout_started"
+    CART_ABANDONED = "cart_abandoned"
+
 
 class GenericEventType(StrEnum):
-    # =========================================================
     # Access / Authorization
-    # =========================================================
-
     ACCESS_DENIED = "access_denied"
     PERMISSION_DENIED = "permission_denied"
     AUTHORIZATION_FAILED = "authorization_failed"
     UNAUTHORIZED_REQUEST = "unauthorized_request"
 
-    # =========================================================
     # Security / Threat Intelligence
-    # =========================================================
-
     SECURITY_THREAT_DETECTED = "security_threat_detected"
     SUSPICIOUS_ACTIVITY = "suspicious_activity"
     BRUTE_FORCE_DETECTED = "brute_force_detected"
@@ -200,39 +202,27 @@ class GenericEventType(StrEnum):
     ABNORMAL_TRAFFIC_PATTERN = "abnormal_traffic_pattern"
     IP_BLOCKED = "ip_blocked"
 
-    # =========================================================
     # Traffic / API Protection
-    # =========================================================
-
     RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
     THROTTLING_APPLIED = "throttling_applied"
     REQUEST_BLOCKED = "request_blocked"
     REQUEST_REJECTED = "request_rejected"
 
-    # =========================================================
     # Validation / Input Errors
-    # =========================================================
-
     INVALID_REQUEST = "invalid_request"
     INVALID_INPUT = "invalid_input"
     MALFORMED_PAYLOAD = "malformed_payload"
     VALIDATION_FAILED = "validation_failed"
     SCHEMA_VALIDATION_FAILED = "schema_validation_failed"
 
-    # =========================================================
     # Resource State
-    # =========================================================
-
     RESOURCE_NOT_FOUND = "resource_not_found"
     RESOURCE_CONFLICT = "resource_conflict"
     RESOURCE_LOCKED = "resource_locked"
     RESOURCE_EXHAUSTED = "resource_exhausted"
     RESOURCE_ALREADY_EXISTS = "resource_already_exists"
 
-    # =========================================================
     # Infrastructure / Service Health
-    # =========================================================
-
     SERVICE_UNAVAILABLE = "service_unavailable"
     SERVICE_TIMEOUT = "service_timeout"
     INTERNAL_SERVICE_ERROR = "internal_service_error"
@@ -241,19 +231,13 @@ class GenericEventType(StrEnum):
     CONFIGURATION_ERROR = "configuration_error"
     CONNECTION_FAILED = "connection_failed"
 
-    # =========================================================
     # Network / Communication
-    # =========================================================
-
     NETWORK_ERROR = "network_error"
     DNS_RESOLUTION_FAILED = "dns_resolution_failed"
     CONNECTION_TIMEOUT = "connection_timeout"
     REQUEST_TIMEOUT = "request_timeout"
 
-    # =========================================================
     # Resilience / Retry / Circuit Breaker
-    # =========================================================
-
     RETRY_ATTEMPTED = "retry_attempted"
     RETRY_SUCCEEDED = "retry_succeeded"
     RETRY_EXHAUSTED = "retry_exhausted"
@@ -265,82 +249,55 @@ class GenericEventType(StrEnum):
 
     FALLBACK_TRIGGERED = "fallback_triggered"
 
-    # =========================================================
     # Data / State Integrity
-    # =========================================================
-
     DATA_INCONSISTENCY = "data_inconsistency"
     STATE_MISMATCH = "state_mismatch"
     DUPLICATE_EVENT_DETECTED = "duplicate_event_detected"
     IDEMPOTENCY_CONFLICT = "idempotency_conflict"
     RECONCILIATION_MISMATCH = "reconciliation_mismatch"
 
-    # =========================================================
     # Queue / Async Processing
-    # =========================================================
-
     MESSAGE_PROCESSING_FAILED = "message_processing_failed"
     MESSAGE_RETRY_EXCEEDED = "message_retry_exceeded"
     DEAD_LETTER_QUEUE_EVENT = "dead_letter_queue_event"
     EVENT_PROCESSING_TIMEOUT = "event_processing_timeout"
 
-    # =========================================================
     # Event Pipeline Integrity (SIGNALOPS CORE)
-    # =========================================================
-
     EVENT_INGESTION_FAILED = "event_ingestion_failed"
     EVENT_PARSE_FAILED = "event_parse_failed"
     EVENT_DROPPED = "event_dropped"
     EVENT_DUPLICATE_SUPPRESSED = "event_duplicate_suppressed"
 
-    # =========================================================
     # Database / Persistence
-    # =========================================================
-
     DATABASE_ERROR = "database_error"
     DATABASE_TIMEOUT = "database_timeout"
     QUERY_FAILED = "query_failed"
     TRANSACTION_ROLLBACK = "transaction_rollback"
     DEADLOCK_DETECTED = "deadlock_detected"
 
-    # =========================================================
     # Cache
-    # =========================================================
-
     CACHE_MISS = "cache_miss"
     CACHE_WRITE_FAILED = "cache_write_failed"
     CACHE_CONNECTION_FAILED = "cache_connection_failed"
 
-    # =========================================================
     # File / Storage
-    # =========================================================
-
     FILE_UPLOAD_FAILED = "file_upload_failed"
     FILE_NOT_FOUND = "file_not_found"
     STORAGE_LIMIT_EXCEEDED = "storage_limit_exceeded"
 
-    # =========================================================
     # Observability / Monitoring (IMPORTANT FOR AIOPS)
-    # =========================================================
-
     HEALTH_CHECK_FAILED = "health_check_failed"
     HEALTH_CHECK_SUCCESS = "health_check_success"
     METRIC_THRESHOLD_EXCEEDED = "metric_threshold_exceeded"
     LOGGING_FAILURE = "logging_failure"
     TRACING_ERROR = "tracing_error"
 
-    # =========================================================
     # Lifecycle / Generic Operations
-    # =========================================================
-
     OPERATION_STARTED = "operation_started"
     OPERATION_COMPLETED = "operation_completed"
     OPERATION_FAILED = "operation_failed"
     OPERATION_CANCELLED = "operation_cancelled"
 
-    # =========================================================
     # Fallback / Unknown
-    # =========================================================
-
     OTHER = "other"
     UNKNOWN = "unknown"

@@ -95,7 +95,7 @@ HARD CONSTRAINTS
 - Never merge logs
 - Never split logs
 - Never modify log_id in any way
-- Never infer missing values (user, email, ip, session_id, request_id)
+- Never infer missing values (user, email, ip, session_id, request_id, token_id)
 - Use ONLY allowed enum values
 - Output must be valid tool JSON only
 
@@ -150,6 +150,7 @@ Only extract if explicitly present in log text:
 - ip
 - session_id
 - request_id
+- token_id
 
 DO NOT INFER ANY OF THESE.
 
@@ -248,6 +249,12 @@ INPUT LOGS
                                                                 ]
                                                             },
                                                             "request_id": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null",
+                                                                ]
+                                                            },
+                                                            "token_id": {
                                                                 "type": [
                                                                     "string",
                                                                     "null",
@@ -362,6 +369,10 @@ INPUT LOGS
                     if request_id == "null":
                         request_id = utility.get_request_id(log)
 
+                    token_id = item.get("token_id", "null")
+                    if token_id == "null":
+                        token_id = utility.get_token_id(log)
+
                     results.append(
                         SemanticEvent(
                             sequence=idx,
@@ -380,6 +391,7 @@ INPUT LOGS
                                 email=email,
                                 session_id=session_id,
                                 request_id=request_id,
+                                token_id=token_id,
                             ),
                         )
                     )

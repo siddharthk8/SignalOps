@@ -48,6 +48,7 @@ AUTH_EVENT_PATTERNS = {
     ],
     AuthEventType.LOGIN_FAILED: [
         ["login", "failed"],
+        ["login", "fail"],
         ["authentication", "failed"],
         ["auth", "failed"],
         ["login", "failure"],

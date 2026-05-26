@@ -19,6 +19,7 @@ from app.shared.constants import (
     INCOMING_LOG_MESSAGE_ALIASES,
     INCOMING_LOG_SESSION_ALIASES,
     INCOMING_LOG_TIMESTAMP_ALIASES,
+    INCOMING_LOG_TOKEN_ALIASES,
 )
 
 LOG_CONSTRAINT = StringConstraints(
@@ -51,6 +52,11 @@ SessionIDField = Annotated[
     StringConstraints(min_length=5, max_length=100),
     Field(validation_alias=AliasChoices(*INCOMING_LOG_SESSION_ALIASES)),
 ]
+TokenIDField = Annotated[
+    str | None,
+    StringConstraints(min_length=5, max_length=100),
+    Field(validation_alias=AliasChoices(*INCOMING_LOG_TOKEN_ALIASES)),
+]
 TimestampField = Annotated[
     datetime | None,
     Field(validation_alias=AliasChoices(*INCOMING_LOG_TIMESTAMP_ALIASES)),
@@ -76,6 +82,7 @@ class JSONIncomingLog(LogBase):
     email: EmailStr | None = None
     ip_address: IPField = None
     session_id: SessionIDField = None
+    token_id: SessionIDField = None
     request_id: RequestIdField | None = None
 
 

@@ -12,11 +12,13 @@ from app.schemas.log import (
     LogField,
     RequestIdField,
     TextLogField,
+    TokenIDField,
     UserField,
 )
 from app.shared.constants import (
     ENTITY_USER_ALIASES,
     INCOMING_LOG_SESSION_ALIASES,
+    INCOMING_LOG_TOKEN_ALIASES,
 )
 
 
@@ -30,8 +32,8 @@ def normalize_log_for_tokens(message: str) -> str:
     )
     message = re.sub(pattern, "", message)
 
-    # Remove all key=value patterns from the string
-    message = re.sub(r"\b\w+=\S+", "", message)
+    # Remove all key=value patterns from the string (this might cause us to loose important data in few types of logs.Ex: "2026-05-26T10:00:00Z user=u123 event=ORDER_VALIDATION_FAILED order_id=o1001")
+    # message = re.sub(r"\b\w+=\S+", "", message)
 
     # make it lowercase
     message = message.lower()
@@ -187,6 +189,26 @@ def get_timestamp(log: LogField) -> datetime | None:
     return None
 
 
+def get_token_id(log: LogField) -> TokenIDField | None:
+    if isinstance(log, JSONIncomingLog):
+        if log.token_id:
+            return log.token_id
+        else:
+            message = log.message
+    else:
+        message = log
+
+    message = normalize_log(message=message)
+
+    for m in INCOMING_LOG_TOKEN_ALIASES:
+        match = re.search(rf"{m}=([a-zA-Z0-9_-]+)", message)
+        if match:
+            user = match.group(1)
+            return user
+
+    return None
+
+
 def get_session_id(log: LogField) -> SessionIDField | None:
     if isinstance(log, JSONIncomingLog):
         if log.session_id:
@@ -199,7 +221,7 @@ def get_session_id(log: LogField) -> SessionIDField | None:
     message = normalize_log(message=message)
 
     for m in INCOMING_LOG_SESSION_ALIASES:
-        match = re.search(rf"{m}=([a-zA-Z0-9_]+)", message)
+        match = re.search(rf"{m}=([a-zA-Z0-9_-]+)", message)
         if match:
             user = match.group(1)
             return user
@@ -218,7 +240,7 @@ def get_request_id(log: LogField) -> RequestIdField | None:
 
     message = normalize_log(message=message)
 
-    match = re.search(r"request_id=([a-zA-Z0-9_]+)", message)
+    match = re.search(r"request_id=([a-zA-Z0-9_-]+)", message)
     if match:
         user = match.group(1)
         return user
