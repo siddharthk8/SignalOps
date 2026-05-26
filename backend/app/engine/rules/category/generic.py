@@ -2,10 +2,10 @@ from collections import defaultdict
 from datetime import UTC, datetime
 
 from app.engine.rules.base import BaseRule
-from app.engine.rules.utility import events_in_last_minutes, threshold_window
+from app.engine.rules.utils import events_in_last_minutes, threshold_window
 from app.enums.common import Severity
 from app.enums.event import AuthEventType, GenericEventType
-from app.enums.rule import GenericSignalType
+from app.enums.signal import GenericSignalType
 from app.schemas.event import SemanticEvent
 from app.schemas.signal import Signal
 

@@ -2,12 +2,14 @@ from enum import StrEnum
 
 
 class LogLevel(StrEnum):
-    TRACE = "TRACE"
-    DEBUG = "DEBUG"
-    INFO = "INFO"
-    NOTICE = "NOTICE"
-    WARN = "WARN"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-    CRITICAL = "CRITICAL"
-    FATAL = "FATAL"
+    TRACE = "trace"
+    DEBUG = "debug"
+    INFO = "info"
+    NOTICE = "notice"
+    WARNING = "warning"
+    ERROR = "error"
+    CRITICAL = "critical"
+
+    # Compatibility aliases
+    WARN = "warning"
+    FATAL = "critical"

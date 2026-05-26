@@ -5,6 +5,7 @@ from app.enums.event import (
     OrderEventType,
     PaymentEventType,
 )
+from app.enums.incident import IncidentType
 
 EVENT_DOMAIN_MAP = {
     "auth-app": AuthEventType,
@@ -39,3 +40,11 @@ def get_event_by_source_app(source_app: SourceAppType, event_value: str):
             return event
 
     return GenericEventType.UNKNOWN
+
+
+def get_all_incident_type_values() -> list[str]:
+    """
+    Returns all incident types for AI prompting + validation.
+    """
+
+    return [e.value for e in IncidentType]

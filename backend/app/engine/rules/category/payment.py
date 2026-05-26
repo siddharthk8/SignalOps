@@ -1,14 +1,14 @@
 from datetime import UTC, datetime
 
 from app.engine.rules.base import BaseRule
-from app.engine.rules.utility import (
+from app.engine.rules.utils import (
     events_in_last_minutes,
     group_by_user_and_filter,
     threshold_window,
 )
 from app.enums.common import Severity
 from app.enums.event import PaymentEventType
-from app.enums.rule import PaymentSignalType
+from app.enums.signal import PaymentSignalType
 from app.schemas.event import SemanticEvent
 from app.schemas.signal import Signal
 

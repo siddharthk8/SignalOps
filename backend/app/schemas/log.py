@@ -100,7 +100,3 @@ LogsField = Annotated[
 class LogBatchRequest(LogBase):
     source_app: SourceAppType
     logs: LogsField
-
-
-class LogBatchResponse(LogBase):
-    pass

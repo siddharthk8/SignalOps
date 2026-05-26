@@ -2,14 +2,12 @@ import asyncio
 import os
 from ipaddress import ip_address
 
-import boto3
-from botocore.config import Config
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from fastapi.concurrency import run_in_threadpool
 from pydantic import validate_email
 
-from app.engine.parsing import utility
+from app.engine.parsing import utils
 from app.enums.common import Severity, SourceAppType
 from app.enums.event import GenericEventType
 from app.schemas.entity import Entity
@@ -40,17 +38,9 @@ class AIFallbackParser:
         normalized semantic events
     """
 
-    def __init__(self):
-
-        self.client = boto3.client(
-            "bedrock-runtime",
-            region_name="ap-south-1",
-            config=Config(
-                retries={"max_attempts": 3},
-                read_timeout=80,
-                connect_timeout=10,
-            ),
-        )
+    def __init__(self, client):
+        # boto3 client
+        self.client = client
 
     async def parse(
         self,
@@ -317,8 +307,6 @@ INPUT LOGS
 
                 results = []
 
-                # print("Prompt: \n", prompt)
-
                 for idx, log in unresolved_logs:
                     item = llm_map.get(idx, {})
 
@@ -346,32 +334,32 @@ INPUT LOGS
                         parsed_ip = None
 
                     if parsed_ip is None:
-                        parsed_ip = utility.get_ip_address(log)
+                        parsed_ip = utils.get_ip_address(log)
 
                     user = item.get("user", "null")
                     if user == "null":
-                        user = utility.get_user(log)
+                        user = utils.get_user(log)
 
                     email = item.get("email", "null")
                     if email == "null":
-                        email = utility.get_email(log)
+                        email = utils.get_email(log)
                     else:
                         try:
                             validate_email(email)
                         except Exception:
-                            email = utility.get_email(log)
+                            email = utils.get_email(log)
 
                     session_id = item.get("session_id", "null")
                     if session_id == "null":
-                        session_id = utility.get_session_id(log)
+                        session_id = utils.get_session_id(log)
 
                     request_id = item.get("request_id", "null")
                     if request_id == "null":
-                        request_id = utility.get_request_id(log)
+                        request_id = utils.get_request_id(log)
 
                     token_id = item.get("token_id", "null")
                     if token_id == "null":
-                        token_id = utility.get_token_id(log)
+                        token_id = utils.get_token_id(log)
 
                     results.append(
                         SemanticEvent(
@@ -383,7 +371,7 @@ INPUT LOGS
                                 "confidence",
                                 0.0,
                             ),
-                            timestamp=utility.get_timestamp(log),
+                            timestamp=utils.get_timestamp(log),
                             raw_log=log,
                             entity=Entity(
                                 ip_address=parsed_ip,
@@ -406,6 +394,3 @@ INPUT LOGS
                 raise
 
         raise RuntimeError("AI fallback parser unavailable.")
-
-
-ai_fallback_parser = AIFallbackParser()

@@ -4,7 +4,7 @@ from app.enums.event import (
     OrderEventType,
     PaymentEventType,
 )
-from app.enums.rule import (
+from app.enums.signal import (
     AuthSignalType,
     GenericSignalType,
     OrderSignalType,

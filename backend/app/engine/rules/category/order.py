@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
 from app.engine.rules.base import BaseRule
-from app.engine.rules.utility import (
+from app.engine.rules.utils import (
     contains_sequence,
     get_sorted_ts_events,
     group_by_user,
@@ -9,7 +9,7 @@ from app.engine.rules.utility import (
 )
 from app.enums.common import Severity
 from app.enums.event import OrderEventType
-from app.enums.rule import OrderSignalType
+from app.enums.signal import OrderSignalType
 from app.schemas.event import SemanticEvent
 from app.schemas.signal import Signal
 

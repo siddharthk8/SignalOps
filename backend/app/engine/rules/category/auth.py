@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import UTC, datetime
 
 from app.engine.rules.base import BaseRule
-from app.engine.rules.utility import (
+from app.engine.rules.utils import (
     contains_sequence,
     group_by_user,
     group_by_user_and_filter,
@@ -10,7 +10,7 @@ from app.engine.rules.utility import (
 )
 from app.enums.common import Severity
 from app.enums.event import AuthEventType
-from app.enums.rule import AuthSignalType
+from app.enums.signal import AuthSignalType
 from app.schemas.event import SemanticEvent
 from app.schemas.signal import Signal
 

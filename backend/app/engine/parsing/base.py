@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from app.engine.parsing import utility
+from app.engine.parsing import utils
 from app.engine.parsing.parsers.shared.generic_patterns import GENERIC_EVENT_PATTERNS
 from app.enums.common import Severity, SourceAppType
 from app.schemas.entity import Entity
@@ -127,7 +127,7 @@ class BaseParser(ABC):
         else:
             message = log or ""
 
-        message = utility.normalize_log_for_tokens(message)
+        message = utils.normalize_log_for_tokens(message)
         tokens = message.split()
         candidates: list[tuple[Any, float]] = []
 
@@ -158,14 +158,14 @@ class BaseParser(ABC):
             event_type=best_event,
             severity=self.get_severity(best_event),
             confidence=self.clamp_confidence(best_conf),
-            timestamp=utility.get_timestamp(log),
+            timestamp=utils.get_timestamp(log),
             raw_log=log,
             entity=Entity(
-                ip_address=utility.get_ip_address(log),
-                user=utility.get_user(log),
-                email=utility.get_email(log),
-                session_id=utility.get_session_id(log),
-                request_id=utility.get_request_id(log),
-                token_id=utility.get_token_id(log),
+                ip_address=utils.get_ip_address(log),
+                user=utils.get_user(log),
+                email=utils.get_email(log),
+                session_id=utils.get_session_id(log),
+                request_id=utils.get_request_id(log),
+                token_id=utils.get_token_id(log),
             ),
         )
