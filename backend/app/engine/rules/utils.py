@@ -1,8 +1,6 @@
 from collections import defaultdict
 from collections.abc import Callable
 from datetime import datetime, timedelta
-
-# TIME WINDOW
 from typing import Any, cast
 
 from app.schemas.event import SemanticEvent

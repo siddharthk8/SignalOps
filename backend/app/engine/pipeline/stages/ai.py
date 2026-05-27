@@ -22,21 +22,20 @@ class AIStage:
                 connect_timeout=20,
             ),
         )
+        self.ai_fallback_parser = AIFallbackParser(self.client)
+        self.ai_incident_analyzer = AIIncidentAnalyzer(self.client)
 
     async def fallback_run(
         self, unresolved_logs: list[tuple[int, LogField]], source_app: SourceAppType
     ) -> list[SemanticEvent]:
-        ai_fallback_parser = AIFallbackParser(self.client)
-
-        ai_events = await ai_fallback_parser.parse(unresolved_logs, source_app)
+        ai_events = await self.ai_fallback_parser.parse(unresolved_logs, source_app)
         return ai_events
 
     async def run(self, incidents: list[Incident]) -> list[IncidentAnalysis]:
         analyzed_incidents = []
-        ai_incident_analyzer = AIIncidentAnalyzer(self.client)
 
         for i in incidents:
-            analyzed_incidents.append(await ai_incident_analyzer.analyze(i))
+            analyzed_incidents.append(await self.ai_incident_analyzer.analyze(i))
 
         if len(analyzed_incidents) == 0:
             analyzed_incidents = [
