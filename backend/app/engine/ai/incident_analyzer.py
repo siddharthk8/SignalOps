@@ -1,16 +1,13 @@
 import asyncio
-import os
 
 from botocore.exceptions import ClientError
 from fastapi.concurrency import run_in_threadpool
 
+from app.core.config import AI_MODEL_ID, AWS_MODEL_RETRY_ATTEMPTS
 from app.enums.common import Severity
 from app.schemas.analysis import IncidentAnalysis
 from app.schemas.incident import Incident
 from app.shared.utils import get_all_incident_type_values
-
-MODEL_ID = os.getenv("AWS_AI_MODEL_ID")
-RETRY_ATTEMPTS = 3
 
 
 class AIIncidentAnalyzer:
@@ -87,11 +84,11 @@ INPUT INCIDENT:
 {payload}
 """
 
-        for attempt in range(RETRY_ATTEMPTS):
+        for attempt in range(AWS_MODEL_RETRY_ATTEMPTS):
             try:
                 response = await run_in_threadpool(
                     self.client.converse,
-                    modelId=MODEL_ID,
+                    modelId=AI_MODEL_ID,
                     messages=[
                         {
                             "role": "user",
@@ -184,7 +181,7 @@ INPUT INCIDENT:
                 return analysis
 
             except ClientError:
-                if attempt < RETRY_ATTEMPTS - 1:
+                if attempt < AWS_MODEL_RETRY_ATTEMPTS - 1:
                     await asyncio.sleep(2**attempt)
 
             except Exception:
