@@ -45,33 +45,25 @@ class BaseParser(ABC):
         # Smaller spread = higher score
         return self.clamp_confidence(1.0 - (spread / len(tokens)))
 
-    def phrase_bonus(self, message: str, signature: dict) -> float:
-        """
-        Gives extra score if complete phrases exist in the message.
-        This improves confidence because exact phrases are stronger signals than individual words.
-        """
+    # NOTE: Future feature - not used yet
+    # Keeping for upcoming release
+    # def phrase_bonus(self, message: str, signature: dict) -> float:
+    #     """
+    #     Gives extra score if complete phrases exist in the message.
+    #     This improves confidence because exact phrases are stronger signals than individual words.
+    #     """
+    #     score = 0.0
+    #     for token_group in signature["tokens"]:
+    #         if token_group in message:
+    #             score += 0.4
+    #     # Prevent bonus from becoming too large
+    #     return min(score, 0.8)
 
-        score = 0.0
-
-        for token_group in signature["tokens"]:
-            if token_group in message:
-                score += 0.4
-
-        # Prevent bonus from becoming too large
-        return min(score, 0.8)
-
-    def matches_pattern(self, tokens: list[str], pattern: list[str]) -> bool:
+    def match_score(self, patterns: list[list[str]], tokens: list[str]) -> float:
         """
         Token-based matching is used instead of raw substring search to ensure word-level accuracy.
         This avoids false matches (e.g., "dev" in "devasted") and improves reliability for noisy log data.
         """
-
-        for word in pattern:
-            if word not in tokens:
-                return False
-        return True
-
-    def match_score(self, patterns: list[list[str]], tokens: list[str]) -> float:
         ms = 0.0
 
         for pattern in patterns:
