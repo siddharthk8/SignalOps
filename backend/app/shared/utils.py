@@ -47,4 +47,4 @@ def get_all_incident_type_values() -> list[str]:
     Returns all incident types for AI prompting + validation.
     """
 
-    return [e.value for e in IncidentType]
+    return [i.value for i in IncidentType]

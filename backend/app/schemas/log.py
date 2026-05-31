@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated
 
 from pydantic import (
@@ -45,12 +45,14 @@ RequestIdField = Annotated[
 ]
 IPField = Annotated[
     IPvAnyAddress | None,
-    Field(validation_alias=AliasChoices(*INCOMING_LOG_IP_ALIASES)),
+    Field(
+        validation_alias=AliasChoices(*INCOMING_LOG_IP_ALIASES),
+    ),
 ]
 SessionIDField = Annotated[
     str | None,
     StringConstraints(min_length=5, max_length=100),
-    Field(validation_alias=AliasChoices(*INCOMING_LOG_SESSION_ALIASES)),
+    Field(default=None, validation_alias=AliasChoices(*INCOMING_LOG_SESSION_ALIASES)),
 ]
 TokenIDField = Annotated[
     str | None,
@@ -82,8 +84,25 @@ class JSONIncomingLog(LogBase):
     email: EmailStr | None = None
     ip_address: IPField = None
     session_id: SessionIDField = None
-    token_id: SessionIDField = None
+    token_id: TokenIDField = None
     request_id: RequestIdField | None = None
+
+    model_config = ConfigDict(
+        # Just a sample request body for the docs UI; it doesn't affect validation.
+        json_schema_extra={
+            "example": {
+                "message": "Testing Log",
+                "level": LogLevel.INFO,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "user": None,
+                "email": None,
+                "ip_address": None,
+                "session_id": None,
+                "token_id": None,
+                "request_id": None,
+            }
+        }
+    )
 
 
 type LogField = TextLogField | JSONIncomingLog
