@@ -25,3 +25,14 @@ class GenericSignalType(StrEnum):
     CASCADING_SERVICE_FAILURE = "cascading_service_failure"
     DOWNSTREAM_SERVICE_DEGRADATION = "downstream_service_degradation"
     HIGH_ERROR_RATE_PATTERN = "high_error_rate_pattern"
+
+
+AllSignalType = StrEnum(
+    "AllSignalType",
+    {
+        **{s.name: s.value for s in AuthSignalType},
+        **{s.name: s.value for s in PaymentSignalType},
+        **{s.name: s.value for s in OrderSignalType},
+        **{s.name: s.value for s in GenericSignalType},
+    },
+)

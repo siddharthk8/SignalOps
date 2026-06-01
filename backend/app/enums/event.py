@@ -301,3 +301,14 @@ class GenericEventType(StrEnum):
     # Fallback / Unknown
     OTHER = "other"
     UNKNOWN = "unknown"
+
+
+AllEventType = StrEnum(
+    "AllEventType",
+    {
+        **{e.name: e.value for e in AuthEventType},
+        **{e.name: e.value for e in OrderEventType},
+        **{e.name: e.value for e in PaymentEventType},
+        **{e.name: e.value for e in GenericEventType},
+    },
+)
