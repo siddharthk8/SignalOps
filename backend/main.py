@@ -1,6 +1,7 @@
 from typing import cast
 
 from fastapi import FastAPI
+from fastapi.concurrency import asynccontextmanager
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.types import ExceptionHandler
@@ -11,13 +12,25 @@ from app.core.exceptions import (
     unhandled_exception_handler,
     validation_exception_handler,
 )
+from app.db.core import Base, engine
+from app.db.models import *  # triggers model loading (This ensures all tables are registered before DB usage.)  # noqa: F403
 
 VERSION = "0.1.0"
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # startup logic
+    Base.metadata.create_all(bind=engine)
+    yield  # app runs here
+    # shutdown logic (optional)
+
 
 app = FastAPI(
     title="SignalOps",
     description="SignalOps is a log intelligence and incident analysis platform that converts raw system logs into meaningful insights.",
     version=VERSION,
+    lifespan=lifespan,
 )
 
 app.include_router(v1_router, prefix="/api/v1")
