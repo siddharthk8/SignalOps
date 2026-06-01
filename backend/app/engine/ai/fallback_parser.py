@@ -13,7 +13,7 @@ from app.schemas.entity import Entity
 from app.schemas.event import SemanticEvent
 from app.schemas.log import JSONIncomingLog, LogField
 from app.shared.utils import (
-    get_all_event_type_values,
+    get_all_event_values_by_source_app,
     get_event_by_source_app,
 )
 
@@ -41,7 +41,7 @@ class AIFallbackParser:
         unresolved_logs: list[tuple[int, LogField]],
         source_app: SourceAppType,
     ) -> list[SemanticEvent]:
-        event_types = get_all_event_type_values(source_app)
+        event_types = get_all_event_values_by_source_app(source_app)
         severity_types = [s.value for s in Severity]
 
         payload = []

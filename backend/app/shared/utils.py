@@ -14,7 +14,7 @@ EVENT_DOMAIN_MAP = {
 }
 
 
-def get_all_event_type_values(source_app: SourceAppType) -> list[str]:
+def get_all_event_values_by_source_app(source_app: SourceAppType) -> list[str]:
     if source_app == SourceAppType.AUTH_APP:
         events = [e.value for e in AuthEventType]
 
@@ -26,6 +26,17 @@ def get_all_event_type_values(source_app: SourceAppType) -> list[str]:
 
     generic_events = [e.value for e in GenericEventType]
     return [*events, *generic_events]
+
+
+def get_all_event_values() -> list[str]:
+    events = (
+        [e.value for e in AuthEventType]
+        + [e.value for e in OrderEventType]
+        + [e.value for e in PaymentEventType]
+        + [e.value for e in GenericEventType]
+    )
+
+    return events
 
 
 def get_events_by_source_app(source_app: SourceAppType):
