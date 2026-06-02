@@ -1,21 +1,29 @@
+from sqlalchemy.orm import Session
+
+from app.db.models.batch import Batch
+from app.db.models.source_app import SourceApp
 from app.engine.pipeline.stages.ai import AIStage
 from app.engine.pipeline.stages.correlation import CorrelationStage
 from app.engine.pipeline.stages.parsing import ParsingStage
 from app.engine.pipeline.stages.rule import RuleStage
+from app.enums.common import SourceAppType
 from app.schemas.analysis import IncidentAnalysis
-from app.schemas.log import LogBatchRequest
+from app.schemas.log import LogsField
 
 
 class LogPipeline:
-    def __init__(self):
+    def __init__(self, db: Session, batch_orm: Batch, source_app_orm: SourceApp):
+        self.db = db
+        self.batch_orm = batch_orm
+        self.source_app_orm = source_app_orm
+
         self.parsing_stage = ParsingStage()
         self.ai_stage = AIStage()
         self.rule_stage = RuleStage()
         self.correlation_stage = CorrelationStage()
 
-    async def process(self, logs_batch: LogBatchRequest) -> list[IncidentAnalysis]:
-        logs = logs_batch.logs
-        source_app = logs_batch.source_app
+    async def process(self, logs: LogsField) -> list[IncidentAnalysis]:
+        source_app = SourceAppType(self.source_app_orm.app_type)
 
         # parsing
         events, unresolved_logs = await self.parsing_stage.run(logs, source_app)
@@ -33,7 +41,5 @@ class LogPipeline:
         # ai analysis of incidents
         analyzed_incidents = await self.ai_stage.run(incidents=incidents)
 
+        self.db.commit()
         return analyzed_incidents
-
-
-log_pipeline = LogPipeline()

@@ -11,7 +11,6 @@ from pydantic import (
     StringConstraints,
 )
 
-from app.enums.common import SourceAppType
 from app.enums.logs import LogLevel
 from app.shared.constants import (
     ENTITY_USER_ALIASES,
@@ -117,5 +116,5 @@ LogsField = Annotated[
 
 
 class LogBatchRequest(LogBase):
-    source_app: SourceAppType
+    source_app_id: Annotated[int, Field(json_schema_extra={"example": 1})]
     logs: LogsField
