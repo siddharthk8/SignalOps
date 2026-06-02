@@ -34,7 +34,7 @@ class Signal(Base):
     # relationships
     events: Mapped[list[Event]] = relationship("Event", back_populates="signal")
     entity: Mapped[Entity] = relationship("Entity", back_populates="signals")
-    incident: Mapped[Incident] = relationship("Incident", back_populates="incident")
+    incident: Mapped[Incident] = relationship("Incident", back_populates="signals")
 
     # datetime
     triggered_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
