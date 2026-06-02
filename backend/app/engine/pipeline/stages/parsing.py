@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.db.models.batch import Batch
+from app.db.repositories.log import LogRepository
 from app.engine.parsing.registery import PARSER_REGISTRY
 from app.enums.common import SourceAppType
 from app.schemas.event import SemanticEvent
@@ -12,6 +13,8 @@ class ParsingStage:
         self.db = db
         self.batch_orm = batch_orm
 
+        self.log_repo = LogRepository(db)
+
     async def run(
         self, logs: LogsField, source_app: SourceAppType
     ) -> tuple[list[SemanticEvent], list[tuple[int, LogField]]]:
@@ -19,6 +22,9 @@ class ParsingStage:
         parser = PARSER_REGISTRY[source_app]
         resolved_events: list[SemanticEvent] = []
         unresolved_logs: list[tuple[int, LogField]] = []
+
+        # save raw logs in db
+        self.log_repo.save_logs(batch_id=self.batch_orm.id, logs=logs)
 
         for i, log in enumerate(logs):
             event = parser.parse(log, i)
