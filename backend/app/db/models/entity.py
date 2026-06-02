@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String
+from sqlalchemy import DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
@@ -26,11 +26,6 @@ class Entity(Base):
     session_id: Mapped[str] = mapped_column(String(60), nullable=True)
     token_id: Mapped[str | None] = mapped_column(String(60), nullable=True)
     request_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
-
-    # FK
-    event_id: Mapped[int] = mapped_column(
-        ForeignKey("event.id"), nullable=False, index=True
-    )
 
     # relationships
     event: Mapped[Event] = relationship("Event", back_populates="entity")

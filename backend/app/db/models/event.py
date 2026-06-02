@@ -49,6 +49,9 @@ class Event(Base):
     signal_id: Mapped[int] = mapped_column(
         ForeignKey("signal.id"), nullable=True, index=True
     )
+    entity_id: Mapped[int] = mapped_column(
+        ForeignKey("entity.id"), nullable=True, index=True
+    )
 
     # relationships
     batch: Mapped[Batch] = relationship("Batch", back_populates="events")
