@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db.core import get_db
-from app.db.repositories.batch_repository import BatchRepository
-from app.db.repositories.source_app_respository import SourceAppRepository
+from app.db.repositories.batch import BatchRepository
+from app.db.repositories.source_app import SourceAppRepository
 from app.engine.pipeline.orchestration import LogPipeline
 from app.schemas.analysis import IncidentAnalysis
 from app.schemas.log import LogBatchRequest
