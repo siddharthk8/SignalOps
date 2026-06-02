@@ -1,3 +1,6 @@
+from sqlalchemy.orm import Session
+
+from app.db.models.batch import Batch
 from app.engine.parsing.registery import PARSER_REGISTRY
 from app.enums.common import SourceAppType
 from app.schemas.event import SemanticEvent
@@ -5,6 +8,10 @@ from app.schemas.log import LogField, LogsField
 
 
 class ParsingStage:
+    def __init__(self, db: Session, batch_orm: Batch):
+        self.db = db
+        self.batch_orm = batch_orm
+
     async def run(
         self, logs: LogsField, source_app: SourceAppType
     ) -> tuple[list[SemanticEvent], list[tuple[int, LogField]]]:

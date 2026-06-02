@@ -1,10 +1,13 @@
+from sqlalchemy.orm import Session
+
 from app.engine.rules.category.generic import GenericRule
 from app.engine.rules.registery import RULE_REGISTRY
 from app.schemas.signal import Signal
 
 
 class RuleStage:
-    def __init__(self):
+    def __init__(self, db: Session):
+        self.db = db
         self.generic_rule = GenericRule()
 
     async def run(self, source_app, events):

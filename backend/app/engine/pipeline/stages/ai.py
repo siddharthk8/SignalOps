@@ -1,5 +1,6 @@
 import boto3
 from botocore.config import Config
+from sqlalchemy.orm import Session
 
 from app.engine.ai.fallback_parser import AIFallbackParser
 from app.engine.ai.incident_analyzer import AIIncidentAnalyzer
@@ -12,7 +13,9 @@ from app.schemas.log import LogField
 
 
 class AIStage:
-    def __init__(self):
+    def __init__(self, db: Session):
+        self.db = db
+
         self.client = boto3.client(
             "bedrock-runtime",
             region_name="ap-south-1",
