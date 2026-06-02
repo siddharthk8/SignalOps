@@ -22,10 +22,20 @@ class AIAnalysis(Base):
     root_cause: Mapped[str] = mapped_column(String, nullable=False)
     business_impact: Mapped[str] = mapped_column(String, nullable=False)
 
-    severity: Mapped[Severity] = mapped_column(Enum(Severity), nullable=False)
+    severity: Mapped[Severity] = mapped_column(
+        Enum(
+            Severity,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
+    )
     confidence: Mapped[float] = mapped_column(Float, nullable=False)
     incident_type: Mapped[IncidentType] = mapped_column(
-        Enum(IncidentType), nullable=False
+        Enum(
+            IncidentType,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
     )
 
     # relationships

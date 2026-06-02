@@ -22,7 +22,13 @@ class Signal(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     signal_type: Mapped[
         StrEnum  # unable to use AllSignalType here because "AllSignalType" is dynamically created, instead of statically typed.
-    ] = mapped_column(Enum(AllSignalType), nullable=False)
+    ] = mapped_column(
+        Enum(
+            AllSignalType,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
+    )
     confidence: Mapped[float] = mapped_column(Float, nullable=False)
 
     # FK

@@ -23,7 +23,15 @@ class SourceApp(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
-    app_type: Mapped[SourceAppType] = mapped_column(Enum(SourceAppType), nullable=False)
+    app_type: Mapped[SourceAppType] = mapped_column(
+        Enum(
+            SourceAppType,
+            values_callable=lambda enum: [
+                e.value for e in enum
+            ],  # "values_callable" Stores enum values (e.g. "auth-app") instead of member names (e.g. "AUTH_APP")
+        ),
+        nullable=False,
+    )
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # FK

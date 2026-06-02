@@ -23,9 +23,21 @@ class Event(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     event_type: Mapped[
         StrEnum  # unable to use AllEventType here because "AllEventType" is dynamically created, instead of statically typed.
-    ] = mapped_column(Enum(AllEventType), nullable=False)
+    ] = mapped_column(
+        Enum(
+            AllEventType,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
+    )
     confidence: Mapped[float] = mapped_column(Float, nullable=False)
-    severity: Mapped[Severity] = mapped_column(Enum(Severity), nullable=False)
+    severity: Mapped[Severity] = mapped_column(
+        Enum(
+            Severity,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
+    )
 
     # FK
     log_id: Mapped[int] = mapped_column(

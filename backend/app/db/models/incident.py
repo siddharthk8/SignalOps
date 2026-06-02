@@ -29,11 +29,27 @@ class Incident(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     incident_type: Mapped[IncidentType] = mapped_column(
-        Enum(IncidentType), nullable=False
+        Enum(
+            IncidentType,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
     )
     confidence: Mapped[float] = mapped_column(Float, nullable=False)
-    status: Mapped[IncidentStatus] = mapped_column(Enum(IncidentStatus), nullable=False)
-    severity: Mapped[Severity] = mapped_column(Enum(Severity), nullable=False)
+    status: Mapped[IncidentStatus] = mapped_column(
+        Enum(
+            IncidentStatus,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
+    )
+    severity: Mapped[Severity] = mapped_column(
+        Enum(
+            Severity,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
+    )
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     summary: Mapped[str] = mapped_column(String, nullable=False)
 
