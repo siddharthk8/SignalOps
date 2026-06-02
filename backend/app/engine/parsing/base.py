@@ -18,6 +18,10 @@ class BaseParser(ABC):
     def get_severity(self, event_type: ALL_EVENT_TYPES) -> Severity:
         pass
 
+    @abstractmethod
+    def parse(self, log: LogField, position: int) -> SemanticEvent | None:
+        pass
+
     def clamp_confidence(self, value: float) -> float:
         """
         We use this to be assure that the confidence remains within valid limit range.

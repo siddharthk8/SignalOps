@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import UTC, datetime
 
 from app.engine.rules.base import BaseRule
@@ -110,7 +109,7 @@ class GenericRule(BaseRule):
         """
         signals: list[Signal] = []
 
-        failures_by_source: dict[str, list[SemanticEvent]] = defaultdict(list)
+        failures_events: list[SemanticEvent] = []
 
         for e in events:
             if e.event_type not in {
@@ -121,30 +120,29 @@ class GenericRule(BaseRule):
             }:
                 continue
 
-            failures_by_source[e.source_app].append(e)
+            failures_events.append(e)
 
-        for service_events in failures_by_source.values():
-            window_events = threshold_window(
-                events=service_events,
-                minutes=3,
-                threshold=self.SERVICE_FAILURE_THRESHOLD,
+        window_events = threshold_window(
+            events=failures_events,
+            minutes=3,
+            threshold=self.SERVICE_FAILURE_THRESHOLD,
+        )
+
+        if len(window_events) < self.SERVICE_FAILURE_THRESHOLD:
+            return []
+
+        signals.append(
+            Signal(
+                signal_type=GenericSignalType.CASCADING_SERVICE_FAILURE,
+                severity=Severity.HIGH,
+                confidence=0.92,
+                source_app=window_events[0].source_app,
+                entity=window_events[0].entity,
+                supporting_events=[e.sequence for e in window_events],
+                metadata={"failure_count": len(window_events)},
+                triggered_at=datetime.now(UTC),
             )
-
-            if len(window_events) < self.SERVICE_FAILURE_THRESHOLD:
-                continue
-
-            signals.append(
-                Signal(
-                    signal_type=GenericSignalType.CASCADING_SERVICE_FAILURE,
-                    severity=Severity.HIGH,
-                    confidence=0.92,
-                    source_app=window_events[0].source_app,
-                    entity=window_events[0].entity,
-                    supporting_events=[e.sequence for e in window_events],
-                    metadata={"failure_count": len(window_events)},
-                    triggered_at=datetime.now(UTC),
-                )
-            )
+        )
 
         return signals
 
