@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from app.enums.common import Severity, SourceAppType
 from app.schemas.entity import Entity
-from app.schemas.log import LogField
+from app.schemas.log import PersistedLog
 from app.shared.constants import ALL_EVENT_TYPES
 
 SequenceField = Annotated[int, Field(ge=0)]
@@ -19,6 +19,6 @@ class SemanticEvent(BaseModel):
     confidence: ConfidenceField
     severity: Severity
     timestamp: datetime | None = None
-    raw_log: LogField
+    persisted_log: PersistedLog
     entity: Entity
     metadata: dict[str, Any] | None = None
