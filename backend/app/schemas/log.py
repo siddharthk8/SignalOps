@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import (
     AliasChoices,
@@ -113,6 +113,17 @@ LogsField = Annotated[
         description="Batch of logs",
     ),
 ]
+
+
+# Represents a log that has crossed the ingestion boundary.
+#
+# We use a separate persisted type because:
+# - persisted logs are guaranteed to have a database ID (`id: int`)
+# - incoming logs may arrive in different formats and are normalized into
+#   a single representation for consistent processing throughout the system.
+class PersistedLog(JSONIncomingLog):
+    id: int
+    log_format: Literal["string"] | Literal["json"] = "string"
 
 
 class LogBatchRequest(LogBase):

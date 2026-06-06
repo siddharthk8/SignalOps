@@ -7,8 +7,7 @@ from app.enums.common import Severity, SourceAppType
 from app.schemas.entity import Entity
 from app.schemas.event import SemanticEvent
 from app.schemas.log import (
-    JSONIncomingLog,
-    LogField,
+    PersistedLog,
 )
 from app.shared.constants import ALL_EVENT_TYPES
 
@@ -19,7 +18,7 @@ class BaseParser(ABC):
         pass
 
     @abstractmethod
-    def parse(self, log: LogField, position: int) -> SemanticEvent | None:
+    def parse(self, log: PersistedLog, sequence: int) -> SemanticEvent | None:
         pass
 
     def clamp_confidence(self, value: float) -> float:
@@ -83,7 +82,7 @@ class BaseParser(ABC):
         return self.clamp_confidence(ms)
 
     def generic_parser(
-        self, candidates: list[Any], tokens: list[str], log: LogField
+        self, candidates: list[Any], tokens: list[str], log: PersistedLog
     ) -> None:
         for event_type, patterns in GENERIC_EVENT_PATTERNS.items():
             match_score = self.match_score(patterns, tokens)
@@ -113,15 +112,12 @@ class BaseParser(ABC):
 
     def global_parse(
         self,
-        log: LogField,
-        position: int,
+        log: PersistedLog,
+        sequence: int,
         PATTERNS: dict[Any, list[list[str]]],
         source_app: SourceAppType,
     ) -> SemanticEvent | None:
-        if isinstance(log, JSONIncomingLog):
-            message = log.message or ""
-        else:
-            message = log or ""
+        message = log.message
 
         message = utils.normalize_log_for_tokens(message)
         tokens = message.split()
@@ -149,13 +145,13 @@ class BaseParser(ABC):
         best_event, best_conf = max(candidates, key=lambda x: x[1])
 
         return SemanticEvent(
-            sequence=position,
+            sequence=sequence,
             source_app=source_app,
             event_type=best_event,
             severity=self.get_severity(best_event),
             confidence=self.clamp_confidence(best_conf),
             timestamp=utils.get_timestamp(log),
-            raw_log=log,
+            persisted_log=log,
             entity=Entity(
                 ip_address=utils.get_ip_address(log),
                 user=utils.get_user(log),

@@ -11,7 +11,7 @@ from app.enums.common import Severity, SourceAppType
 from app.enums.event import GenericEventType
 from app.schemas.entity import Entity
 from app.schemas.event import SemanticEvent
-from app.schemas.log import JSONIncomingLog, LogField
+from app.schemas.log import PersistedLog
 from app.shared.utils import (
     get_all_event_values_by_source_app,
     get_event_by_source_app,
@@ -38,7 +38,7 @@ class AIFallbackParser:
 
     async def parse(
         self,
-        unresolved_logs: list[tuple[int, LogField]],
+        unresolved_logs: list[tuple[int, PersistedLog]],
         source_app: SourceAppType,
     ) -> list[SemanticEvent]:
         event_types = get_all_event_values_by_source_app(source_app)
@@ -47,10 +47,7 @@ class AIFallbackParser:
         payload = []
 
         for idx, log in unresolved_logs:
-            if isinstance(log, JSONIncomingLog):
-                normalized_log = log.model_dump(mode="json")
-            else:
-                normalized_log = log
+            normalized_log = log.model_dump(mode="json")
 
             payload.append(
                 {
@@ -366,7 +363,7 @@ INPUT LOGS
                                 0.0,
                             ),
                             timestamp=utils.get_timestamp(log),
-                            raw_log=log,
+                            persisted_log=log,
                             entity=Entity(
                                 ip_address=parsed_ip,
                                 user=user,

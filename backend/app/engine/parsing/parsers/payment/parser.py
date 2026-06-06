@@ -3,7 +3,7 @@ from app.engine.parsing.parsers.shared.generic_severity import get_generic_sever
 from app.enums.common import Severity, SourceAppType
 from app.enums.event import GenericEventType, PaymentEventType
 from app.schemas.event import SemanticEvent
-from app.schemas.log import LogField
+from app.schemas.log import PersistedLog
 
 from ...base import BaseParser
 
@@ -64,10 +64,10 @@ class PaymentParser(BaseParser):
 
         return Severity.LOW
 
-    def parse(self, log: LogField, position: int) -> SemanticEvent | None:
+    def parse(self, log: PersistedLog, sequence: int) -> SemanticEvent | None:
         return self.global_parse(
             log=log,
-            position=position,
+            sequence=sequence,
             PATTERNS=PAYMENT_EVENT_PATTERNS,
             source_app=SourceAppType.PAYMENT_APP,
         )

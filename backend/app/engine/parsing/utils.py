@@ -8,8 +8,7 @@ from app.enums.logs import LogLevel
 from app.schemas.entity import SessionIDField
 from app.schemas.log import (
     EmailField,
-    JSONIncomingLog,
-    LogField,
+    PersistedLog,
     RequestIdField,
     TextLogField,
     TokenIDField,
@@ -67,16 +66,11 @@ def normalize_log(message: str) -> str:
     return message
 
 
-def get_user(log: LogField) -> UserField | None:
-    if isinstance(log, JSONIncomingLog):
-        if log.user:
-            return log.user
-        else:
-            message = log.message
-    else:
-        message = log
+def get_user(log: PersistedLog) -> UserField | None:
+    if log.user:
+        return log.user
 
-    message = normalize_log(message=message)
+    message = normalize_log(message=log.message)
 
     for m in ENTITY_USER_ALIASES:
         match = re.search(rf"{m}=([\w.@-_]+)", message)
@@ -87,16 +81,11 @@ def get_user(log: LogField) -> UserField | None:
     return None
 
 
-def get_email(log: LogField) -> EmailField | None:
-    if isinstance(log, JSONIncomingLog):
-        if log.email:
-            return log.email
-        else:
-            message = log.message
-    else:
-        message = log
+def get_email(log: PersistedLog) -> EmailField | None:
+    if log.email:
+        return log.email
 
-    message = normalize_log(message=message)
+    message = normalize_log(message=log.message)
 
     match = re.search(
         r"email=([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)", message
@@ -111,22 +100,13 @@ def get_email(log: LogField) -> EmailField | None:
     return None
 
 
-def get_message(log: LogField) -> TextLogField:
-    if isinstance(log, JSONIncomingLog):
-        if log.message:
-            return log.message
-    else:
-        message = log
-
-    return message
+def get_message(log: PersistedLog) -> TextLogField:
+    return log.message
 
 
-def get_timestamp(log: LogField) -> datetime | None:
-    if isinstance(log, JSONIncomingLog):
-        if log.timestamp:
-            return log.timestamp
-    else:
-        message = log
+def get_timestamp(log: PersistedLog) -> datetime | None:
+    if log.timestamp:
+        return log.timestamp
 
     datetime_patterns = [
         # 2026-05-17T14:32:45.123456Z
@@ -168,7 +148,7 @@ def get_timestamp(log: LogField) -> datetime | None:
     ]
 
     for pattern, dt_format, has_z in datetime_patterns:
-        match = re.search(pattern, message)
+        match = re.search(pattern, log.message)
         if not match:
             continue
 
@@ -189,16 +169,11 @@ def get_timestamp(log: LogField) -> datetime | None:
     return None
 
 
-def get_token_id(log: LogField) -> TokenIDField | None:
-    if isinstance(log, JSONIncomingLog):
-        if log.token_id:
-            return log.token_id
-        else:
-            message = log.message
-    else:
-        message = log
+def get_token_id(log: PersistedLog) -> TokenIDField | None:
+    if log.token_id:
+        return log.token_id
 
-    message = normalize_log(message=message)
+    message = normalize_log(message=log.message)
 
     for m in INCOMING_LOG_TOKEN_ALIASES:
         match = re.search(rf"{m}=([a-zA-Z0-9_-]+)", message)
@@ -209,16 +184,11 @@ def get_token_id(log: LogField) -> TokenIDField | None:
     return None
 
 
-def get_session_id(log: LogField) -> SessionIDField | None:
-    if isinstance(log, JSONIncomingLog):
-        if log.session_id:
-            return log.session_id
-        else:
-            message = log.message
-    else:
-        message = log
+def get_session_id(log: PersistedLog) -> SessionIDField | None:
+    if log.session_id:
+        return log.session_id
 
-    message = normalize_log(message=message)
+    message = normalize_log(message=log.message)
 
     for m in INCOMING_LOG_SESSION_ALIASES:
         match = re.search(rf"{m}=([a-zA-Z0-9_-]+)", message)
@@ -229,16 +199,11 @@ def get_session_id(log: LogField) -> SessionIDField | None:
     return None
 
 
-def get_request_id(log: LogField) -> RequestIdField | None:
-    if isinstance(log, JSONIncomingLog):
-        if log.request_id:
-            return log.request_id
-        else:
-            message = log.message
-    else:
-        message = log
+def get_request_id(log: PersistedLog) -> RequestIdField | None:
+    if log.request_id:
+        return log.request_id
 
-    message = normalize_log(message=message)
+    message = normalize_log(message=log.message)
 
     match = re.search(r"request_id=([a-zA-Z0-9_-]+)", message)
     if match:
@@ -248,16 +213,11 @@ def get_request_id(log: LogField) -> RequestIdField | None:
     return None
 
 
-def get_ip_address(log: LogField) -> IPvAnyAddress | None:
-    if isinstance(log, JSONIncomingLog):
-        if log.ip_address:
-            return log.ip_address
-        else:
-            message = log.message
-    else:
-        message = log
+def get_ip_address(log: PersistedLog) -> IPvAnyAddress | None:
+    if log.ip_address:
+        return log.ip_address
 
-    message = normalize_log(message=message)
+    message = normalize_log(message=log.message)
 
     IPv4 = r"(?:\d{1,3}\.){3}\d{1,3}"
     IPv6 = r"(?:[0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}"

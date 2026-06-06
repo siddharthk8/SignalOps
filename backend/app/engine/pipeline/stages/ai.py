@@ -9,7 +9,7 @@ from app.enums.incident import IncidentType
 from app.schemas.analysis import IncidentAnalysis
 from app.schemas.event import SemanticEvent
 from app.schemas.incident import Incident
-from app.schemas.log import LogField
+from app.schemas.log import PersistedLog
 
 
 class AIStage:
@@ -29,7 +29,7 @@ class AIStage:
         self.ai_incident_analyzer = AIIncidentAnalyzer(self.client)
 
     async def fallback_run(
-        self, unresolved_logs: list[tuple[int, LogField]], source_app: SourceAppType
+        self, unresolved_logs: list[tuple[int, PersistedLog]], source_app: SourceAppType
     ) -> list[SemanticEvent]:
         ai_events = await self.ai_fallback_parser.parse(unresolved_logs, source_app)
         return ai_events
