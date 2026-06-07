@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -21,5 +21,6 @@ class SemanticEvent(BaseModel):
     severity: Severity
     timestamp: datetime | None = None
     persisted_log: PersistedLog
+    parsing_method: Literal["ai"] | Literal["heuristic"]
     entity: Entity
     metadata: dict[str, Any] | None = None

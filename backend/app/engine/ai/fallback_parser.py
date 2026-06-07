@@ -358,6 +358,7 @@ INPUT LOGS
                             source_app=source_app,
                             event_type=event_type,
                             severity=severity,
+                            parsing_method="ai",
                             confidence=item.get(
                                 "confidence",
                                 0.0,

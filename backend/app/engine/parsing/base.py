@@ -147,6 +147,7 @@ class BaseParser(ABC):
         return SemanticEvent(
             sequence=sequence,
             source_app=source_app,
+            parsing_method="heuristic",
             event_type=best_event,
             severity=self.get_severity(best_event),
             confidence=self.clamp_confidence(best_conf),
