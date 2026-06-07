@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Integer, String
+from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
@@ -30,6 +30,3 @@ class Entity(Base):
     # relationships
     event: Mapped[Event] = relationship("Event", back_populates="entity")
     signals: Mapped[list[Signal]] = relationship("Signal", back_populates="entity")
-
-    # datetime
-    timestamp: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
