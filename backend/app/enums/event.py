@@ -1,6 +1,11 @@
 from enum import StrEnum
 
 
+class ParsingMethodType(StrEnum):
+    AI = "ai"
+    HEURISTIC = "heuristic"
+
+
 class AuthEventType(StrEnum):
     # Authentication
     LOGIN_ATTEMPT = "login_attempt"

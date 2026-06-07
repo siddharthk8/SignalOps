@@ -9,7 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
 from app.enums.common import Severity
-from app.enums.event import AllEventType
+from app.enums.event import AllEventType, ParsingMethodType
 
 if TYPE_CHECKING:
     from app.db.models.batch import Batch
@@ -26,6 +26,13 @@ class Event(Base):
     ] = mapped_column(
         Enum(
             AllEventType,
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
+        nullable=False,
+    )
+    parsing_method: Mapped[ParsingMethodType] = mapped_column(
+        Enum(
+            ParsingMethodType,
             values_callable=lambda enum: [e.value for e in enum],
         ),
         nullable=False,

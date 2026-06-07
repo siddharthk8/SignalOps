@@ -8,7 +8,7 @@ from pydantic import validate_email
 from app.core.config import AI_MODEL_ID, AWS_MODEL_RETRY_ATTEMPTS
 from app.engine.parsing import utils
 from app.enums.common import Severity, SourceAppType
-from app.enums.event import GenericEventType
+from app.enums.event import GenericEventType, ParsingMethodType
 from app.schemas.entity import Entity
 from app.schemas.event import SemanticEvent
 from app.schemas.log import PersistedLog
@@ -358,7 +358,7 @@ INPUT LOGS
                             source_app=source_app,
                             event_type=event_type,
                             severity=severity,
-                            parsing_method="ai",
+                            parsing_method=ParsingMethodType.AI,
                             confidence=item.get(
                                 "confidence",
                                 0.0,

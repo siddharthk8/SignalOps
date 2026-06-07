@@ -29,6 +29,7 @@ class EventRepository:
                 }
             )
             event_payload["event_type"] = event.event_type.value
+            event_payload["parsing_method"] = event.parsing_method.value
             event_payload["severity"] = event.severity.value
             event_payload["log_id"] = event.persisted_log.id
 

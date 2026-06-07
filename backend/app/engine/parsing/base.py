@@ -4,6 +4,7 @@ from typing import Any
 from app.engine.parsing import utils
 from app.engine.parsing.parsers.shared.generic_patterns import GENERIC_EVENT_PATTERNS
 from app.enums.common import Severity, SourceAppType
+from app.enums.event import ParsingMethodType
 from app.schemas.entity import Entity
 from app.schemas.event import SemanticEvent
 from app.schemas.log import (
@@ -147,7 +148,7 @@ class BaseParser(ABC):
         return SemanticEvent(
             sequence=sequence,
             source_app=source_app,
-            parsing_method="heuristic",
+            parsing_method=ParsingMethodType.HEURISTIC,
             event_type=best_event,
             severity=self.get_severity(best_event),
             confidence=self.clamp_confidence(best_conf),

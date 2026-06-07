@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any
 
 from pydantic import BaseModel, Field
 
 from app.enums.common import Severity, SourceAppType
+from app.enums.event import ParsingMethodType
 from app.schemas.entity import Entity
 from app.schemas.log import PersistedLog
 from app.shared.constants import ALL_EVENT_TYPES
@@ -21,6 +22,6 @@ class SemanticEvent(BaseModel):
     severity: Severity
     timestamp: datetime | None = None
     persisted_log: PersistedLog
-    parsing_method: Literal["ai"] | Literal["heuristic"]
+    parsing_method: ParsingMethodType
     entity: Entity
     metadata: dict[str, Any] | None = None
