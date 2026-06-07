@@ -13,6 +13,7 @@ from app.schemas.log import (
 
 
 class Entity(BaseModel):
+    id: int | None = None  # db id
     user: UserField = None
     email: EmailField | None = None
     ip_address: IPField = None

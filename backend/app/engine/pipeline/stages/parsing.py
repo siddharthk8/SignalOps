@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.db.models.batch import Batch
+from app.db.repositories.event import EventRepository
 from app.db.repositories.log import LogRepository
 from app.engine.parsing.registery import PARSER_REGISTRY
 from app.enums.common import SourceAppType
@@ -14,6 +15,7 @@ class ParsingStage:
         self.batch_orm = batch_orm
 
         self.log_repo = LogRepository(db)
+        self.event_repo = EventRepository(db)
 
     async def run(
         self, logs: LogsField, source_app: SourceAppType
@@ -33,6 +35,12 @@ class ParsingStage:
             else:
                 unresolved_logs.append((i, log))
 
+        if len(unresolved_logs) == 0 and len(resolved_events) > 0:
+            # save sementic events in db, if no unresolved_logs exists
+            self.event_repo.save_events(
+                batch_id=self.batch_orm.id, events=resolved_events
+            )
+
         return resolved_events, unresolved_logs
 
     def merge_ai_events(
@@ -49,3 +57,6 @@ class ParsingStage:
             events.append(event)
 
         events.sort(key=lambda e: e.sequence)
+
+        # save sementic events in db
+        self.event_repo.save_events(batch_id=self.batch_orm.id, events=events)
