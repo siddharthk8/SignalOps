@@ -36,13 +36,10 @@ class EventRepository:
             entity_id = None
 
             if any(value is not None for _, value in event.entity):
-                entity = Entity(
-                    **event.entity.model_dump(
-                        exclude={
-                            "id",
-                        }
-                    )
-                )
+                entity_payload = event.entity.model_dump(exclude={"id", "ip_address"})
+                entity_payload["ip_address"] = str(event.entity.ip_address)
+
+                entity = Entity(**entity_payload)
                 self.db.add(entity)
                 self.db.flush()
                 entity_id = entity.id
