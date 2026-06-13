@@ -62,5 +62,5 @@ class EventRepository:
         self.db.flush()
 
         # store ids of events.
-        for i, db_e in enumerate(db_events):
-            events[i].id = db_e.id
+        for i, orm_event in enumerate(db_events):
+            events[i].id = orm_event.id
