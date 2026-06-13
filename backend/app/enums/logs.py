@@ -11,5 +11,5 @@ class LogLevel(StrEnum):
     CRITICAL = "critical"
 
     # Compatibility aliases
-    WARN = "warning"
+    WARN = "warn"
     FATAL = "critical"
