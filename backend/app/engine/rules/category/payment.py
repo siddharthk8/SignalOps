@@ -6,7 +6,6 @@ from app.engine.rules.utils import (
     group_by_user_and_filter,
     threshold_window,
 )
-from app.enums.common import Severity
 from app.enums.event import PaymentEventType
 from app.enums.signal import PaymentSignalType
 from app.schemas.event import SemanticEvent
@@ -49,11 +48,9 @@ class PaymentRule(BaseRule):
         return [
             Signal(
                 signal_type=PaymentSignalType.PAYMENT_FAILURE_SPIKE,
-                severity=Severity.HIGH,
                 confidence=0.95,
-                source_app=failed_events[0].source_app,
                 entity=failed_events[0].entity,
-                supporting_events=[e.sequence for e in failed_events],
+                supporting_events=failed_events,
                 metadata={
                     "failure_count": len(failed_events),
                     "window_minutes": 5,
@@ -82,11 +79,9 @@ class PaymentRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=PaymentSignalType.REFUND_ABUSE_PATTERN,
-                    severity=Severity.MEDIUM,
                     confidence=0.85,
-                    source_app=user_events[0].source_app,
                     entity=user_events[0].entity,
-                    supporting_events=[e.sequence for e in user_events],
+                    supporting_events=user_events,
                     metadata={
                         "refund_count": len(user_events),
                     },
@@ -119,11 +114,9 @@ class PaymentRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=PaymentSignalType.PAYMENT_RETRY_STORM,
-                    severity=Severity.HIGH,
                     confidence=0.95,
-                    source_app=window[0].source_app,
                     entity=window[0].entity,
-                    supporting_events=[e.sequence for e in window],
+                    supporting_events=window,
                     metadata={
                         "retry_count": len(window),
                         "window_minutes": 2,

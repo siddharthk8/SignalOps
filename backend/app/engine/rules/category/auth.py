@@ -8,7 +8,6 @@ from app.engine.rules.utils import (
     group_by_user_and_filter,
     threshold_window,
 )
-from app.enums.common import Severity
 from app.enums.event import AuthEventType
 from app.enums.signal import AuthSignalType
 from app.schemas.event import SemanticEvent
@@ -81,11 +80,9 @@ class AuthRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=AuthSignalType.EXCESSIVE_AUTH_FAILURES,
-                    severity=Severity.MEDIUM,
                     confidence=0.95,
-                    source_app=window_events[0].source_app,
                     entity=window_events[0].entity,
-                    supporting_events=[e.sequence for e in window_events],
+                    supporting_events=window_events,
                     metadata={
                         "failure_count": len(window_events),
                         "window_minutes": 5,
@@ -122,11 +119,9 @@ class AuthRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=AuthSignalType.POSSIBLE_ACCOUNT_COMPROMISE,
-                    severity=Severity.HIGH,
                     confidence=0.80,
-                    source_app=user_events[0].source_app,
                     entity=user_events[0].entity,
-                    supporting_events=[e.sequence for e in user_events],
+                    supporting_events=user_events,
                     metadata={
                         "pattern": [str(x) for x in compromise_pattern],
                     },
@@ -167,11 +162,9 @@ class AuthRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=AuthSignalType.SUSPICIOUS_SESSION_ACTIVITY,
-                    severity=Severity.MEDIUM,
                     confidence=0.85,
-                    source_app=supporting_events[0].source_app,
                     entity=supporting_events[0].entity,
-                    supporting_events=[e.sequence for e in supporting_events],
+                    supporting_events=supporting_events,
                     metadata={
                         "unique_ip_count": len(ips),
                     },
@@ -209,11 +202,9 @@ class AuthRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=AuthSignalType.TOKEN_ABUSE_PATTERN,
-                    severity=Severity.HIGH,
                     confidence=0.90,
-                    source_app=token_events[0].source_app,
                     entity=token_events[0].entity,
-                    supporting_events=[e.sequence for e in token_events],
+                    supporting_events=token_events,
                     metadata={
                         "usage_count": len(token_events),
                     },

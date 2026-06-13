@@ -3,7 +3,7 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, Field
 
-from app.enums.common import Severity, SourceAppType
+from app.enums.common import Severity
 from app.enums.incident import IncidentStatus, IncidentType
 from app.schemas.entity import Entity
 from app.schemas.signal import Signal
@@ -22,7 +22,6 @@ class Incident(BaseModel):
     confidence: ConfidenceField
     title: str
     summary: IncidentSummaryField
-    source_apps: list[SourceAppType]
     entities: list[Entity]
     related_signals: list[Signal]  # modify this to store only signals ids when using DB
     metadata: dict[str, Any] = {}

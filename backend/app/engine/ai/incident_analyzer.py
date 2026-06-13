@@ -4,7 +4,7 @@ from botocore.exceptions import ClientError
 from fastapi.concurrency import run_in_threadpool
 
 from app.core.config import AI_MODEL_ID, AWS_MODEL_RETRY_ATTEMPTS
-from app.enums.common import Severity
+from app.enums.common import Severity, SourceAppType
 from app.schemas.analysis import IncidentAnalysis
 from app.schemas.incident import Incident
 from app.shared.utils import get_all_incident_type_values
@@ -25,7 +25,9 @@ class AIIncidentAnalyzer:
         # boto3 client
         self.client = client
 
-    async def analyze(self, incident: Incident) -> IncidentAnalysis:
+    async def analyze(
+        self, incident: Incident, source_app: SourceAppType
+    ) -> IncidentAnalysis:
 
         allowed_incident_types = get_all_incident_type_values()
 
@@ -34,19 +36,18 @@ class AIIncidentAnalyzer:
             "incident_type": incident.incident_type,
             "severity": incident.severity,
             "confidence": incident.confidence,
-            "source_apps": incident.source_apps,
+            "source_app": source_app,
             "entities": [e.model_dump() for e in incident.entities],
             "signals": [
                 {
                     "signal_type": s.signal_type,
-                    "severity": s.severity,
                     "confidence": s.confidence,
                     "triggered_at": str(s.triggered_at),
-                    "source_app": s.source_app,
                 }
                 for s in incident.related_signals
             ],
             "summary": incident.summary,
+            "metadata_for_each_signal": [s.metadata for s in incident.related_signals],
         }
 
         prompt = f"""

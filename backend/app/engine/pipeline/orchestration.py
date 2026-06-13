@@ -36,10 +36,14 @@ class LogPipeline:
         signals = await self.rule_stage.run(source_app=source_app, events=events)
 
         # correlation
-        incidents = await self.correlation_stage.run(signals=signals)
+        incidents = await self.correlation_stage.run(
+            signals=signals, source_app=source_app
+        )
 
         # ai analysis of incidents
-        analyzed_incidents = await self.ai_stage.run(incidents=incidents)
+        analyzed_incidents = await self.ai_stage.run(
+            incidents=incidents, source_app=source_app
+        )
 
         self.db.commit()
         return analyzed_incidents

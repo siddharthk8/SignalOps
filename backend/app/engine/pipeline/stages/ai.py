@@ -34,11 +34,15 @@ class AIStage:
         ai_events = await self.ai_fallback_parser.parse(unresolved_logs, source_app)
         return ai_events
 
-    async def run(self, incidents: list[Incident]) -> list[IncidentAnalysis]:
+    async def run(
+        self, incidents: list[Incident], source_app: SourceAppType
+    ) -> list[IncidentAnalysis]:
         analyzed_incidents = []
 
         for i in incidents:
-            analyzed_incidents.append(await self.ai_incident_analyzer.analyze(i))
+            analyzed_incidents.append(
+                await self.ai_incident_analyzer.analyze(i, source_app)
+            )
 
         if len(analyzed_incidents) == 0:
             analyzed_incidents = [

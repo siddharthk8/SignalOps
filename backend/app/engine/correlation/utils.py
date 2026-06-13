@@ -1,7 +1,7 @@
 from collections import defaultdict
 from datetime import UTC, datetime
 
-from app.enums.common import Severity
+from app.enums.common import Severity, SourceAppType
 from app.enums.incident import IncidentType
 from app.enums.signal import (
     AuthSignalType,
@@ -13,7 +13,9 @@ from app.schemas.incident import Incident
 from app.schemas.signal import Signal
 
 
-def group_signals(signals: list[Signal]) -> dict[str, list[Signal]]:
+def group_signals(
+    signals: list[Signal], source_app: SourceAppType
+) -> dict[str, list[Signal]]:
     """
     Multi-dimensional grouping using entity attributes.
 
@@ -48,7 +50,7 @@ def group_signals(signals: list[Signal]) -> dict[str, list[Signal]]:
 
         # fallback if nothing exists
         if not key_parts:
-            key_parts.append(f"source:{signal.source_app}")
+            key_parts.append(f"source:{source_app.value}")
 
         key = "|".join(key_parts)
 
@@ -108,16 +110,23 @@ def match_rules(signals: list[Signal]) -> set[IncidentType]:
 
 
 def build_incident(signals: list[Signal], incident_type: IncidentType) -> Incident:
+    severity = Severity.LOW
 
-    all_severity = [s.severity for s in signals]
-    if Severity.CRITICAL in all_severity:
-        severity = Severity.CRITICAL
-    elif Severity.HIGH in all_severity:
-        severity = Severity.HIGH
-    elif Severity.MEDIUM in all_severity:
-        severity = Severity.MEDIUM
-    else:
-        severity = Severity.LOW
+    for signal in signals:
+        for event in signal.supporting_events:
+            if event.severity == Severity.CRITICAL:
+                severity = Severity.CRITICAL
+                break
+            elif event.severity == Severity.HIGH and severity in (
+                Severity.LOW,
+                Severity.MEDIUM,
+            ):
+                severity = Severity.HIGH
+            elif event.severity == Severity.MEDIUM and severity == Severity.LOW:
+                severity = Severity.MEDIUM
+
+        if severity == Severity.CRITICAL:
+            break
 
     confidence = round(sum(s.confidence for s in signals) / len(signals), 2)
 
@@ -131,7 +140,6 @@ def build_incident(signals: list[Signal], incident_type: IncidentType) -> Incide
         confidence=confidence,
         title=_generate_title(incident_type),
         summary=_generate_summary(signals, incident_type),
-        source_apps=list({s.source_app for s in signals}),
         entities=entities,
         related_signals=signals,
         first_detected_at=min(s.triggered_at for s in signals),

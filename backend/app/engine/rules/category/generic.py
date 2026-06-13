@@ -2,7 +2,6 @@ from datetime import UTC, datetime
 
 from app.engine.rules.base import BaseRule
 from app.engine.rules.utils import events_in_last_minutes, threshold_window
-from app.enums.common import Severity
 from app.enums.event import AuthEventType, GenericEventType
 from app.enums.signal import GenericSignalType
 from app.schemas.event import SemanticEvent
@@ -53,11 +52,9 @@ class GenericRule(BaseRule):
         return [
             Signal(
                 signal_type=GenericSignalType.BRUTE_FORCE_ATTEMPT,
-                severity=Severity.HIGH,
                 confidence=0.95,
-                source_app=window[0].source_app,
                 entity=window[0].entity,
-                supporting_events=[e.sequence for e in window],
+                supporting_events=window,
                 metadata={
                     "attempt_count": len(window),
                     "window_minutes": 2,
@@ -88,11 +85,9 @@ class GenericRule(BaseRule):
         return [
             Signal(
                 signal_type=GenericSignalType.HIGH_ERROR_RATE_PATTERN,
-                severity=Severity.MEDIUM,
                 confidence=0.90,
-                source_app=errors[0].source_app,
                 entity=errors[0].entity,
-                supporting_events=[e.sequence for e in errors],
+                supporting_events=errors,
                 metadata={"error_count": len(errors)},
                 triggered_at=datetime.now(UTC),
             )
@@ -134,11 +129,9 @@ class GenericRule(BaseRule):
         signals.append(
             Signal(
                 signal_type=GenericSignalType.CASCADING_SERVICE_FAILURE,
-                severity=Severity.HIGH,
                 confidence=0.92,
-                source_app=window_events[0].source_app,
                 entity=window_events[0].entity,
-                supporting_events=[e.sequence for e in window_events],
+                supporting_events=window_events,
                 metadata={"failure_count": len(window_events)},
                 triggered_at=datetime.now(UTC),
             )
@@ -175,11 +168,9 @@ class GenericRule(BaseRule):
         return [
             Signal(
                 signal_type=GenericSignalType.DOWNSTREAM_SERVICE_DEGRADATION,
-                severity=Severity.MEDIUM,
                 confidence=0.88,
-                source_app=degradation[0].source_app,
                 entity=degradation[0].entity,
-                supporting_events=[e.sequence for e in degradation],
+                supporting_events=degradation,
                 metadata={"degradation_count": len(degradation)},
                 triggered_at=datetime.now(UTC),
             )

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.engine.correlation.correlator import Correlator
+from app.enums.common import SourceAppType
 from app.schemas.incident import Incident
 from app.schemas.signal import Signal
 
@@ -10,6 +11,8 @@ class CorrelationStage:
         self.db = db
         self.correlator = Correlator()
 
-    async def run(self, signals: list[Signal]) -> list[Incident]:
-        incidents = self.correlator.process(signals=signals)
+    async def run(
+        self, signals: list[Signal], source_app: SourceAppType
+    ) -> list[Incident]:
+        incidents = self.correlator.process(signals=signals, source_app=source_app)
         return incidents

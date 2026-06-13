@@ -3,6 +3,7 @@ from app.engine.correlation.utils import (
     group_signals,
     match_rules,
 )
+from app.enums.common import SourceAppType
 from app.enums.incident import IncidentType
 from app.schemas.incident import Incident
 from app.schemas.signal import Signal
@@ -15,7 +16,9 @@ class Correlator:
     Responsibility: Generate incidents
     """
 
-    def process(self, signals: list[Signal]) -> list[Incident]:
+    def process(
+        self, signals: list[Signal], source_app: SourceAppType
+    ) -> list[Incident]:
         """
         Entry point for correlation pipeline.
         """
@@ -24,7 +27,7 @@ class Correlator:
             return []
 
         # 1. Group signals by entity details/values
-        grouped_signals = group_signals(signals)
+        grouped_signals = group_signals(signals, source_app)
 
         all_incidents: list[Incident] = []
 

@@ -7,7 +7,6 @@ from app.engine.rules.utils import (
     group_by_user,
     threshold_window,
 )
-from app.enums.common import Severity
 from app.enums.event import OrderEventType
 from app.enums.signal import OrderSignalType
 from app.schemas.event import SemanticEvent
@@ -50,11 +49,9 @@ class OrderRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=OrderSignalType.CHECKOUT_ABANDONMENT_SURGE,
-                    severity=Severity.MEDIUM,
                     confidence=0.80,
-                    source_app=user_events[0].source_app,
                     entity=user_events[0].entity,
-                    supporting_events=[e.sequence for e in user_events],
+                    supporting_events=user_events,
                     metadata={
                         "pattern": [str(x) for x in abandonment_pattern],
                     },
@@ -90,11 +87,9 @@ class OrderRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=OrderSignalType.ORDER_CANCELLATION_SPIKE,
-                    severity=Severity.HIGH,
                     confidence=0.90,
-                    source_app=window[0].source_app,
                     entity=window[0].entity,
-                    supporting_events=[e.sequence for e in window],
+                    supporting_events=window,
                     metadata={
                         "cancellation_count": len(window),
                         "window_minutes": 10,
@@ -127,11 +122,9 @@ class OrderRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=OrderSignalType.SUSPICIOUS_ORDER_ACTIVITY,
-                    severity=Severity.HIGH,
                     confidence=0.85,
-                    source_app=window_events[0].source_app,
                     entity=window_events[0].entity,
-                    supporting_events=[e.sequence for e in window_events],
+                    supporting_events=window_events,
                     metadata={
                         "order_count": len(window_events),
                         "window_minutes": 2,
