@@ -4,5 +4,5 @@ router = APIRouter()
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
-def home():
+def health_check():
     return {"status": "ok"}
