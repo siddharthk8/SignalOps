@@ -16,6 +16,7 @@ ConfidenceField = Annotated[
 
 
 class Incident(BaseModel):
+    id: int | None = None  # db id
     incident_type: IncidentType
     severity: Severity
     status: IncidentStatus = IncidentStatus.OPEN
