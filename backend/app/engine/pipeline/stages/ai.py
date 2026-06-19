@@ -2,6 +2,7 @@ import boto3
 from botocore.config import Config
 from sqlalchemy.orm import Session
 
+from app.db.repositories.ai_analysis import AIAnalysisRepository
 from app.engine.ai.fallback_parser import AIFallbackParser
 from app.engine.ai.incident_analyzer import AIIncidentAnalyzer
 from app.enums.common import Severity, SourceAppType
@@ -27,6 +28,7 @@ class AIStage:
         )
         self.ai_fallback_parser = AIFallbackParser(self.client)
         self.ai_incident_analyzer = AIIncidentAnalyzer(self.client)
+        self.ai_analysis_repo = AIAnalysisRepository(self.db)
 
     async def fallback_run(
         self, unresolved_logs: list[tuple[int, PersistedLog]], source_app: SourceAppType
@@ -37,7 +39,7 @@ class AIStage:
     async def run(
         self, incidents: list[Incident], source_app: SourceAppType
     ) -> list[IncidentAnalysis]:
-        analyzed_incidents = []
+        analyzed_incidents: list[IncidentAnalysis] = []
 
         for i in incidents:
             analyzed_incidents.append(
@@ -65,7 +67,11 @@ class AIStage:
                         "Continue routine monitoring.",
                         "Review trends periodically for emerging patterns.",
                     ],
-                    incident_type_validation=IncidentType.INFORMATIONAL,
+                    incident_type=IncidentType.INFORMATIONAL,
                 )
             ]
+
+        # save ai_incidents in db
+        self.ai_analysis_repo.save_ai_analysis(analyzed_incidents=analyzed_incidents)
+
         return analyzed_incidents

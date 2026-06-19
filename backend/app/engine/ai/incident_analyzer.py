@@ -129,7 +129,7 @@ INPUT INCIDENT:
                                                     "type": "array",
                                                     "items": {"type": "string"},
                                                 },
-                                                "incident_type_validation": {
+                                                "incident_type": {
                                                     "type": "string",
                                                     "enum": allowed_incident_types,
                                                 },
@@ -141,7 +141,7 @@ INPUT INCIDENT:
                                                 "severity",
                                                 "confidence",
                                                 "recommendations",
-                                                "incident_type_validation",
+                                                "incident_type",
                                             ],
                                             "additionalProperties": False,
                                         }
@@ -173,8 +173,8 @@ INPUT INCIDENT:
                     severity=Severity(data.get("severity", incident.severity)),
                     confidence=float(data.get("confidence", 0.0)),
                     recommendations=data.get("recommendations", []),
-                    incident_type_validation=data.get(
-                        "incident_type_validation",
+                    incident_type=data.get(
+                        "incident_type",
                         incident.incident_type,
                     ),
                 )
