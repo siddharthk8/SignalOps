@@ -85,7 +85,7 @@ class AuthRule(BaseRule):
                     supporting_events=window_events,
                     metadata={
                         "failure_count": len(window_events),
-                        "window_minutes": 5,
+                        "window_minutes": self.FAILED_LOGIN_THRESHOLD,
                         "window_start": window_events[0].timestamp,
                         "window_end": window_events[-1].timestamp,
                     },

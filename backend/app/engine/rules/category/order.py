@@ -92,7 +92,7 @@ class OrderRule(BaseRule):
                     supporting_events=window,
                     metadata={
                         "cancellation_count": len(window),
-                        "window_minutes": 10,
+                        "window_minutes": self.CANCELLATION_THRESHOLD,
                     },
                     triggered_at=datetime.now(UTC),
                 )
@@ -127,7 +127,7 @@ class OrderRule(BaseRule):
                     supporting_events=window_events,
                     metadata={
                         "order_count": len(window_events),
-                        "window_minutes": 2,
+                        "window_minutes": self.RAPID_ORDER_THRESHOLD,
                     },
                     triggered_at=datetime.now(UTC),
                 )

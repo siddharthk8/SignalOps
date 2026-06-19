@@ -57,7 +57,7 @@ class GenericRule(BaseRule):
                 supporting_events=window,
                 metadata={
                     "attempt_count": len(window),
-                    "window_minutes": 2,
+                    "window_minutes": self.BRUTE_FORCE_THRESHOLD,
                 },
                 triggered_at=datetime.now(UTC),
             )

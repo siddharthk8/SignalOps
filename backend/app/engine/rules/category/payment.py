@@ -53,7 +53,7 @@ class PaymentRule(BaseRule):
                 supporting_events=failed_events,
                 metadata={
                     "failure_count": len(failed_events),
-                    "window_minutes": 5,
+                    "window_minutes": self.FAILURE_SPIKE_THRESHOLD,
                 },
                 triggered_at=datetime.now(UTC),
             )
@@ -119,7 +119,7 @@ class PaymentRule(BaseRule):
                     supporting_events=window,
                     metadata={
                         "retry_count": len(window),
-                        "window_minutes": 2,
+                        "window_minutes": self.RETRY_THRESHOLD,
                     },
                     triggered_at=datetime.now(UTC),
                 )
