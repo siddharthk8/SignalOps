@@ -62,7 +62,7 @@ class AuthParser(BaseParser):
         return Severity.LOW
 
     def parse(self, log: PersistedLog, sequence: int) -> SemanticEvent | None:
-        return self.global_parse(
+        return self.global_parser(
             log=log,
             sequence=sequence,
             PATTERNS=AUTH_EVENT_PATTERNS,

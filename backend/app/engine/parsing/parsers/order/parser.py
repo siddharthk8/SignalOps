@@ -61,7 +61,7 @@ class OrderParser(BaseParser):
         return Severity.LOW
 
     def parse(self, log: PersistedLog, sequence: int) -> SemanticEvent | None:
-        return self.global_parse(
+        return self.global_parser(
             log=log,
             sequence=sequence,
             PATTERNS=ORDER_EVENT_PATTERNS,

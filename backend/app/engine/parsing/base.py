@@ -14,6 +14,9 @@ from app.shared.constants import ALL_EVENT_TYPES
 
 
 class BaseParser(ABC):
+    MIN_MATCH_SCORE = 0.30
+    MIN_CONFIDENCE = 0.60
+
     @abstractmethod
     def get_severity(self, event_type: ALL_EVENT_TYPES) -> Severity:
         pass
@@ -29,7 +32,7 @@ class BaseParser(ABC):
 
         return round(max(0.0, min(1.0, value)), 2)
 
-    def proximity_score(self, tokens: list[str], key_tokens: list[str]) -> float:
+    def proximity_score(self, tokens: set[str], key_tokens: set[str]) -> float:
         """
         - Checks how close important tokens appear to each other in the message.
         - Closer words = higher score.
@@ -40,14 +43,14 @@ class BaseParser(ABC):
         positions = [i for (i, token) in enumerate(tokens) if token in key_tokens]
 
         # If fewer than 2 keywords exist, proximity cannot be measured well
-        if len(positions) < 2:
-            return 0.2
+        if len(positions) <= 1:
+            return 0.01
 
         # Distance between farthest matching tokens
         spread = max(positions) - min(positions)
+        max_spread = len(tokens) - 1
 
-        # Smaller spread = higher score
-        return self.clamp_confidence(1.0 - (spread / len(tokens)))
+        return 1.0 - (spread / max_spread)
 
     # NOTE: Future feature - not used yet
     # Keeping for upcoming release
@@ -63,7 +66,7 @@ class BaseParser(ABC):
     #     # Prevent bonus from becoming too large
     #     return min(score, 0.8)
 
-    def match_score(self, patterns: list[list[str]], tokens: list[str]) -> float:
+    def match_score(self, patterns: list[list[str]], tokens: set[str]) -> float:
         """
         Token-based matching is used instead of raw substring search to ensure word-level accuracy.
         This avoids false matches (e.g., "dev" in "devasted") and improves reliability for noisy log data.
@@ -80,18 +83,19 @@ class BaseParser(ABC):
 
             ms = max(ms, current_weight / total_weight)
 
-        return self.clamp_confidence(ms)
+        return ms
 
     def generic_parser(
-        self, candidates: list[Any], tokens: list[str], log: PersistedLog
+        self, candidates: list[Any], tokens: set[str], log: PersistedLog
     ) -> None:
         for event_type, patterns in GENERIC_EVENT_PATTERNS.items():
             match_score = self.match_score(patterns, tokens)
-            if match_score < 0.3:
+            if match_score < self.MIN_MATCH_SCORE:
                 continue
 
             proximity = self.proximity_score(
-                tokens, [token for p in patterns for token in p]
+                tokens,
+                {token for pattern in patterns for token in pattern},
             )
 
             confidence = match_score * 0.70 + proximity * 0.30
@@ -108,10 +112,10 @@ class BaseParser(ABC):
             #     print("proximity : ", proximity)
             #     print("confidence : ", confidence)
 
-            if confidence >= 0.6:
+            if confidence >= self.MIN_CONFIDENCE:
                 candidates.append((event_type, confidence))
 
-    def global_parse(
+    def global_parser(
         self,
         log: PersistedLog,
         sequence: int,
@@ -121,21 +125,21 @@ class BaseParser(ABC):
         message = log.message
 
         message = utils.normalize_log_for_tokens(message)
-        tokens = message.split()
+        tokens = set(message.split())  # using set reduces time complexity
         candidates: list[tuple[Any, float]] = []
 
         for event_type, patterns in PATTERNS.items():
             match_score = self.match_score(patterns, tokens)
-            if match_score < 0.3:
+            if match_score < self.MIN_MATCH_SCORE:
                 continue
 
             proximity = self.proximity_score(
-                tokens, [token for p in patterns for token in p]
+                tokens, {token for pattern in patterns for token in pattern}
             )
 
             confidence = match_score * 0.70 + proximity * 0.30
 
-            if confidence >= 0.6:
+            if confidence >= self.MIN_CONFIDENCE:
                 candidates.append((event_type, confidence))
 
         self.generic_parser(candidates=candidates, tokens=tokens, log=log)
