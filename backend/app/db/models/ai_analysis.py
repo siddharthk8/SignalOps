@@ -21,6 +21,7 @@ class AIAnalysis(Base):
     summary: Mapped[str] = mapped_column(String, nullable=False)
     root_cause: Mapped[str] = mapped_column(String, nullable=False)
     business_impact: Mapped[str] = mapped_column(String, nullable=False)
+    recommendations: Mapped[str] = mapped_column(String, nullable=False)
 
     severity: Mapped[Severity] = mapped_column(
         Enum(
