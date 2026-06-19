@@ -24,11 +24,9 @@ from app.shared.constants import (
 def normalize_log_for_tokens(message: str) -> str:
     # remove uppercase logs from message(like: "ERROR Database connection timeout" -> "Database connection timeout")
     # this is important for getting precise match_score.
-    # As if using above example, "ERROR Database connection timeout" was giving 1.0 for both db_error and db_connection_timeout
+    # As if using above example, "ERROR Database connection timeout" might give 1.0 confidence for both db_error and db_connection_timeout
     # but removing "ERROR" from it will give us accurate "db_connection_timeout"
-    pattern = r"\b(?:{})\b".format(
-        "|".join(re.escape(level.value.upper()) for level in LogLevel)
-    )
+    pattern = r"\b(?:{})\b".format("|".join(level.value.upper() for level in LogLevel))
     message = re.sub(pattern, "", message)
 
     # Remove all key=value patterns from the string (this might cause us to loose important data in few types of logs.Ex: "2026-05-26T10:00:00Z user=u123 event=ORDER_VALIDATION_FAILED order_id=o1001")
@@ -75,8 +73,7 @@ def get_user(log: PersistedLog) -> UserField | None:
     for m in ENTITY_USER_ALIASES:
         match = re.search(rf"{m}=([\w.@-_]+)", message)
         if match:
-            user = match.group(1)
-            return user
+            return match.group(1)
 
     return None
 
@@ -92,10 +89,10 @@ def get_email(log: PersistedLog) -> EmailField | None:
     )
     if match:
         return match.group(1)
-
-    match = re.search(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)", message)
-    if match:
-        return match.group(1)
+    else:
+        match = re.search(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)", message)
+        if match:
+            return match.group(1)
 
     return None
 
@@ -178,8 +175,7 @@ def get_token_id(log: PersistedLog) -> TokenIDField | None:
     for m in INCOMING_LOG_TOKEN_ALIASES:
         match = re.search(rf"{m}=([a-zA-Z0-9_-]+)", message)
         if match:
-            user = match.group(1)
-            return user
+            return match.group(1)
 
     return None
 
@@ -193,8 +189,7 @@ def get_session_id(log: PersistedLog) -> SessionIDField | None:
     for m in INCOMING_LOG_SESSION_ALIASES:
         match = re.search(rf"{m}=([a-zA-Z0-9_-]+)", message)
         if match:
-            user = match.group(1)
-            return user
+            return match.group(1)
 
     return None
 
@@ -207,8 +202,7 @@ def get_request_id(log: PersistedLog) -> RequestIdField | None:
 
     match = re.search(r"request_id=([a-zA-Z0-9_-]+)", message)
     if match:
-        user = match.group(1)
-        return user
+        return match.group(1)
 
     return None
 
