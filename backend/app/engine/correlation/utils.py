@@ -142,8 +142,8 @@ def build_incident(signals: list[Signal], incident_type: IncidentType) -> Incide
         summary=_generate_summary(signals, incident_type),
         entities=entities,
         related_signals=signals,
-        first_detected_at=min(s.triggered_at for s in signals),
-        last_updated_at=datetime.now(UTC),
+        detected_at=min(s.triggered_at for s in signals),
+        updated_at=datetime.now(UTC),
     )
 
 

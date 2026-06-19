@@ -26,6 +26,6 @@ class Incident(BaseModel):
     entities: list[Entity]
     related_signals: list[Signal]  # modify this to store only signals ids when using DB
     metadata: dict[str, Any] = {}
-    first_detected_at: datetime
-    last_updated_at: datetime
+    detected_at: datetime
+    updated_at: datetime
     resolved_at: datetime | None = None
