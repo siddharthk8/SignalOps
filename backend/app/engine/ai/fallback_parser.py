@@ -355,7 +355,6 @@ INPUT LOGS
                     results.append(
                         SemanticEvent(
                             sequence=idx,
-                            source_app=source_app,
                             event_type=event_type,
                             severity=severity,
                             parsing_method=ParsingMethodType.AI,

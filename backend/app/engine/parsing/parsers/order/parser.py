@@ -1,6 +1,6 @@
 from app.engine.parsing.parsers.order.patterns import ORDER_EVENT_PATTERNS
 from app.engine.parsing.parsers.shared.generic_severity import get_generic_severity
-from app.enums.common import Severity, SourceAppType
+from app.enums.common import Severity
 from app.enums.event import GenericEventType, OrderEventType
 from app.schemas.event import SemanticEvent
 from app.schemas.log import PersistedLog
@@ -65,5 +65,4 @@ class OrderParser(BaseParser):
             log=log,
             sequence=sequence,
             PATTERNS=ORDER_EVENT_PATTERNS,
-            source_app=SourceAppType.ORDER_APP,
         )

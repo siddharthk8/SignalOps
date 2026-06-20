@@ -1,6 +1,6 @@
 from app.engine.parsing.parsers.payment.patterns import PAYMENT_EVENT_PATTERNS
 from app.engine.parsing.parsers.shared.generic_severity import get_generic_severity
-from app.enums.common import Severity, SourceAppType
+from app.enums.common import Severity
 from app.enums.event import GenericEventType, PaymentEventType
 from app.schemas.event import SemanticEvent
 from app.schemas.log import PersistedLog
@@ -69,5 +69,4 @@ class PaymentParser(BaseParser):
             log=log,
             sequence=sequence,
             PATTERNS=PAYMENT_EVENT_PATTERNS,
-            source_app=SourceAppType.PAYMENT_APP,
         )

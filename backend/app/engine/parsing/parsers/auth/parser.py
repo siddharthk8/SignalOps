@@ -1,6 +1,6 @@
 from app.engine.parsing.parsers.auth.patterns import AUTH_EVENT_PATTERNS
 from app.engine.parsing.parsers.shared.generic_severity import get_generic_severity
-from app.enums.common import Severity, SourceAppType
+from app.enums.common import Severity
 from app.enums.event import AuthEventType, GenericEventType
 from app.schemas.event import SemanticEvent
 from app.schemas.log import PersistedLog
@@ -66,5 +66,4 @@ class AuthParser(BaseParser):
             log=log,
             sequence=sequence,
             PATTERNS=AUTH_EVENT_PATTERNS,
-            source_app=SourceAppType.AUTH_APP,
         )

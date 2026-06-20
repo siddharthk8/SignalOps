@@ -3,7 +3,7 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, Field
 
-from app.enums.common import Severity, SourceAppType
+from app.enums.common import Severity
 from app.enums.event import ParsingMethodType
 from app.schemas.entity import Entity
 from app.schemas.log import PersistedLog
@@ -16,7 +16,6 @@ ConfidenceField = Annotated[float, Field(ge=0.0, le=1.0)]
 class SemanticEvent(BaseModel):
     id: int | None = None  # db id
     sequence: SequenceField
-    source_app: SourceAppType
     event_type: ALL_EVENT_TYPES
     confidence: ConfidenceField
     severity: Severity

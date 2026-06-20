@@ -3,7 +3,7 @@ from typing import Any
 
 from app.engine.parsing import utils
 from app.engine.parsing.parsers.shared.generic_patterns import GENERIC_EVENT_PATTERNS
-from app.enums.common import Severity, SourceAppType
+from app.enums.common import Severity
 from app.enums.event import ParsingMethodType
 from app.schemas.entity import Entity
 from app.schemas.event import SemanticEvent
@@ -113,14 +113,18 @@ class BaseParser(ABC):
             #     print("confidence : ", confidence)
 
             if confidence >= self.MIN_CONFIDENCE:
-                candidates.append((event_type, confidence))
+                candidates.append(
+                    (
+                        event_type,
+                        confidence,
+                    )
+                )
 
     def global_parser(
         self,
         log: PersistedLog,
         sequence: int,
         PATTERNS: dict[Any, list[list[str]]],
-        source_app: SourceAppType,
     ) -> SemanticEvent | None:
         message = log.message
 
@@ -140,18 +144,22 @@ class BaseParser(ABC):
             confidence = match_score * 0.70 + proximity * 0.30
 
             if confidence >= self.MIN_CONFIDENCE:
-                candidates.append((event_type, confidence))
+                candidates.append(
+                    (
+                        event_type,
+                        confidence,
+                    )
+                )
 
         self.generic_parser(candidates=candidates, tokens=tokens, log=log)
 
-        if not candidates:
+        if len(candidates) == 0:
             return None
 
         best_event, best_conf = max(candidates, key=lambda x: x[1])
 
         return SemanticEvent(
             sequence=sequence,
-            source_app=source_app,
             parsing_method=ParsingMethodType.HEURISTIC,
             event_type=best_event,
             severity=self.get_severity(best_event),
