@@ -32,6 +32,8 @@ class IncidentRepository:
             orm_incident = ORMIncident(
                 **incident_payload,
             )
+
+            orm_incidents.append(orm_incident)
             self.db.add(orm_incident)
             self.db.flush()
 
