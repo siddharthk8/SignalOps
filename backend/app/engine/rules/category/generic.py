@@ -53,7 +53,7 @@ class GenericRule(BaseRule):
             Signal(
                 signal_type=GenericSignalType.BRUTE_FORCE_ATTEMPT,
                 confidence=0.95,
-                entity=window[0].entity,
+                entity=None,
                 supporting_events=window,
                 metadata={
                     "attempt_count": len(window),
@@ -86,7 +86,7 @@ class GenericRule(BaseRule):
             Signal(
                 signal_type=GenericSignalType.HIGH_ERROR_RATE_PATTERN,
                 confidence=0.90,
-                entity=errors[0].entity,
+                entity=None,
                 supporting_events=errors,
                 metadata={"error_count": len(errors)},
                 triggered_at=datetime.now(UTC),
@@ -130,7 +130,7 @@ class GenericRule(BaseRule):
             Signal(
                 signal_type=GenericSignalType.CASCADING_SERVICE_FAILURE,
                 confidence=0.92,
-                entity=window_events[0].entity,
+                entity=None,
                 supporting_events=window_events,
                 metadata={"failure_count": len(window_events)},
                 triggered_at=datetime.now(UTC),
@@ -169,7 +169,7 @@ class GenericRule(BaseRule):
             Signal(
                 signal_type=GenericSignalType.DOWNSTREAM_SERVICE_DEGRADATION,
                 confidence=0.88,
-                entity=degradation[0].entity,
+                entity=None,
                 supporting_events=degradation,
                 metadata={"degradation_count": len(degradation)},
                 triggered_at=datetime.now(UTC),

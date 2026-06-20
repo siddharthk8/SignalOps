@@ -18,7 +18,8 @@ class SignalRepository:
                 exclude={"signal_type", "supporting_events", "entity", "metadata"}
             )
             signal_payload["signal_type"] = signal.signal_type.value
-            signal_payload["entity_id"] = signal.entity.id
+            if signal.entity:
+                signal_payload["entity_id"] = signal.entity.id
 
             orm_signal = ORMSignal(
                 **signal_payload,

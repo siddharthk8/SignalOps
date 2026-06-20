@@ -30,26 +30,27 @@ def group_signals(
 
         key_parts = []
 
-        if e.user:
-            key_parts.append(f"user:{e.user}")
+        if e:
+            if e.user:
+                key_parts.append(f"user:{e.user}")
 
-        if e.email:
-            key_parts.append(f"email:{e.email}")
+            if e.email:
+                key_parts.append(f"email:{e.email}")
 
-        if e.ip_address:
-            key_parts.append(f"ip:{e.ip_address}")
+            if e.ip_address:
+                key_parts.append(f"ip:{e.ip_address}")
 
-        if e.session_id:
-            key_parts.append(f"session:{e.session_id}")
+            if e.session_id:
+                key_parts.append(f"session:{e.session_id}")
 
-        if e.token_id:
-            key_parts.append(f"token:{e.token_id}")
+            if e.token_id:
+                key_parts.append(f"token:{e.token_id}")
 
-        if e.request_id:
-            key_parts.append(f"request:{e.request_id}")
+            if e.request_id:
+                key_parts.append(f"request:{e.request_id}")
 
         # fallback if nothing exists
-        if not key_parts:
+        if len(key_parts) > 0:
             key_parts.append(f"source:{source_app.value}")
 
         key = "|".join(key_parts)
@@ -131,7 +132,7 @@ def build_incident(signals: list[Signal], incident_type: IncidentType) -> Incide
     confidence = round(sum(s.confidence for s in signals) / len(signals), 2)
 
     # merge entity (keep full structure)
-    entities = [s.entity for s in signals]
+    entities = [s.entity for s in signals if s.entity]
 
     return Incident(
         # incident_id=...,
@@ -153,8 +154,8 @@ def _generate_summary(signals: list[Signal], incident_type: IncidentType) -> str
     primary_entity = signals[0].entity
     count = len(signals)
 
-    user = primary_entity.user or "unknown"
-    ip = primary_entity.ip_address or "unknown"
+    user = primary_entity.user if primary_entity else "someone"
+    ip = primary_entity.ip_address if primary_entity else "someone"
 
     if incident_type == IncidentType.ACCOUNT_SECURITY:
         return f"{count} security-related signals detected for user {user} from IP {ip}"

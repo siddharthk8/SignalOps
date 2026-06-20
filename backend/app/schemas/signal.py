@@ -21,6 +21,6 @@ class Signal(BaseModel):
     signal_type: ALL_SIGNAL_TYPES
     confidence: ConfidenceField
     supporting_events: list[SemanticEvent]
-    entity: Entity
+    entity: Entity | None = None
     metadata: dict[str, Any] = {}
     triggered_at: datetime

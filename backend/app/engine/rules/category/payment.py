@@ -114,7 +114,7 @@ class PaymentRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=PaymentSignalType.PAYMENT_RETRY_STORM,
-                    confidence=0.95,
+                    confidence=0.90,
                     entity=window[0].entity,
                     supporting_events=window,
                     metadata={

@@ -80,7 +80,7 @@ class AuthRule(BaseRule):
             signals.append(
                 Signal(
                     signal_type=AuthSignalType.EXCESSIVE_AUTH_FAILURES,
-                    confidence=0.95,
+                    confidence=0.90,
                     entity=window_events[0].entity,
                     supporting_events=window_events,
                     metadata={
