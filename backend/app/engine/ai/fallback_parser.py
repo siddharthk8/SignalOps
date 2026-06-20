@@ -7,6 +7,7 @@ from pydantic import validate_email
 
 from app.core.config import AI_MODEL_ID, AWS_MODEL_RETRY_ATTEMPTS
 from app.engine.parsing import utils
+from app.engine.parsing.base import BaseParser
 from app.enums.common import Severity, SourceAppType
 from app.enums.event import GenericEventType, ParsingMethodType
 from app.schemas.entity import Entity
@@ -47,112 +48,81 @@ class AIFallbackParser:
         payload = []
 
         for idx, log in unresolved_logs:
-            normalized_log = log.model_dump(mode="json")
+            if log.log_format == "string":
+                normalized_log = log.message
+            else:
+                normalized_log = log.model_dump(mode="json")
 
             payload.append(
                 {
-                    "log_id": idx,
-                    "content": normalized_log,
+                    "id": idx,
+                    "log": normalized_log,
                 }
             )
 
         prompt = f"""
 You are a deterministic log normalization engine.
 
-STRICT INSTRUCTIONS (must follow exactly):
-
 TASK
-Convert each input log into exactly ONE normalized semantic event.
 
-OUTPUT METHOD
-You MUST return output ONLY via the tool: normalize_logs
-No extra text, no explanation, no markdown, no reasoning.
+Convert each input log into exactly ONE normalized event.
 
----
+OUTPUT
 
-HARD CONSTRAINTS
-- Exactly ONE event per log_id
-- Never omit any log_id
-- Never merge logs
-- Never split logs
-- Never modify log_id in any way
-- Never infer missing values (user, email, ip, session_id, request_id, token_id)
-- Use ONLY allowed enum values
-- Output must be valid tool JSON only
+Respond ONLY using the normalize_logs tool.
 
----
+RULES
 
-CLASSIFICATION PRIORITY (apply in order)
+* Exactly one event per input id
+* Never omit, modify, merge, or split ids
+* Use only allowed event types and severity values
+* Never invent event types
+* Never infer missing entity values
 
-1. AUTHENTICATION
-   - "login failed", "invalid credentials", "authentication failed" → LOGIN_FAIL
-   - "login success", "authenticated" → LOGIN_SUCCESS
+CLASSIFICATION
 
-2. AUTHORIZATION
-   - "access denied", "permission denied", "not authorized" → AUTHORIZATION_FAILURE
+Select the most semantically accurate event_type from the allowed taxonomy.
 
-3. PAYMENT
-   - "payment failed", "transaction declined", "charge failed" → PAYMENT_FAILED
+* Match based on meaning, not exact wording
+* Synonyms and equivalent phrasing are valid matches
+* Prefer specific events over generic events
+* Use "unknown" only when no reasonable taxonomy match exists
 
-4. ORDER
+SEVERITY
 
-4. RATE LIMITING
-   - "rate limit", "too many requests", "throttled" → RATE_LIMIT_EXCEEDED
+Assign the most appropriate severity based on the event meaning.
 
-5. CRASH / SYSTEM FAILURE
-   - "fatal", "exception", "crash", "service stopped" → SERVER_CRASH
+CONFIDENCE
 
-6. OTHERWISE
-   → UNKNOWN (only if no clear match)
+Confidence reflects confidence in the selected classification.
 
----
+* High confidence for clear semantic matches
+* Low confidence only when classification is genuinely uncertain
+* If confidence < 0.60, event_type must be "unknown"
 
-SEVERITY RULES
-- CRITICAL → SERVER_CRASH, PAYMENT_FAILED
-- HIGH → LOGIN_FAIL, AUTHORIZATION_FAILURE
-- MEDIUM → RATE_LIMIT_EXCEEDED
-- LOW → LOGIN_SUCCESS
-- Default → MEDIUM if unclear
+ENTITY EXTRACTION
 
----
+Extract only if explicitly present:
 
-CONFIDENCE RULES
-- 0.90 – 1.00 → explicit match in log text
-- 0.60 – 0.89 → partial/indirect match
-- < 0.60 → use UNKNOWN event_type
-- If event_type = OTHER → confidence must be ≤ 0.70
+* user
+* email
+* ip
+* session_id
+* request_id
+* token_id
 
----
+Do not infer or guess missing values.
 
-ENTITY EXTRACTION RULES
-Only extract if explicitly present in log text:
-- user
-- email
-- ip
-- session_id
-- request_id
-- token_id
+ALLOWED EVENT TYPES
 
-DO NOT INFER ANY OF THESE.
-
----
-
-CONSISTENCY RULE
-Same log input must always produce identical output.
-
----
-
-ALLOWED ENUMS
-
-Event types:
 {event_types}
 
-Severity types:
+ALLOWED SEVERITIES
+
 {severity_types}
 
----
-
 INPUT LOGS
+
 {payload}
 """
 
@@ -179,8 +149,7 @@ INPUT LOGS
                                 "toolSpec": {
                                     "name": "normalize_logs",
                                     "description": (
-                                        "Normalize application logs "
-                                        "into semantic events."
+                                        "Normalize application logs into semantic events."
                                     ),
                                     "inputSchema": {
                                         "json": {
@@ -191,9 +160,7 @@ INPUT LOGS
                                                     "items": {
                                                         "type": "object",
                                                         "properties": {
-                                                            "log_id": {
-                                                                "type": "integer"
-                                                            },
+                                                            "id": {"type": "integer"},
                                                             "event_type": {
                                                                 "type": "string",
                                                                 "enum": event_types,
@@ -243,7 +210,7 @@ INPUT LOGS
                                                             },
                                                         },
                                                         "required": [
-                                                            "log_id",
+                                                            "id",
                                                             "event_type",
                                                             "severity",
                                                             "confidence",
@@ -283,7 +250,7 @@ INPUT LOGS
                     if not isinstance(item, dict):
                         continue
 
-                    log_id = item.get("log_id")
+                    id = item.get("id")
                     try:
                         confidence = float(item.get("confidence", 0.0))
                     except Exception:
@@ -294,22 +261,19 @@ INPUT LOGS
                         min(confidence, 1.0),
                     )
                     item["confidence"] = confidence
-                    llm_map[log_id] = item
+                    llm_map[id] = item
 
                 results = []
 
                 for idx, log in unresolved_logs:
                     item = llm_map.get(idx, {})
 
-                    try:
-                        event_type = get_event_by_source_app(
-                            source_app,
-                            item.get("event_type"),
-                        )
-                    except Exception:
-                        event_type = GenericEventType.UNKNOWN
+                    event_type = get_event_by_source_app(
+                        source_app,
+                        item.get("event_type"),
+                    )
 
-                    if item.get("confidence", 0.0) < 0.35:
+                    if item.get("confidence", 0.0) < BaseParser.MIN_CONFIDENCE:
                         event_type = GenericEventType.UNKNOWN
 
                     try:
