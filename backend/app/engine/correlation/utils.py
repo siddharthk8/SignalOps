@@ -150,15 +150,21 @@ def build_incident(signals: list[Signal], incident_type: IncidentType) -> Incide
 
 # DETERMINISTIC SUMMARY (NO AI)
 def _generate_summary(signals: list[Signal], incident_type: IncidentType) -> str:
-
-    primary_entity = signals[0].entity
     count = len(signals)
 
-    user = primary_entity.user if primary_entity else "someone"
-    ip = primary_entity.ip_address if primary_entity else "someone"
-
     if incident_type == IncidentType.ACCOUNT_SECURITY:
-        return f"{count} security-related signals detected for user {user} from IP {ip}"
+        primary_entity = signals[0].entity
+        user = primary_entity.user if primary_entity else None
+        ip = primary_entity.ip_address if primary_entity else None
+
+        if user and ip:
+            return f"{count} security-related signals detected for user {user} from IP {ip}"
+        elif user:
+            return f"{count} security-related signals detected for user {user}"
+        elif ip:
+            return f"{count} security-related signals detected from IP {ip}"
+        else:
+            return f"{count} security-related signals detected"
 
     if incident_type == IncidentType.PAYMENT_OUTAGE:
         return f"{count} payment-related anomalies detected across payment flow"
