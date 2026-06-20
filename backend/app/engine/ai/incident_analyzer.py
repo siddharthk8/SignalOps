@@ -3,7 +3,7 @@ import asyncio
 from botocore.exceptions import ClientError
 from fastapi.concurrency import run_in_threadpool
 
-from app.core.config import AI_MODEL_ID, AWS_MODEL_RETRY_ATTEMPTS
+from app.core.config import settings
 from app.enums.common import Severity, SourceAppType
 from app.schemas.analysis import IncidentAnalysis
 from app.schemas.incident import Incident
@@ -32,6 +32,9 @@ class AIIncidentAnalyzer:
         source_app: SourceAppType,
         analyzed_incidents: list[IncidentAnalysis],
     ) -> None:
+        if len(incidents) == 0:
+            return
+
         allowed_incident_types = get_all_incident_type_values()
 
         payload = [
@@ -47,13 +50,11 @@ class AIIncidentAnalyzer:
                         "signal_type": s.signal_type,
                         "confidence": s.confidence,
                         "triggered_at": str(s.triggered_at),
+                        "metadata": s.metadata,
                     }
                     for s in incident.related_signals
                 ],
                 "summary": incident.summary,
-                "metadata_for_each_signal": [
-                    s.metadata for s in incident.related_signals
-                ],
             }
             for idx, incident in enumerate(incidents)
         ]
@@ -120,11 +121,11 @@ INPUT INCIDENTS:
 {payload}
 """
 
-        for attempt in range(AWS_MODEL_RETRY_ATTEMPTS):
+        for attempt in range(settings.aws_ai_model_retry_attempts):
             try:
                 response = await run_in_threadpool(
                     self.client.converse,
-                    modelId=AI_MODEL_ID,
+                    modelId=settings.aws_ai_model_id,
                     messages=[
                         {
                             "role": "user",
@@ -238,8 +239,8 @@ INPUT INCIDENTS:
                     [],
                 )
 
-                print("analyses_data :", len(analyses_data))
-                print("incidents :", len(incidents))
+                # print("analyses_data len:", len(analyses_data))
+                # print("incidents len:", len(incidents))
 
                 if len(analyses_data) != len(incidents):
                     raise ValueError(
@@ -296,10 +297,10 @@ INPUT INCIDENTS:
                         )
                     )
 
-                return None
+                return
 
             except ClientError:
-                if attempt < AWS_MODEL_RETRY_ATTEMPTS - 1:
+                if attempt < settings.aws_ai_model_retry_attempts - 1:
                     await asyncio.sleep(2**attempt)
                 else:
                     raise

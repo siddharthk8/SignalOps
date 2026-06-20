@@ -1,9 +1,12 @@
-import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from dotenv import load_dotenv
 
-load_dotenv()
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8")
 
-AI_MODEL_ID: str = os.environ["AWS_AI_MODEL_ID"]
-SQLALCHEMY_DB_URL: str = os.environ["SQLALCHEMY_DB_URL"]
-AWS_MODEL_RETRY_ATTEMPTS: int = 3
+    sqlalchemy_db_url: str
+    aws_ai_model_id: str
+    aws_ai_model_retry_attempts: int = 3
+
+
+settings = Settings()  # type: ignore[call-arg]

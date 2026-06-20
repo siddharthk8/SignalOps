@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError
 from fastapi.concurrency import run_in_threadpool
 from pydantic import validate_email
 
-from app.core.config import AI_MODEL_ID, AWS_MODEL_RETRY_ATTEMPTS
+from app.core.config import settings
 from app.engine.parsing import utils
 from app.engine.parsing.base import BaseParser
 from app.enums.common import Severity, SourceAppType
@@ -126,11 +126,11 @@ INPUT LOGS
 {payload}
 """
 
-        for attempt in range(AWS_MODEL_RETRY_ATTEMPTS):
+        for attempt in range(settings.aws_ai_model_retry_attempts):
             try:
                 response = await run_in_threadpool(
                     self.client.converse,
-                    modelId=AI_MODEL_ID,
+                    modelId=settings.aws_ai_model_id,
                     # system=[]
                     messages=[
                         {
@@ -240,7 +240,7 @@ INPUT LOGS
 
                 raw_events = tool_blocks[0]["input"].get("events")
 
-                # print("CINT: ", raw_events)
+                # print("raw_events: ", raw_events)
                 if not isinstance(raw_events, list):
                     raise ValueError("Invalid tool output format")
 
@@ -342,7 +342,7 @@ INPUT LOGS
                 return results
 
             except ClientError:
-                if attempt < AWS_MODEL_RETRY_ATTEMPTS - 1:
+                if attempt < settings.aws_ai_model_retry_attempts - 1:
                     await asyncio.sleep(2**attempt)
 
             except Exception:
