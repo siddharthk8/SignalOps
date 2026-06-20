@@ -14,46 +14,34 @@ from app.schemas.signal import Signal
 
 
 def group_signals(
-    signals: list[Signal], source_app: SourceAppType
+    signals: list[Signal],
+    source_app: SourceAppType,
 ) -> dict[str, list[Signal]]:
     """
-    Multi-dimensional grouping using entity attributes.
+    Group signals by the first available entity identifier.
 
-    This ensures correlation works across:
-    user, email, ip, session, token, request_id
+    Priority:
+    user -> email -> ip -> session -> token -> request_id
     """
-
     groups = defaultdict(list)
 
     for signal in signals:
         e = signal.entity
-
-        key_parts = []
+        key = f"source:{source_app.value}"
 
         if e:
             if e.user:
-                key_parts.append(f"user:{e.user}")
-
-            if e.email:
-                key_parts.append(f"email:{e.email}")
-
-            if e.ip_address:
-                key_parts.append(f"ip:{e.ip_address}")
-
-            if e.session_id:
-                key_parts.append(f"session:{e.session_id}")
-
-            if e.token_id:
-                key_parts.append(f"token:{e.token_id}")
-
-            if e.request_id:
-                key_parts.append(f"request:{e.request_id}")
-
-        # fallback if nothing exists
-        if len(key_parts) > 0:
-            key_parts.append(f"source:{source_app.value}")
-
-        key = "|".join(key_parts)
+                key = f"user:{e.user}"
+            elif e.email:
+                key = f"email:{e.email}"
+            elif e.ip_address:
+                key = f"ip:{e.ip_address}"
+            elif e.session_id:
+                key = f"session:{e.session_id}"
+            elif e.token_id:
+                key = f"token:{e.token_id}"
+            elif e.request_id:
+                key = f"request:{e.request_id}"
 
         groups[key].append(signal)
 
@@ -70,7 +58,7 @@ def match_rules(signals: list[Signal]) -> set[IncidentType]:
     # ACCOUNT SECURITY
     if (
         AuthSignalType.EXCESSIVE_AUTH_FAILURES in signal_types
-        and AuthSignalType.TOKEN_ABUSE_PATTERN in signal_types
+        or AuthSignalType.TOKEN_ABUSE_PATTERN in signal_types
     ):
         incidents.add(IncidentType.ACCOUNT_SECURITY)
 
