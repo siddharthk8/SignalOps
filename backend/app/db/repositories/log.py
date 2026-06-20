@@ -29,7 +29,10 @@ class LogRepository:
 
         for log in logs:
             if isinstance(log, JSONIncomingLog):
-                data.append(Log(batch_id=batch_id, **log.model_dump()))
+                log_payload = log.model_dump(exclude={"ip_address"})
+                log_payload["ip_address"] = str(log.ip_address)
+
+                data.append(Log(batch_id=batch_id, **log_payload))
             else:
                 data.append(Log(batch_id=batch_id, message=log))
 
