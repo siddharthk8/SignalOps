@@ -15,10 +15,10 @@ class AIIncidentAnalyzer:
     AI-powered incident analysis engine.
 
     INPUT:
-        Incident (already correlated + structured)
+        list[Incident]
 
     OUTPUT:
-        IncidentAnalysis (structured reasoning)
+        list[IncidentAnalysis]
     """
 
     def __init__(self, client):
@@ -26,53 +26,88 @@ class AIIncidentAnalyzer:
         self.client = client
 
     async def analyze(
-        self, incident: Incident, source_app: SourceAppType
-    ) -> IncidentAnalysis:
-
+        self,
+        *,
+        incidents: list[Incident],
+        source_app: SourceAppType,
+        analyzed_incidents: list[IncidentAnalysis],
+    ) -> None:
         allowed_incident_types = get_all_incident_type_values()
 
-        payload = {
-            # "incident_id": str(incident.incident_id),
-            "incident_type": incident.incident_type,
-            "severity": incident.severity,
-            "confidence": incident.confidence,
-            "source_app": source_app,
-            "entities": [e.model_dump() for e in incident.entities],
-            "signals": [
-                {
-                    "signal_type": s.signal_type,
-                    "confidence": s.confidence,
-                    "triggered_at": str(s.triggered_at),
-                }
-                for s in incident.related_signals
-            ],
-            "summary": incident.summary,
-            "metadata_for_each_signal": [s.metadata for s in incident.related_signals],
-        }
+        payload = [
+            {
+                "incident_index": idx,
+                "incident_type": incident.incident_type,
+                "severity": incident.severity,
+                "confidence": incident.confidence,
+                "source_app": source_app,
+                "entities": [e.model_dump() for e in incident.entities],
+                "signals": [
+                    {
+                        "signal_type": s.signal_type,
+                        "confidence": s.confidence,
+                        "triggered_at": str(s.triggered_at),
+                    }
+                    for s in incident.related_signals
+                ],
+                "summary": incident.summary,
+                "metadata_for_each_signal": [
+                    s.metadata for s in incident.related_signals
+                ],
+            }
+            for idx, incident in enumerate(incidents)
+        ]
 
-        prompt = f"""
-You are an expert Site Reliability Engineer (SRE) and incident analyst.
+        prompt = f"""You are an expert Site Reliability Engineer (SRE) and incident analyst.
 
-You will analyze a fully correlated incident from an observability system.
+You will analyze MULTIPLE fully correlated incidents from an observability system.
 
 STRICT RULES:
-- Do NOT hallucinate new data
-- Do NOT assume missing fields
-- Use ONLY provided incident information
-- Be deterministic and structured
-- Output ONLY via tool call: analyze_incident
+
+* Do NOT hallucinate new data.
+* Do NOT assume missing fields.
+* Use ONLY information contained within the specific incident being analyzed.
+* Analyze EACH incident completely independently.
+* Treat every incident as an isolated case.
+* NEVER use entities, signals, metadata, summaries, root causes, impacts, recommendations, or classifications from one incident when analyzing another incident.
+* NEVER compare incidents to each other.
+* NEVER merge incidents together.
+* NEVER infer relationships between incidents unless those relationships are explicitly present in that incident's data.
+* If information required for analysis is not present in a specific incident, state that it cannot be determined from the available data.
+* Preserve incident ordering.
+* Return EXACTLY one analysis result per incident.
+* The output for incident N must be derived only from the data provided for incident N.
+* Be deterministic and structured.
+* Output ONLY via tool call: analyze_incidents.
 
 ---
 
 TASK:
-Analyze the incident and produce operational intelligence:
 
-1. Human-readable summary (improved if needed)
-2. Probable root cause
-3. Business impact
-4. Severity validation (can upgrade/downgrade but must justify)
-5. Recommended actions (step-by-step)
-6. Incident classification check
+For EACH incident independently:
+
+1. Generate a human-readable summary.
+2. Determine the most probable root cause using only that incident's data.
+3. Assess business impact using only that incident's data.
+4. Validate severity (may upgrade or downgrade if justified by that incident's data).
+5. Recommend remediation and investigation actions specific to that incident.
+6. Validate or correct the incident classification.
+
+---
+
+ANALYSIS ISOLATION REQUIREMENT:
+
+Assume every incident was collected from a completely different system.
+
+Before generating an analysis for an incident:
+
+* Ignore all previous incidents.
+* Ignore all subsequent incidents.
+* Use only the fields contained in the current incident.
+* Do not reuse conclusions from another incident.
+* Do not generalize findings across incidents.
+
+If two incidents appear similar, analyze them separately and independently.
 
 ---
 
@@ -81,7 +116,7 @@ ALLOWED INCIDENT TYPES:
 
 ---
 
-INPUT INCIDENT:
+INPUT INCIDENTS:
 {payload}
 """
 
@@ -93,55 +128,87 @@ INPUT INCIDENT:
                     messages=[
                         {
                             "role": "user",
-                            "content": [{"text": prompt}],
+                            "content": [
+                                {
+                                    "text": prompt,
+                                }
+                            ],
                         }
                     ],
                     inferenceConfig={
                         "temperature": 0,
                         "topP": 0.1,
-                        "maxTokens": 3000,
+                        "maxTokens": 5000,
                     },
                     toolConfig={
                         "tools": [
                             {
                                 "toolSpec": {
-                                    "name": "analyze_incident",
+                                    "name": "analyze_incidents",
                                     "description": (
-                                        "Generate structured incident analysis "
-                                        "for observability platform."
+                                        "Generate structured incident analyses for multiple observability incidents."
                                     ),
                                     "inputSchema": {
                                         "json": {
                                             "type": "object",
                                             "properties": {
-                                                "summary": {"type": "string"},
-                                                "root_cause": {"type": "string"},
-                                                "business_impact": {
+                                                "analyses": {
                                                     "type": "array",
-                                                    "items": {"type": "string"},
-                                                },
-                                                "severity": {
-                                                    "type": "string",
-                                                    "enum": [s.value for s in Severity],
-                                                },
-                                                "confidence": {"type": "number"},
-                                                "recommendations": {
-                                                    "type": "array",
-                                                    "items": {"type": "string"},
-                                                },
-                                                "incident_type": {
-                                                    "type": "string",
-                                                    "enum": allowed_incident_types,
-                                                },
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "incident_index": {
+                                                                "type": "integer"
+                                                            },
+                                                            "summary": {
+                                                                "type": "string"
+                                                            },
+                                                            "root_cause": {
+                                                                "type": "string"
+                                                            },
+                                                            "business_impact": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string"
+                                                                },
+                                                            },
+                                                            "severity": {
+                                                                "type": "string",
+                                                                "enum": [
+                                                                    s.value
+                                                                    for s in Severity
+                                                                ],
+                                                            },
+                                                            "confidence": {
+                                                                "type": "number"
+                                                            },
+                                                            "recommendations": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string"
+                                                                },
+                                                            },
+                                                            "incident_type": {
+                                                                "type": "string",
+                                                                "enum": allowed_incident_types,
+                                                            },
+                                                        },
+                                                        "required": [
+                                                            "incident_index",
+                                                            "summary",
+                                                            "root_cause",
+                                                            "business_impact",
+                                                            "severity",
+                                                            "confidence",
+                                                            "recommendations",
+                                                            "incident_type",
+                                                        ],
+                                                        "additionalProperties": False,
+                                                    },
+                                                }
                                             },
                                             "required": [
-                                                "summary",
-                                                "root_cause",
-                                                "business_impact",
-                                                "severity",
-                                                "confidence",
-                                                "recommendations",
-                                                "incident_type",
+                                                "analyses",
                                             ],
                                             "additionalProperties": False,
                                         }
@@ -149,7 +216,9 @@ INPUT INCIDENT:
                                 }
                             }
                         ],
-                        "toolChoice": {"any": {}},
+                        "toolChoice": {
+                            "any": {},
+                        },
                     },
                 )
 
@@ -164,28 +233,76 @@ INPUT INCIDENT:
 
                 data = tool_blocks[0]["input"]
 
-                # SAFE PARSING
-                analysis = IncidentAnalysis(
-                    # incident_id=incident.incident_id,
-                    summary=data.get("summary", incident.summary),
-                    root_cause=data.get("root_cause", "Unknown"),
-                    business_impact=data.get("business_impact", "Unknown"),
-                    severity=Severity(data.get("severity", incident.severity)),
-                    confidence=float(data.get("confidence", 0.0)),
-                    recommendations=data.get("recommendations", []),
-                    incident_type=data.get(
-                        "incident_type",
-                        incident.incident_type,
-                    ),
+                analyses_data = data.get(
+                    "analyses",
+                    [],
                 )
 
-                return analysis
+                print("analyses_data :", len(analyses_data))
+                print("incidents :", len(incidents))
+
+                if len(analyses_data) != len(incidents):
+                    raise ValueError(
+                        f"Expected {len(incidents)} analyses, got {len(analyses_data)}"
+                    )
+
+                analyses_data = sorted(
+                    analyses_data,
+                    key=lambda x: x["incident_index"],
+                )
+
+                for item in analyses_data:
+                    idx = item["incident_index"]
+
+                    if idx >= len(incidents):
+                        raise ValueError(f"Invalid incident_index returned: {idx}")
+
+                    original_incident = incidents[idx]
+
+                    analyzed_incidents.append(
+                        IncidentAnalysis(
+                            summary=item.get(
+                                "summary",
+                                original_incident.summary,
+                            ),
+                            root_cause=item.get(
+                                "root_cause",
+                                "Unknown",
+                            ),
+                            business_impact=item.get(
+                                "business_impact",
+                                [],
+                            ),
+                            severity=Severity(
+                                item.get(
+                                    "severity",
+                                    original_incident.severity,
+                                )
+                            ),
+                            confidence=float(
+                                item.get(
+                                    "confidence",
+                                    0.0,
+                                )
+                            ),
+                            recommendations=item.get(
+                                "recommendations",
+                                [],
+                            ),
+                            incident_type=item.get(
+                                "incident_type",
+                                original_incident.incident_type,
+                            ),
+                        )
+                    )
+
+                return None
 
             except ClientError:
                 if attempt < AWS_MODEL_RETRY_ATTEMPTS - 1:
                     await asyncio.sleep(2**attempt)
+                else:
+                    raise
 
             except Exception:
                 raise
-
-        raise RuntimeError("AI incident analysis failed.")

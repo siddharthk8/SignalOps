@@ -41,10 +41,11 @@ class AIStage:
     ) -> list[IncidentAnalysis]:
         analyzed_incidents: list[IncidentAnalysis] = []
 
-        for i in incidents:
-            analyzed_incidents.append(
-                await self.ai_incident_analyzer.analyze(i, source_app)
-            )
+        await self.ai_incident_analyzer.analyze(
+            incidents=incidents,
+            source_app=source_app,
+            analyzed_incidents=analyzed_incidents,
+        )
 
         if len(analyzed_incidents) == 0:
             analyzed_incidents = [
