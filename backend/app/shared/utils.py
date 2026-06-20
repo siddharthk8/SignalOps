@@ -46,11 +46,13 @@ def get_events_by_source_app(source_app: SourceAppType):
 def get_event_by_source_app(source_app: SourceAppType, event_value: str):
     enum_cls = EVENT_DOMAIN_MAP[source_app]
 
-    for event in enum_cls:
-        if event.value == event_value:
-            return event
-
-    return GenericEventType.UNKNOWN
+    try:
+        return enum_cls(event_value)
+    except ValueError:
+        try:
+            return GenericEventType(event_value)
+        except ValueError:
+            return GenericEventType.UNKNOWN
 
 
 def get_all_incident_type_values() -> list[str]:
