@@ -192,6 +192,8 @@ class OrderEventType(StrEnum):
 
 
 class GenericEventType(StrEnum):
+    APPLICATION_STARTED = "application_started"
+
     # Access / Authorization
     ACCESS_DENIED = "access_denied"
     PERMISSION_DENIED = "permission_denied"
@@ -274,6 +276,7 @@ class GenericEventType(StrEnum):
     EVENT_DUPLICATE_SUPPRESSED = "event_duplicate_suppressed"
 
     # Database / Persistence
+    DATABASE_CONNECTED_SUCCESSFULLY = "database_connected_successfully"
     DATABASE_ERROR = "database_error"
     DATABASE_TIMEOUT = "database_timeout"
     QUERY_FAILED = "query_failed"
