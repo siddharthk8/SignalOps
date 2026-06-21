@@ -8,13 +8,11 @@ async def general_http_exception_handler(
     _request: Request,
     exception: StarletteHTTPException,
 ):
-    message = "Something went wrong."
-    if exception.detail:
-        message = exception.detail
-
     return JSONResponse(
         status_code=exception.status_code,
-        content={"detail": message},
+        content={
+            "message": str(exception.detail),
+        },
     )
 
 
@@ -22,15 +20,33 @@ async def validation_exception_handler(
     _request: Request,
     exception: RequestValidationError,
 ):
+    errors = []
+
+    for error in exception.errors():
+        errors.append(
+            {
+                "field": error["loc"][-1],
+                "error": error["msg"],
+            }
+        )
+
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-        content={"detail": exception.errors()},
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "message": "Validation failed",
+            "errors": errors,
+        },
     )
 
 
 # Global fallback handler (catch-all)
-async def unhandled_exception_handler(_request: Request, _exception: Exception):
+async def unhandled_exception_handler(
+    _request: Request,
+    _exception: Exception,
+):
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": "Internal server error"},
+        content={
+            "message": "Internal server error",
+        },
     )
