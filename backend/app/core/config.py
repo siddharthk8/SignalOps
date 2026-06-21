@@ -1,10 +1,19 @@
+from pathlib import Path
+
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASE_DIR = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file="../.env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=BASE_DIR / ".env",
+        env_file_encoding="utf-8",
+    )
 
-    sqlalchemy_db_url: str
+    secret_key: SecretStr
+    sqlalchemy_db_url: SecretStr
     aws_ai_model_id: str
     aws_ai_model_retry_attempts: int = 3
 
