@@ -8,7 +8,7 @@ from app.domains.auth.utils import (
 )
 
 
-async def register_user(user: UserCreate, db: Session) -> UserPrivate:
+async def create_user(user: UserCreate, db: Session) -> UserPrivate:
     user_repo = UserRepository(db)
 
     if user_repo.check_exists_by_email(user.email):

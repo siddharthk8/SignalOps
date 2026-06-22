@@ -1,2 +1,2 @@
-from .register import register_user
+from .register import create_user
 from .token import create_token
