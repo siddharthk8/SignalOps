@@ -24,7 +24,6 @@ class UserPrivate(BaseUserSchema):
 
 
 class UserUpdate(BaseUserSchema):
-    id: uuid.UUID
     first_name: str | None = None
     last_name: str | None = None
 
