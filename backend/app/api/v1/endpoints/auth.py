@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.db.core import get_db
 from app.domains.auth import service
 from app.domains.auth.dependencies import CurrentUser
-from app.domains.auth.schemas import TokenResponse, UserCreate, UserPrivate
+from app.domains.auth.schemas import TokenResponse, UserCreate, UserPrivate, UserUpdate
 
 router = APIRouter()
 
@@ -28,3 +28,10 @@ async def create_token(
 @router.get("/users/me", response_model=UserPrivate)
 async def get_current_user(current_user: CurrentUser):
     return current_user
+
+
+@router.patch("/users/me", response_model=UserPrivate)
+async def update_current_user(
+    data: UserUpdate, current_user: CurrentUser, db: Annotated[Session, Depends(get_db)]
+):
+    return await service.update_current_user(data, current_user, db)

@@ -23,6 +23,12 @@ class UserPrivate(BaseUserSchema):
     is_active: bool
 
 
+class UserUpdate(BaseUserSchema):
+    id: uuid.UUID
+    first_name: str | None = None
+    last_name: str | None = None
+
+
 class UserCreate(BaseUserSchema):
     id: uuid.UUID | None = None
     first_name: str
