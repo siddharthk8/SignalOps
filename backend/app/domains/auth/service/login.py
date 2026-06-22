@@ -23,5 +23,5 @@ async def create_token(form_data: OAuth2PasswordRequestForm, db: Session):
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    access_token = create_access_token({"sub": str(user.id)})
+    access_token = create_access_token({"sub": str(user.id), "tv": user.token_version})
     return TokenResponse(access_token=access_token, token_type="bearer")

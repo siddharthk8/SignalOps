@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.db.models.user import User
@@ -37,3 +37,11 @@ class UserRepository:
 
     def delete_user(self, user: User):
         self.db.delete(user)
+
+    def increment_token_version(self, user: User):
+        # Incrementing token_version atomically in the database to avoid race conditions.
+        self.db.execute(
+            update(User)
+            .where(User.id == user.id)
+            .values(token_version=User.token_version + 1)
+        )

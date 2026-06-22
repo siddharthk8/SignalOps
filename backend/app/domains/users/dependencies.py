@@ -39,6 +39,11 @@ def get_current_active_user(
     if user is None:
         raise credentials_exception
 
+    # Token version mismatch means the user's sessions were revoked
+    # (e.g. password change, logout-all-devices, account recovery).
+    if payload["tv"] != user.token_version:
+        raise credentials_exception
+
     if user.is_active is False:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"

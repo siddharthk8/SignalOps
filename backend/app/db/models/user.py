@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, String, Uuid, func
+from sqlalchemy import Boolean, CheckConstraint, DateTime, Integer, String, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
@@ -32,6 +32,9 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(String(80), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
+    # Increment it to invalidate all previously issued JWTs.
+    token_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+
     # relationships
     source_apps: Mapped[list[SourceApp]] = relationship(
         "SourceApp", back_populates="creator"
@@ -48,4 +51,8 @@ class User(Base):
         server_default=func.now(),
         onupdate=func.now(),
         nullable=False,
+    )
+
+    __table_args__ = (
+        CheckConstraint("token_version > 0", name="user_token_version_positive"),
     )

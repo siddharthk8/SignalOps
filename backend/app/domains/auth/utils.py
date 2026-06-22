@@ -26,7 +26,7 @@ def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     now = datetime.now(UTC)
     token_expiration = now + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": token_expiration})
+    to_encode.update({"exp": token_expiration, "iat": now})
 
     print("CREATING TOKEN")
     # jwt usage
