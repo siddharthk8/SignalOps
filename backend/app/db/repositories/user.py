@@ -34,3 +34,6 @@ class UserRepository:
         self.db.add(db_user)
         self.db.flush()
         user.id = db_user.id
+
+    def delete_user(self, user: User):
+        self.db.delete(user)

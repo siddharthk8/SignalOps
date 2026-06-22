@@ -35,3 +35,10 @@ async def update_current_user(
     data: UserUpdate, current_user: CurrentUser, db: Annotated[Session, Depends(get_db)]
 ):
     return await service.update_current_user(data, current_user, db)
+
+
+@router.delete("/users/me", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_current_user(
+    current_user: CurrentUser, db: Annotated[Session, Depends(get_db)]
+):
+    return await service.delete_current_user(current_user, db)
