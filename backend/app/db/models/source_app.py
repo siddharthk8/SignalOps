@@ -2,6 +2,7 @@ from __future__ import (
     annotations,  # delays evaluation of type hints, prevents circular import issues
 )
 
+import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
@@ -35,7 +36,7 @@ class SourceApp(Base):
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # FK
-    user_id: Mapped[int] = mapped_column(
+    user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("user.id"),
         nullable=False,
         index=True,  # FKs are not indexed by default. So we need to index imp FKs.
