@@ -1,0 +1,35 @@
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.orm import Session
+
+from app.db.core import get_db
+from app.domains.users import service
+from app.domains.users.dependencies import CurrentUser
+from app.domains.users.schemas import UserCreate, UserPrivate, UserUpdate
+
+router = APIRouter()
+
+
+@router.post("", response_model=UserPrivate, status_code=status.HTTP_201_CREATED)
+async def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)]):
+    return await service.create_user(user, db)
+
+
+@router.get("/me", response_model=UserPrivate)
+async def get_current_user(current_user: CurrentUser):
+    return current_user
+
+
+@router.patch("/me", response_model=UserPrivate)
+async def update_current_user(
+    data: UserUpdate, current_user: CurrentUser, db: Annotated[Session, Depends(get_db)]
+):
+    return await service.update_current_user(data, current_user, db)
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_current_user(
+    current_user: CurrentUser, db: Annotated[Session, Depends(get_db)]
+):
+    return await service.delete_current_user(current_user, db)

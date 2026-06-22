@@ -7,9 +7,9 @@ from sqlalchemy.orm import Session
 from app.domains.auth.schemas import TokenResponse
 from app.domains.auth.utils import (
     create_access_token,
-    get_user,
     verify_password,
 )
+from app.domains.users.utils import get_user
 
 
 async def create_token(form_data: OAuth2PasswordRequestForm, db: Session):

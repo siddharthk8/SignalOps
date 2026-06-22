@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.db.repositories.user import UserRepository
-from app.domains.auth.dependencies import CurrentUser
+from app.domains.users.dependencies import CurrentUser
 
 
 async def delete_current_user(current_user: CurrentUser, db: Session):

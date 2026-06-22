@@ -9,8 +9,8 @@ from app.db.core import get_db
 from app.db.models.user import User
 from app.domains.auth.utils import (
     get_access_token_data,
-    get_user,
 )
+from app.domains.users.utils import get_user
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 

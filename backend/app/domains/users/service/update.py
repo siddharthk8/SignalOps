@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.domains.auth.dependencies import CurrentUser
-from app.domains.auth.schemas import UserPrivate, UserUpdate
+from app.domains.users.dependencies import CurrentUser
+from app.domains.users.schemas import UserPrivate, UserUpdate
 
 
 async def update_current_user(
