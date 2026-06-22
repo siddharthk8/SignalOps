@@ -7,8 +7,8 @@ from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.db.models.user import User
 from app.db.repositories.user import UserRepository
-from app.domains.auth.schemas import InternalUser, UserPrivate
 
 ALGORITHM = settings.password_hash_algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
@@ -50,20 +50,13 @@ def get_access_token_data(token: str) -> dict[str, Any] | None:
     return decoded_jwt
 
 
-def get_internal_user(db: Session, id: uuid.UUID) -> InternalUser | None:
+def get_user(db: Session, id: uuid.UUID) -> User | None:
     user = UserRepository(db).get_by_id(id)
-    if user:
-        return InternalUser.model_validate(user)
-
-
-def get_private_user(db: Session, id: uuid.UUID) -> UserPrivate | None:
-    user = UserRepository(db).get_by_id(id)
-    if user:
-        return UserPrivate.model_validate(user)
+    return user
 
 
 def authenticate_user(db: Session, id: uuid.UUID, password: str) -> bool:
-    user = get_internal_user(db, id)
+    user = get_user(db, id)
     if user is None:
         # Using a dummy hash to ensure authentication takes roughly the same time
         # whether or not the user exists, minimizing timing-based information leakage.

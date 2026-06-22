@@ -6,10 +6,10 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app.db.core import get_db
-from app.domains.auth.schemas import UserPrivate
+from app.db.models.user import User
 from app.domains.auth.utils import (
     get_access_token_data,
-    get_private_user,
+    get_user,
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
@@ -18,7 +18,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 def get_current_active_user(
     db: Annotated[Session, Depends(get_db)],
     token: Annotated[str, Depends(oauth2_scheme)],
-) -> UserPrivate:
+) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -35,7 +35,7 @@ def get_current_active_user(
     if id is None:
         raise credentials_exception
 
-    user = get_private_user(db, UUID(id))
+    user = get_user(db, UUID(id))
     if user is None:
         raise credentials_exception
 
@@ -45,3 +45,6 @@ def get_current_active_user(
         )
 
     return user
+
+
+CurrentUser = Annotated[User, Depends(get_current_active_user)]

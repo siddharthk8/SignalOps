@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.db.core import get_db
-from app.domains.auth.dependencies import get_current_active_user
+from app.domains.auth.dependencies import CurrentUser
 from app.domains.auth.schemas import TokenResponse, UserCreate, UserPrivate
 from app.domains.auth.service import create_token, register_user
 
@@ -27,8 +27,6 @@ async def token(
     return await create_token(form_data, db)
 
 
-@router.get("/me")
-async def get_current_user(
-    current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
-):
+@router.get("/me", response_model=UserPrivate)
+async def get_current_user(current_user: CurrentUser):
     return current_user
