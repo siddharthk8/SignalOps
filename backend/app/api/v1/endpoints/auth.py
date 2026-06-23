@@ -41,3 +41,11 @@ async def revoke_refresh_token(
     db: Annotated[Session, Depends(get_db)],
 ):
     return await service.revoke_refresh_token(refresh_token_data, db)
+
+
+@router.post("/logout-all", status_code=status.HTTP_204_NO_CONTENT)
+async def revoke_all_refresh_tokens(
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.revoke_all_refresh_tokens(current_user, db)
