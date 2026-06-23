@@ -12,7 +12,7 @@ from app.domains.auth.utils import (
 )
 from app.domains.users.utils import get_user
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def get_current_active_user(

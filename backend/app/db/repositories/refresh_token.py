@@ -20,7 +20,18 @@ class RefreshTokenRepository:
         self.db.execute(
             update(ORMRefreshToken)
             .where(
-                ORMRefreshToken.user_id == user.id, ORMRefreshToken.revoked_at.is_(None)
+                ORMRefreshToken.user_id == user.id,
+                ORMRefreshToken.is_revoked.is_(False),
+            )
+            .values(is_revoked=True, revoked_at=datetime.now(UTC))
+        )
+
+    def revoke_refresh_token(self, token_hash: str):
+        self.db.execute(
+            update(ORMRefreshToken)
+            .where(
+                ORMRefreshToken.token_hash == token_hash,
+                ORMRefreshToken.is_revoked.is_(False),
             )
             .values(is_revoked=True, revoked_at=datetime.now(UTC))
         )

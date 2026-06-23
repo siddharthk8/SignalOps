@@ -11,11 +11,12 @@ from app.domains.auth.schemas import (
     RefreshTokenResponse,
     TokenResponse,
 )
+from app.domains.users.dependencies import CurrentUser
 
 router = APIRouter()
 
 
-@router.post("/token", response_model=TokenResponse, status_code=status.HTTP_200_OK)
+@router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
 async def create_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
@@ -31,3 +32,12 @@ async def refresh_token(
     db: Annotated[Session, Depends(get_db)],
 ):
     return await service.refresh_token(refresh_token_data, db)
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+async def revoke_refresh_token(
+    refresh_token_data: RefreshTokenRequest,
+    _current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.revoke_refresh_token(refresh_token_data, db)
