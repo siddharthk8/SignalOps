@@ -18,10 +18,10 @@ class AIAnalysis(Base):
     __tablename__ = "ai_analysis"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    summary: Mapped[str] = mapped_column(String, nullable=False)
-    root_cause: Mapped[str] = mapped_column(String, nullable=False)
-    business_impact: Mapped[str] = mapped_column(String, nullable=False)
-    recommendations: Mapped[str] = mapped_column(String, nullable=False)
+    summary: Mapped[str] = mapped_column(String(1000), nullable=False)
+    root_cause: Mapped[str] = mapped_column(String(1000), nullable=False)
+    business_impact: Mapped[str] = mapped_column(String(1000), nullable=False)
+    recommendations: Mapped[str] = mapped_column(String(1000), nullable=False)
 
     severity: Mapped[Severity] = mapped_column(
         Enum(
@@ -53,6 +53,7 @@ class AIAnalysis(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "confidence >= 0.0 and confidence <= 1.0", name="confidence_range_check"
+            "confidence >= 0.0 and confidence <= 1.0",
+            name="ai_analysis_confidence_range_check",
         ),
     )

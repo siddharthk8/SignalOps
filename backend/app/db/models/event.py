@@ -71,6 +71,7 @@ class Event(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "confidence >= 0.0 and confidence <= 1.0", name="confidence_range_check"
+            "confidence >= 0.0 and confidence <= 1.0",
+            name="event_confidence_range_check",
         ),
     )

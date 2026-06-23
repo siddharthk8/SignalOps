@@ -26,7 +26,7 @@ class Log(Base):
         ),
         nullable=True,
     )
-    user: Mapped[str | None] = mapped_column(String, nullable=True)
+    user: Mapped[str | None] = mapped_column(String(100), nullable=True)
     email: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,

@@ -51,7 +51,7 @@ class Incident(Base):
         nullable=False,
     )
     title: Mapped[str] = mapped_column(String(100), nullable=False)
-    summary: Mapped[str] = mapped_column(String, nullable=False)
+    summary: Mapped[str] = mapped_column(String(1000), nullable=False)
 
     # FK
     ai_analysis_id: Mapped[int] = mapped_column(
@@ -83,6 +83,7 @@ class Incident(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "confidence >= 0.0 and confidence <= 1.0", name="confidence_range_check"
+            "confidence >= 0.0 and confidence <= 1.0",
+            name="incident_confidence_range_check",
         ),
     )

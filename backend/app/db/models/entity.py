@@ -17,7 +17,7 @@ class Entity(Base):
     __tablename__ = "entity"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user: Mapped[datetime | None] = mapped_column(String, nullable=True)
+    user: Mapped[datetime | None] = mapped_column(String(100), nullable=True)
     email: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
