@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.db.repositories.user import UserRepository
 from app.domains.auth.utils import get_password_hash, verify_password
 from app.domains.users.dependencies import CurrentUser
@@ -22,5 +23,8 @@ async def change_password(
 
     # to invalidate previous tokens
     user_repo.increment_token_version(current_user)
+
+    rt_repo = RefreshTokenRepository(db)
+    rt_repo.revoke_refresh_tokens(current_user)
 
     db.commit()

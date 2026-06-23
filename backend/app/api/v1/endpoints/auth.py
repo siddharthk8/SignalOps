@@ -6,7 +6,11 @@ from sqlalchemy.orm import Session
 
 from app.db.core import get_db
 from app.domains.auth import service
-from app.domains.auth.schemas import TokenResponse
+from app.domains.auth.schemas import (
+    RefreshTokenRequest,
+    RefreshTokenResponse,
+    TokenResponse,
+)
 
 router = APIRouter()
 
@@ -17,3 +21,13 @@ async def create_token(
     db: Annotated[Session, Depends(get_db)],
 ):
     return await service.create_token(form_data, db)
+
+
+@router.post(
+    "/refresh", response_model=RefreshTokenResponse, status_code=status.HTTP_200_OK
+)
+async def refresh_token(
+    refresh_token_data: RefreshTokenRequest,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.refresh_token(refresh_token_data, db)

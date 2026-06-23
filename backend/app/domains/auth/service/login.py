@@ -4,9 +4,12 @@ from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
+from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.domains.auth.schemas import TokenResponse
 from app.domains.auth.utils import (
     create_access_token,
+    create_refresh_token_obj,
+    generate_refresh_token,
     verify_password,
 )
 from app.domains.users.utils import get_user
@@ -24,4 +27,11 @@ async def create_token(form_data: OAuth2PasswordRequestForm, db: Session):
         )
 
     access_token = create_access_token({"sub": str(user.id), "tv": user.token_version})
-    return TokenResponse(access_token=access_token, token_type="bearer")
+    refresh_token = generate_refresh_token()
+
+    rt = create_refresh_token_obj(user, refresh_token)
+    rt_repo = RefreshTokenRepository(db)
+    rt_repo.create_refresh_token(rt)
+
+    db.commit()
+    return TokenResponse(access_token=access_token, refresh_token=refresh_token)

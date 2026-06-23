@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.core import Base
 
 if TYPE_CHECKING:
+    from app.db.models.refresh_token import RefreshToken
     from app.db.models.source_app import SourceApp
 
 
@@ -38,6 +39,9 @@ class User(Base):
     # relationships
     source_apps: Mapped[list[SourceApp]] = relationship(
         "SourceApp", back_populates="creator"
+    )
+    refresh_tokens: Mapped[list[RefreshToken]] = relationship(
+        "RefreshToken", back_populates="user"
     )
 
     # datetime
