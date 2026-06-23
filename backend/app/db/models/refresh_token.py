@@ -18,7 +18,7 @@ class RefreshToken(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     token_hash: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
-    revoked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_revoked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     # FK
     user_id: Mapped[uuid.UUID] = mapped_column(

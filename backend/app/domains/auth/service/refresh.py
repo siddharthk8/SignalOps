@@ -35,7 +35,7 @@ async def refresh_token(refresh_token_data: RefreshTokenRequest, db: Session):
     # compare using aware UTC time
     now = datetime.now(UTC)
 
-    if rt.revoked or (expires < now):
+    if rt.is_revoked or (expires < now):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired refresh token",

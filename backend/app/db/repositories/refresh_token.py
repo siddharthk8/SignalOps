@@ -22,7 +22,7 @@ class RefreshTokenRepository:
             .where(
                 ORMRefreshToken.user_id == user.id, ORMRefreshToken.revoked_at.is_(None)
             )
-            .values(revoked=True, revoked_at=datetime.now(UTC))
+            .values(is_revoked=True, revoked_at=datetime.now(UTC))
         )
 
     def get_by_token_hash(self, token_hash: str) -> ORMRefreshToken | None:

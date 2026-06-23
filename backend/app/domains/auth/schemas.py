@@ -13,7 +13,7 @@ class TokenResponse(BaseModel):
 class RefreshToken(BaseModel):
     user_id: UUID
     token_hash: str
-    revoked: bool = False
+    is_revoked: bool = False
     expires_at: datetime
     revoked_at: datetime | None = None
 
