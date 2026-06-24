@@ -15,11 +15,12 @@ class BaseUserSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserPublic(BaseUserSchema):
-    id: uuid.UUID
-    first_name: str
-    last_name: str
-    profile_image_path: str | None
+# Reserved for future public user endpoints, its not yet in use.
+# class UserPublic(BaseUserSchema):
+#     id: uuid.UUID
+#     first_name: str
+#     last_name: str
+#     profile_image_path: str | None
 
 
 class UserPrivate(BaseUserSchema):
