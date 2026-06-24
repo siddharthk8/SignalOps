@@ -19,7 +19,7 @@ class UserPublic(BaseUserSchema):
     id: uuid.UUID
     first_name: str
     last_name: str
-    profile_image_path: str
+    profile_image_path: str | None
 
 
 class UserPrivate(BaseUserSchema):
@@ -27,7 +27,7 @@ class UserPrivate(BaseUserSchema):
     first_name: str
     last_name: str
     email: EmailStr
-    profile_image_path: str
+    profile_image_path: str | None
     is_active: bool
 
 
