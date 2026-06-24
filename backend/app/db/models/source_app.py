@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, String, func
+from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
@@ -33,7 +33,6 @@ class SourceApp(Base):
         ),
         nullable=False,
     )
-    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # FK
     user_id: Mapped[uuid.UUID] = mapped_column(
