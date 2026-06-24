@@ -2,6 +2,7 @@ import boto3
 from botocore.config import Config
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.db.repositories.ai_analysis import AIAnalysisRepository
 from app.engine.ai.fallback_parser import AIFallbackParser
 from app.engine.ai.incident_analyzer import AIIncidentAnalyzer
@@ -19,7 +20,17 @@ class AIStage:
 
         self.client = boto3.client(
             "bedrock-runtime",
-            region_name="ap-south-1",
+            region_name=settings.bedrock_region,
+            aws_access_key_id=(
+                settings.aws_access_key_id.get_secret_value()
+                if settings.aws_access_key_id
+                else None
+            ),
+            aws_secret_access_key=(
+                settings.aws_secret_access_key.get_secret_value()
+                if settings.aws_secret_access_key
+                else None
+            ),
             config=Config(
                 retries={"max_attempts": 3},
                 read_timeout=120,

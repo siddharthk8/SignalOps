@@ -13,13 +13,27 @@ class Settings(BaseSettings):
     )
 
     secret_key: SecretStr
-    sqlalchemy_db_url: SecretStr
+    database_url: SecretStr
     password_hash_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 7
 
-    aws_ai_model_id: str
-    aws_ai_model_retry_attempts: int = 3
+    # Optional AWS credentials.
+    # If not provided, boto3 falls back to its default credential chain:
+    # environment variables, shared AWS config (~/.aws/credentials),
+    # IAM roles (EC2/ECS/Lambda), etc.
+    aws_access_key_id: SecretStr | None = None
+    aws_secret_access_key: SecretStr | None = None
+
+    # Bedrock configuration
+    bedrock_region: str = "ap-south-1"
+    bedrock_model_id: str
+    bedrock_model_retry_attempts: int = 3
+
+    # S3 configuration
+    s3_region: str = "ap-south-1"
+    s3_bucket_name: str
+    max_upload_size_bytes: int = 5 * 1024 * 1024  # 5 MB
 
 
 settings = Settings()  # type: ignore[call-arg]
