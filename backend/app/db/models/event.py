@@ -53,10 +53,10 @@ class Event(Base):
     batch_id: Mapped[int] = mapped_column(
         ForeignKey("batch.id"), nullable=False, index=True
     )
-    signal_id: Mapped[int] = mapped_column(
+    signal_id: Mapped[int | None] = mapped_column(
         ForeignKey("signal.id"), nullable=True, index=True
     )
-    entity_id: Mapped[int] = mapped_column(
+    entity_id: Mapped[int | None] = mapped_column(
         ForeignKey("entity.id"), nullable=True, index=True
     )
 

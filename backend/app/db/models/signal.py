@@ -32,8 +32,10 @@ class Signal(Base):
     confidence: Mapped[float] = mapped_column(Float, nullable=False)
 
     # FK
-    entity_id: Mapped[int] = mapped_column(ForeignKey("entity.id"), nullable=True)
-    incident_id: Mapped[int] = mapped_column(
+    entity_id: Mapped[int | None] = mapped_column(
+        ForeignKey("entity.id"), nullable=True
+    )
+    incident_id: Mapped[int | None] = mapped_column(
         ForeignKey("incident.id"), nullable=True, index=True
     )
 

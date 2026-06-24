@@ -32,7 +32,7 @@ class Log(Base):
         nullable=True,
     )
     ip_address: Mapped[IPvAnyAddress | None] = mapped_column(String(45), nullable=True)
-    session_id: Mapped[str] = mapped_column(String(60), nullable=True)
+    session_id: Mapped[str | None] = mapped_column(String(60), nullable=True)
     token_id: Mapped[str | None] = mapped_column(String(60), nullable=True)
     request_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
 

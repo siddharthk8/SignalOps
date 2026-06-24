@@ -54,7 +54,7 @@ class Incident(Base):
     summary: Mapped[str] = mapped_column(String(1000), nullable=False)
 
     # FK
-    ai_analysis_id: Mapped[int] = mapped_column(
+    ai_analysis_id: Mapped[int | None] = mapped_column(
         ForeignKey("ai_analysis.id"), nullable=True, index=True
     )
 
@@ -76,7 +76,7 @@ class Incident(Base):
         onupdate=func.now(),
         nullable=False,
     )
-    resolved_at: Mapped[datetime] = mapped_column(
+    resolved_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
     )
