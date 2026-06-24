@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import Boolean, CheckConstraint, DateTime, Integer, String, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.core.config import settings
 from app.db.core import Base
 
 if TYPE_CHECKING:
@@ -31,6 +32,9 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(200), nullable=False)
     first_name: Mapped[str] = mapped_column(String(60), nullable=False)
     last_name: Mapped[str] = mapped_column(String(80), nullable=False)
+    profile_image: Mapped[str | None] = mapped_column(
+        String(200), nullable=True, default=None
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     # Increment it to invalidate all previously issued JWTs.
@@ -60,3 +64,9 @@ class User(Base):
     __table_args__ = (
         CheckConstraint("token_version > 0", name="user_token_version_positive"),
     )
+
+    @property
+    def profile_image_path(self):
+        if self.profile_image:
+            return f"https://{settings.s3_bucket_name}.s3.{settings.s3_region}.amazonaws.com/profile_images/{self.profile_image}"
+        return None

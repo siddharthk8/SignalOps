@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.db.core import get_db
@@ -47,3 +47,22 @@ async def change_password(
     db: Annotated[Session, Depends(get_db)],
 ):
     return await service.change_password(data, current_user, db)
+
+
+@router.post(
+    "/me/profile-image", response_model=UserPrivate, status_code=status.HTTP_200_OK
+)
+async def upload_profile_image(
+    file: UploadFile,
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.upload_profile_image(file, current_user, db)
+
+
+@router.delete("/me/profile-image", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_profile_image(
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.delete_profile_image(current_user, db)

@@ -126,11 +126,11 @@ INPUT LOGS
 {payload}
 """
 
-        for attempt in range(settings.aws_ai_model_retry_attempts):
+        for attempt in range(settings.bedrock_model_retry_attempts):
             try:
                 response = await run_in_threadpool(
                     self.client.converse,
-                    modelId=settings.aws_ai_model_id,
+                    modelId=settings.bedrock_model_id,
                     # system=[]
                     messages=[
                         {
@@ -342,7 +342,7 @@ INPUT LOGS
                 return results
 
             except ClientError:
-                if attempt < settings.aws_ai_model_retry_attempts - 1:
+                if attempt < settings.bedrock_model_retry_attempts - 1:
                     await asyncio.sleep(2**attempt)
 
             except Exception:
