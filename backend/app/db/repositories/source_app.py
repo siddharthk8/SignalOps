@@ -49,3 +49,6 @@ class SourceAppRepository:
             .scalars()
             .all()
         )
+
+    def delete_source_app(self, source_app: SourceApp):
+        self.db.delete(source_app)

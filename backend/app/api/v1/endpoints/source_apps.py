@@ -44,6 +44,18 @@ async def create_source_app(
     return await service.create_source_app(data, current_user, db)
 
 
+@router.delete(
+    "/{source_app_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_source_app(
+    source_app_id: int,
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.delete_source_app(source_app_id, current_user, db)
+
+
 @router.get(
     "/{source_app_id}/batches",
     response_model=PaginatedBatchResponse,
