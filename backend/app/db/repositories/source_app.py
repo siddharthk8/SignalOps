@@ -12,14 +12,17 @@ class SourceAppRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_source_app(self, *, name: str, app_type: SourceAppType):
-        self.db.add(
-            SourceApp(
-                name=name,
-                app_type=app_type.value,
-            )
+    def create_source_app(
+        self, *, user_id: UUID, name: str, app_type: SourceAppType
+    ) -> SourceApp:
+        source_app_orm = SourceApp(
+            user_id=user_id,
+            name=name,
+            app_type=app_type.value,
         )
+        self.db.add(source_app_orm)
         self.db.flush()
+        return source_app_orm
 
     def get_by_id(self, source_app_id: int) -> SourceApp | None:
         return self.db.get(SourceApp, source_app_id)

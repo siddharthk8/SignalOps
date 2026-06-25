@@ -9,6 +9,8 @@ from app.domains.source_app import service
 from app.domains.source_app.schemas import (
     PaginatedBatchResponse,
     PaginatedSourceAppResponse,
+    SourceAppModel,
+    SourceAppRequest,
 )
 from app.domains.users.dependencies import CurrentUser
 
@@ -27,6 +29,19 @@ async def get_source_apps(
     limit: Annotated[int, Query(ge=1, le=100)] = settings.source_apps_per_page,
 ):
     return await service.get_source_apps(skip, limit, current_user, db)
+
+
+@router.post(
+    "",
+    response_model=SourceAppModel,
+    status_code=status.HTTP_200_OK,
+)
+async def create_source_app(
+    data: SourceAppRequest,
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.create_source_app(data, current_user, db)
 
 
 @router.get(
