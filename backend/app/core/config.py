@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 7
 
+    source_apps_per_page: int = 10
+    batches_per_page: int = 10
+
     # Optional AWS credentials.
     # If not provided, boto3 falls back to its default credential chain:
     # environment variables, shared AWS config (~/.aws/credentials),
