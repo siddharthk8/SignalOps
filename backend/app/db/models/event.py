@@ -48,23 +48,31 @@ class Event(Base):
 
     # FK
     log_id: Mapped[int] = mapped_column(
-        ForeignKey("log.id"), nullable=False, index=True
+        ForeignKey("log.id", ondelete="CASCADE"), nullable=False, index=True
     )
     batch_id: Mapped[int] = mapped_column(
-        ForeignKey("batch.id"), nullable=False, index=True
+        ForeignKey("batch.id", ondelete="CASCADE"), nullable=False, index=True
     )
     signal_id: Mapped[int | None] = mapped_column(
-        ForeignKey("signal.id"), nullable=True, index=True
+        ForeignKey("signal.id", ondelete="CASCADE"), nullable=True, index=True
     )
     entity_id: Mapped[int | None] = mapped_column(
-        ForeignKey("entity.id"), nullable=True, index=True
+        ForeignKey("entity.id", ondelete="CASCADE"), nullable=True, index=True
     )
 
     # relationships
-    batch: Mapped[Batch] = relationship("Batch", back_populates="events")
-    log: Mapped[Batch] = relationship("Log", back_populates="event")
-    entity: Mapped[Entity] = relationship("Entity", back_populates="event")
-    signal: Mapped[Signal] = relationship("Signal", back_populates="events")
+    batch: Mapped[Batch] = relationship(
+        "Batch", passive_deletes=True, back_populates="events"
+    )
+    log: Mapped[Batch] = relationship(
+        "Log", passive_deletes=True, back_populates="event"
+    )
+    entity: Mapped[Entity] = relationship(
+        "Entity", passive_deletes=True, back_populates="event"
+    )
+    signal: Mapped[Signal] = relationship(
+        "Signal", passive_deletes=True, back_populates="events"
+    )
 
     # datetime
     timestamp: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

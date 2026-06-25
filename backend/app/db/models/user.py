@@ -42,10 +42,10 @@ class User(Base):
 
     # relationships
     source_apps: Mapped[list[SourceApp]] = relationship(
-        "SourceApp", back_populates="creator"
+        "SourceApp", passive_deletes=True, back_populates="creator"
     )
     refresh_tokens: Mapped[list[RefreshToken]] = relationship(
-        "RefreshToken", back_populates="user"
+        "RefreshToken", passive_deletes=True, back_populates="user"
     )
 
     # datetime

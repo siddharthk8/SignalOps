@@ -36,14 +36,18 @@ class SourceApp(Base):
 
     # FK
     user_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("user.id"),
+        ForeignKey("user.id", ondelete="CASCADE"),
         nullable=False,
         index=True,  # FKs are not indexed by default. So we need to index imp FKs.
     )
 
     # relationships (these works only at ORM/Python level)
-    creator: Mapped[User] = relationship("User", back_populates="source_apps")
-    batches: Mapped[list[Batch]] = relationship("Batch", back_populates="source_app")
+    creator: Mapped[User] = relationship(
+        "User", passive_deletes=True, back_populates="source_apps"
+    )
+    batches: Mapped[list[Batch]] = relationship(
+        "Batch", passive_deletes=True, back_populates="source_app"
+    )
 
     # datetime
     created_at: Mapped[datetime] = mapped_column(

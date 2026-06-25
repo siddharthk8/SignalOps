@@ -21,13 +21,19 @@ class Batch(Base):
 
     # FK
     source_app_id: Mapped[int] = mapped_column(
-        ForeignKey("source_app.id"), nullable=False, index=True
+        ForeignKey("source_app.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # relationships
-    source_app: Mapped[SourceApp] = relationship("SourceApp", back_populates="batches")
-    logs: Mapped[list[Log]] = relationship("Log", back_populates="batch")
-    events: Mapped[list[Event]] = relationship("Event", back_populates="batch")
+    source_app: Mapped[SourceApp] = relationship(
+        "SourceApp", passive_deletes=True, back_populates="batches"
+    )
+    logs: Mapped[list[Log]] = relationship(
+        "Log", passive_deletes=True, back_populates="batch"
+    )
+    events: Mapped[list[Event]] = relationship(
+        "Event", passive_deletes=True, back_populates="batch"
+    )
 
     # datetime
     created_at: Mapped[datetime] = mapped_column(

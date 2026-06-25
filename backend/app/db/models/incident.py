@@ -55,13 +55,15 @@ class Incident(Base):
 
     # FK
     ai_analysis_id: Mapped[int | None] = mapped_column(
-        ForeignKey("ai_analysis.id"), nullable=True, index=True
+        ForeignKey("ai_analysis.id", ondelete="CASCADE"), nullable=True, index=True
     )
 
     # relationships
-    signals: Mapped[list[Signal]] = relationship("Signal", back_populates="incident")
+    signals: Mapped[list[Signal]] = relationship(
+        "Signal", passive_deletes=True, back_populates="incident"
+    )
     ai_analysis: Mapped[AIAnalysis] = relationship(
-        "AIAnalysis", back_populates="incidents"
+        "AIAnalysis", passive_deletes=True, back_populates="incidents"
     )
 
     # datetime

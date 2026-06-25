@@ -28,5 +28,9 @@ class Entity(Base):
     request_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     # relationships
-    event: Mapped[Event] = relationship("Event", back_populates="entity")
-    signals: Mapped[list[Signal]] = relationship("Signal", back_populates="entity")
+    event: Mapped[Event] = relationship(
+        "Event", passive_deletes=True, back_populates="entity"
+    )
+    signals: Mapped[list[Signal]] = relationship(
+        "Signal", passive_deletes=True, back_populates="entity"
+    )

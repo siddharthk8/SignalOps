@@ -33,16 +33,22 @@ class Signal(Base):
 
     # FK
     entity_id: Mapped[int | None] = mapped_column(
-        ForeignKey("entity.id"), nullable=True
+        ForeignKey("entity.id", ondelete="CASCADE"), nullable=True
     )
     incident_id: Mapped[int | None] = mapped_column(
-        ForeignKey("incident.id"), nullable=True, index=True
+        ForeignKey("incident.id", ondelete="CASCADE"), nullable=True, index=True
     )
 
     # relationships
-    events: Mapped[list[Event]] = relationship("Event", back_populates="signal")
-    entity: Mapped[Entity] = relationship("Entity", back_populates="signals")
-    incident: Mapped[Incident] = relationship("Incident", back_populates="signals")
+    events: Mapped[list[Event]] = relationship(
+        "Event", passive_deletes=True, back_populates="signal"
+    )
+    entity: Mapped[Entity] = relationship(
+        "Entity", passive_deletes=True, back_populates="signals"
+    )
+    incident: Mapped[Incident] = relationship(
+        "Incident", passive_deletes=True, back_populates="signals"
+    )
 
     # datetime
     triggered_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

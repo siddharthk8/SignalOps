@@ -38,12 +38,16 @@ class Log(Base):
 
     # FK
     batch_id: Mapped[int] = mapped_column(
-        ForeignKey("batch.id"), nullable=False, index=True
+        ForeignKey("batch.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # relationships
-    batch: Mapped[Batch] = relationship("Batch", back_populates="logs")
-    event: Mapped[Batch] = relationship("Event", back_populates="log")
+    batch: Mapped[Batch] = relationship(
+        "Batch", passive_deletes=True, back_populates="logs"
+    )
+    event: Mapped[Batch] = relationship(
+        "Event", passive_deletes=True, back_populates="log"
+    )
 
     # datetime
     timestamp: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

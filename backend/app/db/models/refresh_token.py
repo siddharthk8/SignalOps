@@ -22,11 +22,13 @@ class RefreshToken(Base):
 
     # FK
     user_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("user.id"), nullable=False, index=True
+        ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # relationships
-    user: Mapped[User] = relationship("User", back_populates="refresh_tokens")
+    user: Mapped[User] = relationship(
+        "User", passive_deletes=True, back_populates="refresh_tokens"
+    )
 
     # datetime
     expires_at: Mapped[datetime] = mapped_column(

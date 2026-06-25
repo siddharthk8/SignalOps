@@ -41,7 +41,7 @@ class AIAnalysis(Base):
 
     # relationships
     incidents: Mapped[list[Incident]] = relationship(
-        "Incident", back_populates="ai_analysis"
+        "Incident", passive_deletes=True, back_populates="ai_analysis"
     )
 
     # datetime
