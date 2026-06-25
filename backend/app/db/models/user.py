@@ -11,6 +11,7 @@ from app.core.config import settings
 from app.db.core import Base
 
 if TYPE_CHECKING:
+    from app.db.models.password_reset_token import PasswordResetToken
     from app.db.models.refresh_token import RefreshToken
     from app.db.models.source_app import SourceApp
 
@@ -46,6 +47,11 @@ class User(Base):
     )
     refresh_tokens: Mapped[list[RefreshToken]] = relationship(
         "RefreshToken", passive_deletes=True, back_populates="user"
+    )
+    password_reset_tokens: Mapped[list[PasswordResetToken]] = relationship(
+        "PasswordResetToken",
+        passive_deletes=True,
+        back_populates="user",
     )
 
     # datetime

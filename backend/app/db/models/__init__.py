@@ -5,6 +5,8 @@ from .event import Event
 from .incident import Incident
 from .incident_entities import IncidentEntities
 from .log import Log
+from .password_reset_token import PasswordResetToken
+from .refresh_token import RefreshToken
 from .signal import Signal
 from .source_app import SourceApp
 from .user import User

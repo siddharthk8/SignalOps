@@ -1,14 +1,16 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, BackgroundTasks, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.db.core import get_db
 from app.domains.auth import service
 from app.domains.auth.schemas import (
+    ForgotPasswordRequest,
     RefreshTokenRequest,
     RefreshTokenResponse,
+    ResetPasswordRequest,
     TokenResponse,
 )
 from app.domains.users.dependencies import CurrentUser
@@ -49,3 +51,20 @@ async def revoke_all_refresh_tokens(
     db: Annotated[Session, Depends(get_db)],
 ):
     return await service.revoke_all_refresh_tokens(current_user, db)
+
+
+@router.post("/forgot-password", status_code=status.HTTP_202_ACCEPTED)
+async def forgot_password(
+    data: ForgotPasswordRequest,
+    background_tasks: BackgroundTasks,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.forgot_password(data, background_tasks, db)
+
+
+@router.post("/reset-password", status_code=status.HTTP_200_OK)
+async def reset_password(
+    data: ResetPasswordRequest,
+    db: Annotated[Session, Depends(get_db)],
+):
+    return await service.reset_password(data, db)

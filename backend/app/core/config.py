@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     source_apps_per_page: int = 10
     batches_per_page: int = 10
 
+    # forgot password email configuration
+    mail_from: str
+    reset_token_expire_minutes: int = 30
+
+    frontend_url: str = "http://localhost:8000"
+
     # Optional AWS credentials.
     # If not provided, boto3 falls back to its default credential chain:
     # environment variables, shared AWS config (~/.aws/credentials),
@@ -37,6 +43,9 @@ class Settings(BaseSettings):
     s3_region: str = "ap-south-1"
     s3_bucket_name: str
     max_upload_size_bytes: int = 5 * 1024 * 1024  # 5 MB
+
+    # SES configuration
+    ses_region: str = "ap-south-1"
 
 
 settings = Settings()  # type: ignore[call-arg]

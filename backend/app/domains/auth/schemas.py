@@ -1,7 +1,10 @@
 from datetime import datetime
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, StringConstraints
+
+from app.domains.users.schemas import PasswordField, PasswordValidationMixin
 
 
 class TokenResponse(BaseModel):
@@ -25,3 +28,12 @@ class RefreshTokenRequest(BaseModel):
 class RefreshTokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: Annotated[EmailStr, StringConstraints(max_length=254)]
+
+
+class ResetPasswordRequest(PasswordValidationMixin):
+    token: str
+    new_password: PasswordField

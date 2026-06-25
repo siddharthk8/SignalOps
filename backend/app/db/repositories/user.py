@@ -1,5 +1,6 @@
 import uuid
 
+from pydantic import EmailStr
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,11 @@ class UserRepository:
 
     def get_by_id(self, id: uuid.UUID) -> User | None:
         return self.db.get(User, id)
+
+    def get_by_email(self, email: EmailStr) -> User | None:
+        return self.db.execute(
+            select(User).where(User.email == email.lower())
+        ).scalar_one_or_none()
 
     def check_exists_by_email(self, email: str) -> bool:
         return (
