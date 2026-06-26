@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.core import Base
 
 if TYPE_CHECKING:
+    from app.db.models.ai_analysis import AIAnalysis
     from app.db.models.event import Event
     from app.db.models.log import Log
     from app.db.models.source_app import SourceApp
@@ -33,6 +34,9 @@ class Batch(Base):
     )
     events: Mapped[list[Event]] = relationship(
         "Event", passive_deletes=True, back_populates="batch"
+    )
+    ai_analysis: Mapped[AIAnalysis] = relationship(
+        "AIAnalysis", passive_deletes=True, back_populates="batch"
     )
 
     # datetime

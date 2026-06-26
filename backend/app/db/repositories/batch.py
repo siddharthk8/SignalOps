@@ -2,6 +2,7 @@ from collections.abc import Sequence
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.db.models.batch import Batch
 
@@ -30,6 +31,7 @@ class BatchRepository:
     ) -> Sequence[Batch]:
         query = await self.db.execute(
             select(Batch)
+            .options(selectinload(Batch.ai_analysis))
             .where(Batch.source_app_id == source_app_id)
             .order_by(Batch.created_at.desc())
             .offset(skip)

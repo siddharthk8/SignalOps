@@ -18,7 +18,7 @@ class LogPipeline:
         self.source_app_orm = source_app_orm
 
         self.parsing_stage = ParsingStage(db, batch_orm)
-        self.ai_stage = AIStage(db)
+        self.ai_stage = AIStage(db, batch_orm)
         self.rule_stage = RuleStage(db)
         self.correlation_stage = CorrelationStage(db)
 

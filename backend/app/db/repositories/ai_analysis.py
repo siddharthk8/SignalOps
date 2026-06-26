@@ -11,11 +11,12 @@ class AIAnalysisRepository:
         self.db = db
 
     async def save_ai_analysis(
-        self, *, analyzed_incidents: list[IncidentAnalysis]
+        self, *, analyzed_incidents: list[IncidentAnalysis], batch_id: int
     ) -> None:
 
         for a in analyzed_incidents:
             analyzed_payload = a.model_dump()
+            analyzed_payload["batch_id"] = batch_id
             analyzed_payload["severity"] = a.severity.value
             analyzed_payload["incident_type"] = a.incident_type.value
             analyzed_payload["business_impact"] = json.dumps(a.business_impact)

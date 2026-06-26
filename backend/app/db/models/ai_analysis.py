@@ -3,7 +3,16 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, DateTime, Enum, Float, Integer, String, func
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
@@ -11,6 +20,7 @@ from app.enums.common import Severity
 from app.enums.incident import IncidentType
 
 if TYPE_CHECKING:
+    from app.db.models.batch import Batch
     from app.db.models.incident import Incident
 
 
@@ -39,9 +49,17 @@ class AIAnalysis(Base):
         nullable=False,
     )
 
+    # FK
+    batch_id: Mapped[int] = mapped_column(
+        ForeignKey("batch.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
     # relationships
     incidents: Mapped[list[Incident]] = relationship(
         "Incident", passive_deletes=True, back_populates="ai_analysis"
+    )
+    batch: Mapped[Batch] = relationship(
+        "Batch", passive_deletes=True, back_populates="ai_analysis"
     )
 
     # datetime

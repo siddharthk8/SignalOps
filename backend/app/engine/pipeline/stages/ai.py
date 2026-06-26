@@ -3,6 +3,7 @@ from botocore.config import Config
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.db.models.batch import Batch
 from app.db.repositories.ai_analysis import AIAnalysisRepository
 from app.engine.ai.fallback_parser import AIFallbackParser
 from app.engine.ai.incident_analyzer import AIIncidentAnalyzer
@@ -15,8 +16,9 @@ from app.schemas.log import PersistedLog
 
 
 class AIStage:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession, batch_orm: Batch):
         self.db = db
+        self.batch_orm = batch_orm
 
         self.client = boto3.client(
             "bedrock-runtime",
@@ -85,7 +87,7 @@ class AIStage:
 
         # save ai_incidents in db
         await self.ai_analysis_repo.save_ai_analysis(
-            analyzed_incidents=analyzed_incidents
+            analyzed_incidents=analyzed_incidents, batch_id=self.batch_orm.id
         )
 
         return analyzed_incidents
