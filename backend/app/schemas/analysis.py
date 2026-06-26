@@ -9,6 +9,7 @@ class IncidentAnalysis(BaseModel):
     AI-generated structured analysis of a correlated incident.
     """
 
+    id: int | None = None  # db
     summary: str
     root_cause: str
     business_impact: list[str]
