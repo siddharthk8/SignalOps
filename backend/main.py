@@ -12,7 +12,7 @@ from app.core.exceptions import (
     unhandled_exception_handler,
     validation_exception_handler,
 )
-from app.db.core import Base, engine
+from app.db.core import engine
 from app.db.models import *  # triggers model loading (This ensures all tables are registered before DB usage.)  # noqa: F403
 
 VERSION = "0.1.0"
@@ -20,9 +20,6 @@ VERSION = "0.1.0"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # startup logic
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
     yield  # app runs here
     # shutdown logic
     await engine.dispose()

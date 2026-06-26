@@ -9,7 +9,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.config import settings
 from app.db.core import Base
-from app.temp.ignore import TEMP_EMAILS
 
 if TYPE_CHECKING:
     from app.db.models.password_reset_token import PasswordResetToken
@@ -70,10 +69,6 @@ class User(Base):
 
     __table_args__ = (
         CheckConstraint("token_version > 0", name="user_token_version_positive"),
-        CheckConstraint(  # Temporary for testing workflow, will remove in production.
-            f"email IN {TEMP_EMAILS}",
-            name="check_allowed_emails",
-        ),
     )
 
     @property
