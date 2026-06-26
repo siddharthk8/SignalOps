@@ -1,16 +1,18 @@
 import json
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.ai_analysis import AIAnalysis
 from app.schemas.analysis import IncidentAnalysis
 
 
 class AIAnalysisRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def save_ai_analysis(self, *, analyzed_incidents: list[IncidentAnalysis]) -> None:
+    async def save_ai_analysis(
+        self, *, analyzed_incidents: list[IncidentAnalysis]
+    ) -> None:
 
         for a in analyzed_incidents:
             analyzed_payload = a.model_dump()
@@ -22,4 +24,4 @@ class AIAnalysisRepository:
             ai_analysis_orm = AIAnalysis(**analyzed_payload)
             self.db.add(ai_analysis_orm)
 
-        self.db.flush()
+        await self.db.flush()

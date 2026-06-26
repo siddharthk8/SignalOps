@@ -2,17 +2,17 @@ from collections.abc import Sequence
 from uuid import UUID
 
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.source_app import SourceApp
 from app.enums.common import SourceAppType
 
 
 class SourceAppRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def create_source_app(
+    async def create_source_app(
         self, *, user_id: UUID, name: str, app_type: SourceAppType
     ) -> SourceApp:
         source_app_orm = SourceApp(
@@ -21,34 +21,33 @@ class SourceAppRepository:
             app_type=app_type.value,
         )
         self.db.add(source_app_orm)
-        self.db.flush()
+        await self.db.flush()
         return source_app_orm
 
-    def get_by_id(self, source_app_id: int) -> SourceApp | None:
-        return self.db.get(SourceApp, source_app_id)
+    async def get_by_id(self, source_app_id: int) -> SourceApp | None:
+        return await self.db.get(SourceApp, source_app_id)
 
-    def get_total_source_apps(self, user_id: UUID) -> int:
-        query = self.db.execute(
+    async def get_total_source_apps(self, user_id: UUID) -> int:
+        query = await self.db.execute(
             select(func.count())
             .select_from(SourceApp)
             .where(SourceApp.user_id == user_id)
-        ).scalar()
-        return query or 0
+        )
+        result = query.scalar_one()
+        return result or 0
 
-    def get_paginated_source_apps(
+    async def get_paginated_source_apps(
         self, user_id: UUID, skip: int, limit: int
     ) -> Sequence[SourceApp]:
-        return (
-            self.db.execute(
-                select(SourceApp)
-                .where(SourceApp.user_id == user_id)
-                .order_by(SourceApp.created_at.desc())
-                .offset(skip)
-                .limit(limit)
-            )
-            .scalars()
-            .all()
+        query = await self.db.execute(
+            select(SourceApp)
+            .where(SourceApp.user_id == user_id)
+            .order_by(SourceApp.created_at.desc())
+            .offset(skip)
+            .limit(limit)
         )
+        result = query.scalars().all()
+        return result
 
-    def delete_source_app(self, source_app: SourceApp):
-        self.db.delete(source_app)
+    async def delete_source_app(self, source_app: SourceApp):
+        await self.db.delete(source_app)

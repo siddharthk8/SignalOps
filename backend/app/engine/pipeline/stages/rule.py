@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.signal import SignalRepository
 from app.engine.rules.category.generic import GenericRule
@@ -7,7 +7,7 @@ from app.schemas.signal import Signal
 
 
 class RuleStage:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
         self.generic_rule = GenericRule()
         self.signal_repo = SignalRepository(db)
@@ -24,6 +24,6 @@ class RuleStage:
         signals.extend(self.generic_rule.evaluate(events))
 
         # save signals in db
-        self.signal_repo.save_signals(signals=signals)
+        await self.signal_repo.save_signals(signals=signals)
 
         return signals

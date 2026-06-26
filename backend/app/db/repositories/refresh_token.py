@@ -1,7 +1,8 @@
 from datetime import UTC, datetime
 
 from sqlalchemy import select, update
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.db.models.refresh_token import RefreshToken as ORMRefreshToken
 from app.db.models.user import User
@@ -9,15 +10,15 @@ from app.domains.auth.schemas import RefreshToken
 
 
 class RefreshTokenRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def create_refresh_token(self, refresh_token_obj: RefreshToken):
+    async def create_refresh_token(self, refresh_token_obj: RefreshToken):
         self.db.add(ORMRefreshToken(**refresh_token_obj.model_dump()))
-        self.db.flush()
+        await self.db.flush()
 
-    def revoke_refresh_tokens(self, user: User):
-        self.db.execute(
+    async def revoke_refresh_tokens(self, user: User):
+        await self.db.execute(
             update(ORMRefreshToken)
             .where(
                 ORMRefreshToken.user_id == user.id,
@@ -26,8 +27,8 @@ class RefreshTokenRepository:
             .values(is_revoked=True, revoked_at=datetime.now(UTC))
         )
 
-    def revoke_refresh_token(self, token_hash: str):
-        self.db.execute(
+    async def revoke_refresh_token(self, token_hash: str):
+        await self.db.execute(
             update(ORMRefreshToken)
             .where(
                 ORMRefreshToken.token_hash == token_hash,
@@ -36,9 +37,13 @@ class RefreshTokenRepository:
             .values(is_revoked=True, revoked_at=datetime.now(UTC))
         )
 
-    def get_by_token_hash(self, token_hash: str) -> ORMRefreshToken | None:
-        return self.db.execute(
-            select(ORMRefreshToken).where(
+    async def get_by_token_hash(self, token_hash: str) -> ORMRefreshToken | None:
+        query = await self.db.execute(
+            select(ORMRefreshToken)
+            .options(selectinload(ORMRefreshToken.user))
+            .where(
                 ORMRefreshToken.token_hash == token_hash,
             )
-        ).scalar_one_or_none()
+        )
+        result = query.scalar_one_or_none()
+        return result

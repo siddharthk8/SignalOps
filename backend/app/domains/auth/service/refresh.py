@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.domains.auth.schemas import (
@@ -14,12 +14,12 @@ from app.domains.auth.utils import (
 )
 
 
-async def refresh_token(refresh_token_data: RefreshTokenRequest, db: Session):
+async def refresh_token(refresh_token_data: RefreshTokenRequest, db: AsyncSession):
     refresh_token = refresh_token_data.refresh_token
     token_hash = get_refresh_token_hash(refresh_token)
 
     rt_repo = RefreshTokenRepository(db)
-    rt = rt_repo.get_by_token_hash(token_hash)
+    rt = await rt_repo.get_by_token_hash(token_hash)
 
     if rt is None:
         raise HTTPException(
@@ -44,5 +44,5 @@ async def refresh_token(refresh_token_data: RefreshTokenRequest, db: Session):
     user = rt.user
     access_token = create_access_token({"sub": str(user.id), "tv": user.token_version})
 
-    db.commit()
+    await db.commit()
     return RefreshTokenResponse(access_token=access_token)

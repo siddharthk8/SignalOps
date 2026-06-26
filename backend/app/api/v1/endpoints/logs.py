@@ -1,9 +1,6 @@
-from typing import Annotated
+from fastapi import APIRouter, HTTPException, status
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
-from app.db.core import get_db
+from app.db.core import DBSessionDep
 from app.db.repositories.batch import BatchRepository
 from app.db.repositories.source_app import SourceAppRepository
 from app.domains.users.dependencies import CurrentUser
@@ -23,10 +20,10 @@ router = APIRouter()
 async def ingest_logs(
     data: LogBatchRequest,
     current_user: CurrentUser,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     # get source app
-    source_app_orm = SourceAppRepository(db).get_by_id(data.source_app_id)
+    source_app_orm = await SourceAppRepository(db).get_by_id(data.source_app_id)
     if source_app_orm is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Source app not found."
@@ -38,7 +35,7 @@ async def ingest_logs(
         )
 
     # create batch
-    batch_orm = BatchRepository(db).create_and_get_batch(source_app_orm.id)
+    batch_orm = await BatchRepository(db).create_and_get_batch(source_app_orm.id)
 
     pipeline = LogPipeline(db, batch_orm, source_app_orm)
     return await pipeline.process(data.logs)

@@ -1,14 +1,14 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.signal import Signal as ORMSignal
 from app.schemas.signal import Signal
 
 
 class SignalRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def save_signals(
+    async def save_signals(
         self,
         *,
         signals: list[Signal],

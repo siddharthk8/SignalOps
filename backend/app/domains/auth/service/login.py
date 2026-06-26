@@ -2,7 +2,7 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.domains.auth.schemas import TokenResponse
@@ -15,9 +15,9 @@ from app.domains.auth.utils import (
 from app.domains.users.utils import get_user
 
 
-async def create_token(form_data: OAuth2PasswordRequestForm, db: Session):
+async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
     id = form_data.username
-    user = get_user(db, UUID(id))
+    user = await get_user(db, UUID(id))
 
     if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(
@@ -31,7 +31,7 @@ async def create_token(form_data: OAuth2PasswordRequestForm, db: Session):
 
     rt = create_refresh_token_obj(user, refresh_token)
     rt_repo = RefreshTokenRepository(db)
-    rt_repo.create_refresh_token(rt)
+    await rt_repo.create_refresh_token(rt)
 
-    db.commit()
+    await db.commit()
     return TokenResponse(access_token=access_token, refresh_token=refresh_token)

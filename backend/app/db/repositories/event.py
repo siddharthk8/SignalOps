@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.entity import Entity
 from app.db.models.event import Event
@@ -6,10 +6,10 @@ from app.schemas.event import SemanticEvent
 
 
 class EventRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def save_events(
+    async def save_events(
         self,
         *,
         batch_id: int,
@@ -41,7 +41,7 @@ class EventRepository:
 
                 entity = Entity(**entity_payload)
                 self.db.add(entity)
-                self.db.flush()
+                await self.db.flush()
                 entity_id = entity.id
 
             db_event = Event(
@@ -56,7 +56,7 @@ class EventRepository:
             self.db.add(db_event)
             db_events.append(db_event)
 
-        self.db.flush()
+        await self.db.flush()
 
         # store ids of events.
         for i, orm_event in enumerate(db_events):

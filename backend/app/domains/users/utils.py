@@ -4,7 +4,7 @@ from io import BytesIO
 import boto3
 from fastapi.concurrency import run_in_threadpool
 from PIL import Image, ImageOps
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.db.models.user import User
@@ -12,13 +12,13 @@ from app.db.repositories.user import UserRepository
 from app.domains.auth.utils import DUMMY_HASH, verify_password
 
 
-def get_user(db: Session, id: uuid.UUID) -> User | None:
-    user = UserRepository(db).get_by_id(id)
+async def get_user(db: AsyncSession, id: uuid.UUID) -> User | None:
+    user = await UserRepository(db).get_by_id(id)
     return user
 
 
-def authenticate_user(db: Session, id: uuid.UUID, password: str) -> bool:
-    user = get_user(db, id)
+async def authenticate_user(db: AsyncSession, id: uuid.UUID, password: str) -> bool:
+    user = await get_user(db, id)
     if user is None:
         # Using a dummy hash to ensure authentication takes roughly the same time
         # whether or not the user exists, minimizing timing-based information leakage.

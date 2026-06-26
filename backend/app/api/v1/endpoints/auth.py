@@ -2,9 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 
-from app.db.core import get_db
+from app.db.core import DBSessionDep
 from app.domains.auth import service
 from app.domains.auth.schemas import (
     ForgotPasswordRequest,
@@ -21,7 +20,7 @@ router = APIRouter()
 @router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
 async def create_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     return await service.create_token(form_data, db)
 
@@ -31,7 +30,7 @@ async def create_token(
 )
 async def refresh_token(
     refresh_token_data: RefreshTokenRequest,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     return await service.refresh_token(refresh_token_data, db)
 
@@ -40,7 +39,7 @@ async def refresh_token(
 async def revoke_refresh_token(
     refresh_token_data: RefreshTokenRequest,
     _current_user: CurrentUser,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     return await service.revoke_refresh_token(refresh_token_data, db)
 
@@ -48,7 +47,7 @@ async def revoke_refresh_token(
 @router.post("/logout-all", status_code=status.HTTP_204_NO_CONTENT)
 async def revoke_all_refresh_tokens(
     current_user: CurrentUser,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     return await service.revoke_all_refresh_tokens(current_user, db)
 
@@ -57,7 +56,7 @@ async def revoke_all_refresh_tokens(
 async def forgot_password(
     data: ForgotPasswordRequest,
     background_tasks: BackgroundTasks,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     return await service.forgot_password(data, background_tasks, db)
 
@@ -65,6 +64,6 @@ async def forgot_password(
 @router.post("/reset-password", status_code=status.HTTP_200_OK)
 async def reset_password(
     data: ResetPasswordRequest,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     return await service.reset_password(data, db)

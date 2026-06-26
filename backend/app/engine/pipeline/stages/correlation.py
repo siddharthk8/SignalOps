@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.incident import IncidentRepository
 from app.engine.correlation.correlator import Correlator
@@ -8,7 +8,7 @@ from app.schemas.signal import Signal
 
 
 class CorrelationStage:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
         self.correlator = Correlator()
         self.incident_repo = IncidentRepository(db)
@@ -19,6 +19,6 @@ class CorrelationStage:
         incidents = self.correlator.process(signals=signals, source_app=source_app)
 
         # save incidents in db
-        self.incident_repo.save_incidents(incidents=incidents)
+        await self.incident_repo.save_incidents(incidents=incidents)
 
         return incidents

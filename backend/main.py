@@ -21,9 +21,11 @@ VERSION = "0.1.0"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # startup logic
-    Base.metadata.create_all(bind=engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield  # app runs here
-    # shutdown logic (optional)
+    # shutdown logic
+    await engine.dispose()
 
 
 app = FastAPI(

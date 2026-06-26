@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.user import UserRepository
 from app.domains.auth.utils import (
@@ -8,17 +8,17 @@ from app.domains.auth.utils import (
 from app.domains.users.schemas import UserCreate, UserPrivate
 
 
-async def create_user(user: UserCreate, db: Session) -> UserPrivate:
+async def create_user(data: UserCreate, db: AsyncSession) -> UserPrivate:
     user_repo = UserRepository(db)
 
-    if user_repo.check_exists_by_email(user.email):
+    if await user_repo.check_exists_by_email(data.email):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User with this email already exists.",
         )
 
-    user_repo.create_user(user, password_hash=get_password_hash(user.password))
-    new_user = UserPrivate(**user.model_dump(exclude={"password"}), is_active=True)
+    await user_repo.create_user(data, password_hash=get_password_hash(data.password))
+    response = UserPrivate(**data.model_dump(exclude={"password"}), is_active=True)
 
-    db.commit()
-    return new_user
+    await db.commit()
+    return response

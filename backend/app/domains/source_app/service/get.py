@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.batch import BatchRepository
 from app.db.repositories.source_app import SourceAppRepository
@@ -12,12 +12,18 @@ from app.domains.users.dependencies import CurrentUser
 
 
 async def get_source_app_batches(
-    skip: int, limit: int, source_app_id: int, current_user: CurrentUser, db: Session
+    skip: int,
+    limit: int,
+    source_app_id: int,
+    current_user: CurrentUser,
+    db: AsyncSession,
 ):
     batch_repo = BatchRepository(db)
-    total_batches = batch_repo.get_total_batches(source_app_id)
+    total_batches = await batch_repo.get_total_batches(source_app_id)
 
-    paginated_batches_orm = batch_repo.get_paginated_batches(source_app_id, skip, limit)
+    paginated_batches_orm = await batch_repo.get_paginated_batches(
+        source_app_id, skip, limit
+    )
     paginated_batches = [Batch.model_validate(b) for b in paginated_batches_orm]
 
     has_more = False
@@ -34,12 +40,12 @@ async def get_source_app_batches(
 
 
 async def get_source_apps(
-    skip: int, limit: int, current_user: CurrentUser, db: Session
+    skip: int, limit: int, current_user: CurrentUser, db: AsyncSession
 ):
     source_app_repo = SourceAppRepository(db)
-    total_source_apps = source_app_repo.get_total_source_apps(current_user.id)
+    total_source_apps = await source_app_repo.get_total_source_apps(current_user.id)
 
-    paginated_source_apps_orm = source_app_repo.get_paginated_source_apps(
+    paginated_source_apps_orm = await source_app_repo.get_paginated_source_apps(
         current_user.id, skip, limit
     )
     paginated_source_apps = [

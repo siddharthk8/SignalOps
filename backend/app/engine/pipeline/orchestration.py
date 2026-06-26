@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.batch import Batch
 from app.db.models.source_app import SourceApp
@@ -12,7 +12,7 @@ from app.schemas.log import LogsField
 
 
 class LogPipeline:
-    def __init__(self, db: Session, batch_orm: Batch, source_app_orm: SourceApp):
+    def __init__(self, db: AsyncSession, batch_orm: Batch, source_app_orm: SourceApp):
         self.db = db
         self.batch_orm = batch_orm
         self.source_app_orm = source_app_orm
@@ -30,7 +30,7 @@ class LogPipeline:
 
         if len(unresolved_logs) > 0:
             ai_events = await self.ai_stage.fallback_run(unresolved_logs, source_app)
-            self.parsing_stage.merge_ai_events(events, ai_events, unresolved_logs)
+            await self.parsing_stage.merge_ai_events(events, ai_events, unresolved_logs)
 
         # rule
         signals = await self.rule_stage.run(source_app=source_app, events=events)
@@ -45,5 +45,5 @@ class LogPipeline:
             incidents=incidents, source_app=source_app
         )
 
-        self.db.commit()
+        await self.db.commit()
         return analyzed_incidents

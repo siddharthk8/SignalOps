@@ -2,51 +2,47 @@ import uuid
 
 from pydantic import EmailStr
 from sqlalchemy import select, update
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.user import User
 from app.domains.users.schemas import UserCreate
 
 
 class UserRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_by_id(self, id: uuid.UUID) -> User | None:
-        return self.db.get(User, id)
+    async def get_by_id(self, id: uuid.UUID) -> User | None:
+        return await self.db.get(User, id)
 
-    def get_by_email(self, email: EmailStr) -> User | None:
-        return self.db.execute(
-            select(User).where(User.email == email.lower())
-        ).scalar_one_or_none()
+    async def get_by_email(self, email: EmailStr) -> User | None:
+        query = await self.db.execute(select(User).where(User.email == email.lower()))
+        result = query.scalar_one_or_none()
+        return result
 
-    def check_exists_by_email(self, email: str) -> bool:
-        return (
-            self.db.execute(
-                select(User.id).where(User.email == email)
-            ).scalar_one_or_none()
-            is not None
-        )
+    async def check_exists_by_email(self, email: str) -> bool:
+        query = await self.db.execute(select(User.id).where(User.email == email))
+        result = query.scalar_one_or_none()
+        return result is not None
 
-    def check_exists_by_id(self, id: uuid.UUID) -> bool:
-        return (
-            self.db.execute(select(User.id).where(User.id == id)).scalar_one_or_none()
-            is not None
-        )
+    async def check_exists_by_id(self, id: uuid.UUID) -> bool:
+        query = await self.db.execute(select(User.id).where(User.id == id))
+        result = query.scalar_one_or_none()
+        return result is not None
 
-    def create_user(self, user: UserCreate, password_hash: str):
+    async def create_user(self, user: UserCreate, password_hash: str):
         db_user = User(**user.model_dump(exclude={"id", "password"}))
         db_user.password_hash = password_hash
         self.db.add(db_user)
-        self.db.flush()
+        await self.db.flush()
         user.id = db_user.id
 
-    def delete_user(self, user: User):
-        self.db.delete(user)
+    async def delete_user(self, user: User):
+        await self.db.delete(user)
 
-    def increment_token_version(self, user: User):
+    async def increment_token_version(self, user: User):
         # Incrementing token_version atomically in the database to avoid race conditions.
-        self.db.execute(
+        await self.db.execute(
             update(User)
             .where(User.id == user.id)
             .values(token_version=User.token_version + 1)

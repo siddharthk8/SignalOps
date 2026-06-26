@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.core import get_db
 from app.db.models.user import User
@@ -15,8 +15,8 @@ from app.domains.users.utils import get_user
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-def get_current_active_user(
-    db: Annotated[Session, Depends(get_db)],
+async def get_current_active_user(
+    db: Annotated[AsyncSession, Depends(get_db)],
     token: Annotated[str, Depends(oauth2_scheme)],
 ) -> User:
     credentials_exception = HTTPException(
@@ -35,7 +35,7 @@ def get_current_active_user(
     if id is None:
         raise credentials_exception
 
-    user = get_user(db, UUID(id))
+    user = await get_user(db, UUID(id))
     if user is None:
         raise credentials_exception
 

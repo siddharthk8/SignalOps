@@ -1,10 +1,10 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.user import UserRepository
 from app.domains.users.dependencies import CurrentUser
 
 
-async def delete_current_user(current_user: CurrentUser, db: Session):
+async def delete_current_user(current_user: CurrentUser, db: AsyncSession):
     user_repo = UserRepository(db)
-    user_repo.delete_user(current_user)
-    db.commit()
+    await user_repo.delete_user(current_user)
+    await db.commit()

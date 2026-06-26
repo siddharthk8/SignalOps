@@ -2,10 +2,11 @@ from botocore.exceptions import ClientError
 from fastapi import HTTPException, UploadFile, status
 from fastapi.concurrency import run_in_threadpool
 from PIL import UnidentifiedImageError
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.domains.users.dependencies import CurrentUser
+from app.domains.users.schemas import UserPrivate
 from app.domains.users.utils import (
     process_profile_image,
     remove_profile_image,
@@ -14,7 +15,7 @@ from app.domains.users.utils import (
 
 
 async def upload_profile_image(
-    file: UploadFile, current_user: CurrentUser, db: Session
+    file: UploadFile, current_user: CurrentUser, db: AsyncSession
 ):
     file_bytes = await file.read()
 
@@ -49,8 +50,8 @@ async def upload_profile_image(
     previous_profile_image = current_user.profile_image
 
     current_user.profile_image = image_name
-    db.commit()
-    db.refresh(current_user)
+    await db.commit()
+    await db.refresh(current_user)
 
     if previous_profile_image is not None:
         # Delete previous profile image from S3 bucket
@@ -60,10 +61,10 @@ async def upload_profile_image(
             # Ignore S3 errors: image is already removed from DB; cleanup can be retried later
             pass
 
-    return current_user
+    return UserPrivate.model_validate(current_user)
 
 
-async def delete_profile_image(current_user: CurrentUser, db: Session):
+async def delete_profile_image(current_user: CurrentUser, db: AsyncSession):
     previous_profile_image = current_user.profile_image
 
     if previous_profile_image is None:
@@ -73,7 +74,7 @@ async def delete_profile_image(current_user: CurrentUser, db: Session):
         )
 
     current_user.profile_image = None
-    db.commit()
+    await db.commit()
 
     # Delete image from S3 bucket
     try:

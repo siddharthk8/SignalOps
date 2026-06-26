@@ -1,6 +1,6 @@
 import boto3
 from botocore.config import Config
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.db.repositories.ai_analysis import AIAnalysisRepository
@@ -15,7 +15,7 @@ from app.schemas.log import PersistedLog
 
 
 class AIStage:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
         self.client = boto3.client(
@@ -84,6 +84,8 @@ class AIStage:
             ]
 
         # save ai_incidents in db
-        self.ai_analysis_repo.save_ai_analysis(analyzed_incidents=analyzed_incidents)
+        await self.ai_analysis_repo.save_ai_analysis(
+            analyzed_incidents=analyzed_incidents
+        )
 
         return analyzed_incidents

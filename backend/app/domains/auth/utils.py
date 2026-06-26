@@ -70,8 +70,9 @@ def create_refresh_token_obj(user: User, refresh_token: str) -> RefreshToken:
         days=settings.refresh_token_expire_days
     )
 
-    a = RefreshToken(user_id=user.id, token_hash=token_hash, expires_at=expiration_time)
-    return a
+    return RefreshToken(
+        user_id=user.id, token_hash=token_hash, expires_at=expiration_time
+    )
 
 
 # email utils

@@ -1,11 +1,11 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.log import Log
 from app.schemas.log import JSONIncomingLog, LogsField, PersistedLog
 
 
 class LogRepository:
-    def __init__(self, db: Session) -> None:
+    def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
     @staticmethod
@@ -24,7 +24,7 @@ class LogRepository:
 
         return persisted_logs
 
-    def save_logs(self, *, batch_id: int, logs: LogsField) -> list[PersistedLog]:
+    async def save_logs(self, *, batch_id: int, logs: LogsField) -> list[PersistedLog]:
         data: list[Log] = []
 
         for log in logs:
@@ -37,6 +37,6 @@ class LogRepository:
                 data.append(Log(batch_id=batch_id, message=log))
 
         self.db.add_all(data)
-        self.db.flush()
+        await self.db.flush()
 
         return self._return_persisted_logs(data, logs)

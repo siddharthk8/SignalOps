@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 from fastapi import BackgroundTasks, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.db.repositories.password_reset_token import PasswordResetTokenRepository
@@ -17,14 +17,14 @@ from app.domains.auth.utils import (
 
 
 async def forgot_password(
-    data: ForgotPasswordRequest, background_tasks: BackgroundTasks, db: Session
+    data: ForgotPasswordRequest, background_tasks: BackgroundTasks, db: AsyncSession
 ):
     user_repo = UserRepository(db)
     password_reset_token_repo = PasswordResetTokenRepository(db)
 
-    user = user_repo.get_by_email(data.email)
+    user = await user_repo.get_by_email(data.email)
     if user:
-        password_reset_token_repo.delete_all(user.id)
+        await password_reset_token_repo.delete_all(user.id)
 
         token = generate_reset_token()
         token_hash = get_reset_token_hash(token)
@@ -32,10 +32,11 @@ async def forgot_password(
             minutes=settings.reset_token_expire_minutes,
         )
 
-        password_reset_token_repo.create(
+        await password_reset_token_repo.create(
             token_hash=token_hash, user_id=user.id, expires_at=expires_at
         )
-        db.commit()
+        await db.commit()
+        await db.refresh(user)
 
         background_tasks.add_task(
             send_reset_password_email,
@@ -49,12 +50,12 @@ async def forgot_password(
     }
 
 
-async def reset_password(data: ResetPasswordRequest, db: Session):
+async def reset_password(data: ResetPasswordRequest, db: AsyncSession):
     token_hash = get_reset_token_hash(data.token)
 
     user_repo = UserRepository(db)
     password_reset_token_repo = PasswordResetTokenRepository(db)
-    password_reset_orm = password_reset_token_repo.get_by_token_hash(token_hash)
+    password_reset_orm = await password_reset_token_repo.get_by_token_hash(token_hash)
 
     if not password_reset_orm:
         raise HTTPException(
@@ -77,12 +78,12 @@ async def reset_password(data: ResetPasswordRequest, db: Session):
         current_user.password_hash = get_password_hash(data.new_password)
 
         # to invalidate previous tokens
-        user_repo.increment_token_version(current_user)
+        await user_repo.increment_token_version(current_user)
 
         rt_repo = RefreshTokenRepository(db)
-        rt_repo.revoke_refresh_tokens(current_user)
+        await rt_repo.revoke_refresh_tokens(current_user)
 
-        db.commit()
+        await db.commit()
 
     return {
         "message": "Your password has been reset successfully. You can now log in using your new password.",

@@ -1,10 +1,9 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Query, status
 
 from app.core.config import settings
-from app.db.core import get_db
+from app.db.core import DBSessionDep
 from app.domains.source_app import service
 from app.domains.source_app.schemas import (
     PaginatedBatchResponse,
@@ -24,7 +23,7 @@ router = APIRouter()
 )
 async def get_source_apps(
     current_user: CurrentUser,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
     skip: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = settings.source_apps_per_page,
 ):
@@ -39,7 +38,7 @@ async def get_source_apps(
 async def create_source_app(
     data: SourceAppRequest,
     current_user: CurrentUser,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     return await service.create_source_app(data, current_user, db)
 
@@ -51,7 +50,7 @@ async def create_source_app(
 async def delete_source_app(
     source_app_id: int,
     current_user: CurrentUser,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
 ):
     return await service.delete_source_app(source_app_id, current_user, db)
 
@@ -64,7 +63,7 @@ async def delete_source_app(
 async def get_source_app_batches(
     current_user: CurrentUser,
     source_app_id: int,
-    db: Annotated[Session, Depends(get_db)],
+    db: DBSessionDep,
     skip: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = settings.batches_per_page,
 ):
