@@ -6,7 +6,7 @@ from app.core.config import settings
 from app.db.core import DBSessionDep
 from app.domains.source_app import service
 from app.domains.source_app.schemas import (
-    PaginatedBatchResponse,
+    PaginatedBatchesResponse,
     PaginatedSourceAppResponse,
     SourceAppModel,
     SourceAppRequest,
@@ -57,7 +57,7 @@ async def delete_source_app(
 
 @router.get(
     "/{source_app_id}/batches",
-    response_model=PaginatedBatchResponse,
+    response_model=PaginatedBatchesResponse,
     status_code=status.HTTP_200_OK,
 )
 async def get_source_app_batches(

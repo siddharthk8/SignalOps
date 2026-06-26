@@ -87,7 +87,9 @@ class AIStage:
 
         # save ai_incidents in db
         await self.ai_analysis_repo.save_ai_analysis(
-            analyzed_incidents=analyzed_incidents, batch_id=self.batch_orm.id
+            analyzed_incidents=analyzed_incidents,
+            incidents=incidents,
+            batch_id=self.batch_orm.id,
         )
 
         return analyzed_incidents

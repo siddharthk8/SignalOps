@@ -31,11 +31,20 @@ class BatchRepository:
     ) -> Sequence[Batch]:
         query = await self.db.execute(
             select(Batch)
-            .options(selectinload(Batch.ai_analysis))
+            .options(selectinload(Batch.ai_analyses))
             .where(Batch.source_app_id == source_app_id)
             .order_by(Batch.created_at.desc())
             .offset(skip)
             .limit(limit)
         )
         result = query.scalars().all()
+        return result
+
+    async def get(self, batch_id: int):
+        query = await self.db.execute(
+            select(Batch)
+            .options(selectinload(Batch.source_app), selectinload(Batch.ai_analyses))
+            .where(Batch.id == batch_id)
+        )
+        result = query.scalar_one_or_none()
         return result

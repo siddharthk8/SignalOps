@@ -1,13 +1,31 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from collections.abc import Sequence
 
-from app.db.models.entity import Entity
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.db.models.event import Event
+from app.db.repositories.entity import EntityRepository
 from app.schemas.event import SemanticEvent
 
 
 class EventRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
+
+    async def filter_for_response(self, batch_id: int) -> Sequence[Event]:
+        query = await self.db.execute(
+            select(Event)
+            .options(selectinload(Event.entity), selectinload(Event.log))
+            .where(Event.batch_id == batch_id)
+        )
+        result = query.scalars().all()
+        return result
+
+    async def save_signal_id(self, signal_id: int, event_ids: list[int]):
+        await self.db.execute(
+            update(Event).where(Event.id.in_(event_ids)).values(signal_id=signal_id)
+        )
 
     async def save_events(
         self,
@@ -16,6 +34,7 @@ class EventRepository:
         events: list[SemanticEvent],
     ) -> None:
         db_events: list[Event] = []
+        entity_repo = EntityRepository(self.db)
 
         for event in events:
             event_payload = event.model_dump(
@@ -36,13 +55,8 @@ class EventRepository:
             entity_id = None
 
             if any(value is not None for _, value in event.entity):
-                entity_payload = event.entity.model_dump(exclude={"id", "ip_address"})
-                entity_payload["ip_address"] = str(event.entity.ip_address)
-
-                entity = Entity(**entity_payload)
-                self.db.add(entity)
-                await self.db.flush()
-                entity_id = entity.id
+                entity_orm = await entity_repo.save(event.entity)
+                entity_id = entity_orm.id
 
             db_event = Event(
                 batch_id=batch_id,

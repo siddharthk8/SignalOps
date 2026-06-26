@@ -18,6 +18,7 @@ SignalDescriptionField = Annotated[
 
 
 class Signal(BaseModel):
+    id: int | None = None  # db
     signal_type: ALL_SIGNAL_TYPES
     confidence: ConfidenceField
     supporting_events: list[SemanticEvent]

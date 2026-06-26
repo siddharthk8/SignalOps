@@ -1,9 +1,12 @@
 import json
+from typing import cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.ai_analysis import AIAnalysis
+from app.db.repositories.incident import IncidentRepository
 from app.schemas.analysis import IncidentAnalysis
+from app.schemas.incident import Incident
 
 
 class AIAnalysisRepository:
@@ -11,7 +14,11 @@ class AIAnalysisRepository:
         self.db = db
 
     async def save_ai_analysis(
-        self, *, analyzed_incidents: list[IncidentAnalysis], batch_id: int
+        self,
+        *,
+        analyzed_incidents: list[IncidentAnalysis],
+        incidents: list[Incident],
+        batch_id: int,
     ) -> None:
         db_ai_analysis_orms: list[AIAnalysis] = []
 
@@ -27,6 +34,13 @@ class AIAnalysisRepository:
             db_ai_analysis_orms.append(ai_analysis_orm)
             self.db.add(ai_analysis_orm)
 
+        incident_repo = IncidentRepository(self.db)
+
         await self.db.flush()
         for i, orm in enumerate(db_ai_analysis_orms):
             analyzed_incidents[i].id = orm.id
+            if i < len(incidents):
+                # This condition fails when there is no incident - so we generated a default analyzed_incident
+                await incident_repo.save_ai_analysis_id(
+                    cast(int, incidents[i].id), orm.id
+                )

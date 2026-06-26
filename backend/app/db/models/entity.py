@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Integer, String
@@ -17,7 +16,7 @@ class Entity(Base):
     __tablename__ = "entity"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user: Mapped[datetime | None] = mapped_column(String(100), nullable=True)
+    user: Mapped[str | None] = mapped_column(String(100), nullable=True)
     email: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,

@@ -30,7 +30,7 @@ class PaginatedSourceAppResponse(_BaseModel):
     has_more: bool
 
 
-class PaginatedBatchResponse(_BaseModel):
+class PaginatedBatchesResponse(_BaseModel):
     batches: list[Batch]
     total: int
     skip: int

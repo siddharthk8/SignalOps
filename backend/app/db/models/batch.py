@@ -35,7 +35,7 @@ class Batch(Base):
     events: Mapped[list[Event]] = relationship(
         "Event", passive_deletes=True, back_populates="batch"
     )
-    ai_analysis: Mapped[AIAnalysis] = relationship(
+    ai_analyses: Mapped[list[AIAnalysis]] = relationship(
         "AIAnalysis", passive_deletes=True, back_populates="batch"
     )
 

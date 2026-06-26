@@ -59,7 +59,7 @@ class AIAnalysis(Base):
         "Incident", passive_deletes=True, back_populates="ai_analysis"
     )
     batch: Mapped[Batch] = relationship(
-        "Batch", passive_deletes=True, back_populates="ai_analysis"
+        "Batch", passive_deletes=True, back_populates="ai_analyses"
     )
 
     # datetime
