@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domains.users.dependencies import CurrentUser
@@ -7,11 +8,20 @@ from app.domains.users.schemas import UserPrivate, UserUpdate
 async def update_current_user(
     data: UserUpdate, current_user: CurrentUser, db: AsyncSession
 ) -> UserPrivate:
+    has_changes = False
     if data.first_name is not None:
+        has_changes = True
         current_user.first_name = data.first_name
 
     if data.last_name is not None:
+        has_changes = True
         current_user.last_name = data.last_name
+
+    if has_changes is False:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No fields provided for update.",
+        )
 
     response = UserPrivate.model_validate(current_user)
 
