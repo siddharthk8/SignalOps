@@ -1,5 +1,6 @@
 import asyncio
 import sys
+from dataclasses import dataclass
 
 # Fix for Windows compatibility with async PostgreSQL (psycopg) and Alembic
 # Forces SelectorEventLoop instead of ProactorEventLoop
@@ -118,12 +119,23 @@ async def client(
     app.dependency_overrides.clear()
 
 
+@dataclass
+class TestUser:
+    first_name: str = "First"
+    last_name: str = "Last"
+    email: str = "test@example.com"
+    password: str = "String123"
+
+
+DEFAULT_USER = TestUser()
+
+
 async def create_test_user(
     client: AsyncClient,
-    first_name: str = "First",
-    last_name: str = "Last",
-    email: str = "test@example.com",
-    password: str = "String123",
+    first_name: str = DEFAULT_USER.first_name,
+    last_name: str = DEFAULT_USER.last_name,
+    email: str = DEFAULT_USER.email,
+    password: str = DEFAULT_USER.password,
 ) -> dict[str, Any]:
     response = await client.post(
         "/api/v1/users",

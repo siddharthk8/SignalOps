@@ -96,5 +96,5 @@ class UserPasswordChange(PasswordValidationMixin):
     @model_validator(mode="after")
     def validate_password_change(self):
         if self.current_password == self.new_password:
-            raise ValueError("New password must be different from current password")
+            raise ValueError("New password must be different from current password.")
         return self
