@@ -18,7 +18,9 @@ async def create_user(data: UserCreate, db: AsyncSession) -> UserPrivate:
         )
 
     await user_repo.create_user(data, password_hash=get_password_hash(data.password))
-    response = UserPrivate(**data.model_dump(exclude={"password"}), is_active=True)
+    response = UserPrivate(
+        **data.model_dump(exclude={"password"}), is_active=True, profile_image_path=None
+    )
 
     await db.commit()
     return response
