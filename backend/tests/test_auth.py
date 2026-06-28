@@ -158,3 +158,33 @@ async def test_forgot_and_reset_password_success(client: AsyncClient):
             data["message"]
             == "Your password has been reset successfully. You can now log in using your new password."
         )
+
+
+@pytest.mark.anyio
+async def test_forgot_password_reach_threshold(client: AsyncClient):
+    await create_test_user(client)
+
+    with patch(
+        "app.domains.auth.service.password.send_reset_password_email",
+        new_callable=AsyncMock,
+    ) as _:
+        response = await client.post(
+            "/api/v1/auth/forgot-password",
+            json={"email": DEFAULT_USER.email},
+        )
+
+        assert response.status_code == 202
+        data = response.json()
+        assert (
+            data["message"]
+            == "If an account exists with this email address, you will receive password reset instructions shortly."
+        )
+
+        response = await client.post(
+            "/api/v1/auth/forgot-password",
+            json={"email": DEFAULT_USER.email},
+        )
+
+        assert response.status_code == 429
+        data = response.json()
+        assert data["message"] == "Too many password reset requests."
