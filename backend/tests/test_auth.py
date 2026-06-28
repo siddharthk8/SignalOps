@@ -1,3 +1,5 @@
+from unittest.mock import AsyncMock, patch
+
 import pytest
 from httpx import AsyncClient
 
@@ -114,3 +116,45 @@ async def test_logout_all_success(client: AsyncClient):
     )
 
     assert response.status_code == 204
+
+
+@pytest.mark.anyio
+async def test_forgot_and_reset_password_success(client: AsyncClient):
+    await create_test_user(client)
+
+    with patch(
+        "app.domains.auth.service.password.send_reset_password_email",
+        new_callable=AsyncMock,
+    ) as mock_send:
+        response = await client.post(
+            "/api/v1/auth/forgot-password",
+            json={"email": DEFAULT_USER.email},
+        )
+
+        assert response.status_code == 202
+        data = response.json()
+        assert (
+            data["message"]
+            == "If an account exists with this email address, you will receive password reset instructions shortly."
+        )
+
+        mock_send.assert_awaited_once()
+        call_kwargs = mock_send.call_args.kwargs
+        assert call_kwargs["to_email"] == DEFAULT_USER.email
+        assert call_kwargs["first_name"] == DEFAULT_USER.first_name
+        assert "token" in call_kwargs
+
+        token = call_kwargs["token"]
+        new_password = "String1234"
+
+        response = await client.post(
+            "/api/v1/auth/reset-password",
+            json={"token": token, "new_password": new_password},
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert (
+            data["message"]
+            == "Your password has been reset successfully. You can now log in using your new password."
+        )
