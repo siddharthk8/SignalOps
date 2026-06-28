@@ -230,8 +230,6 @@ INPUT LOGS
                     },
                 )
 
-                # print("AI RESPONSE 1 : ", response)
-
                 content = response["output"]["message"]["content"]
 
                 tool_blocks = [

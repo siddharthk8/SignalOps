@@ -223,8 +223,6 @@ INPUT INCIDENTS:
                     },
                 )
 
-                # print("AI RESPONSE 2 : ", response)
-
                 content = response["output"]["message"]["content"]
 
                 tool_blocks = [
