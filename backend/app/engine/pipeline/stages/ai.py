@@ -52,16 +52,16 @@ class AIStage:
     async def run(
         self, incidents: list[Incident], source_app: SourceAppType
     ) -> list[IncidentAnalysis]:
-        analyzed_incidents: list[IncidentAnalysis] = []
+        ai_analyses: list[IncidentAnalysis] = []
 
         await self.ai_incident_analyzer.analyze(
             incidents=incidents,
             source_app=source_app,
-            analyzed_incidents=analyzed_incidents,
+            ai_analyses=ai_analyses,
         )
 
-        if len(analyzed_incidents) == 0:
-            analyzed_incidents = [
+        if len(ai_analyses) == 0:
+            ai_analyses = [
                 IncidentAnalysis(
                     summary=(
                         "No significant operational issues detected. "
@@ -84,12 +84,12 @@ class AIStage:
                     incident_type=IncidentType.INFORMATIONAL,
                 )
             ]
+        else:
+            # save ai_incidents in db
+            await self.ai_analysis_repo.save(
+                batch_id=self.batch_orm.id,
+                incidents=incidents,
+                ai_analyses=ai_analyses,
+            )
 
-        # save ai_incidents in db
-        await self.ai_analysis_repo.save_ai_analysis(
-            analyzed_incidents=analyzed_incidents,
-            incidents=incidents,
-            batch_id=self.batch_orm.id,
-        )
-
-        return analyzed_incidents
+        return ai_analyses

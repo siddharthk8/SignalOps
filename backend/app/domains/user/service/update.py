@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.users.dependencies import CurrentUser
-from app.domains.users.schemas import UserPrivate, UserUpdate
+from app.domains.user.dependencies import CurrentUser
+from app.domains.user.schemas import UserPrivate, UserUpdate
 
 
 async def update_current_user(

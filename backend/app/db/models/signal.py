@@ -8,16 +8,15 @@ from sqlalchemy import CheckConstraint, DateTime, Enum, Float, ForeignKey, Integ
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
+from app.db.models.event_signal import EventSignal
 from app.enums.signal import AllSignalType
 
 if TYPE_CHECKING:
     from app.db.models.entity import Entity
-    from app.db.models.event import Event
-    from app.db.models.incident import Incident
 
 
 class Signal(Base):
-    __tablename__ = "signal"
+    __tablename__ = "signals"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     signal_type: Mapped[
@@ -33,21 +32,15 @@ class Signal(Base):
 
     # FK
     entity_id: Mapped[int | None] = mapped_column(
-        ForeignKey("entity.id", ondelete="CASCADE"), nullable=True
-    )
-    incident_id: Mapped[int | None] = mapped_column(
-        ForeignKey("incident.id", ondelete="CASCADE"), nullable=True, index=True
+        ForeignKey("entities.id", ondelete="CASCADE"), nullable=True
     )
 
     # relationships
-    events: Mapped[list[Event]] = relationship(
-        "Event", passive_deletes=True, back_populates="signal"
-    )
-    entity: Mapped[Entity] = relationship(
+    entity: Mapped[Entity | None] = relationship(
         "Entity", passive_deletes=True, back_populates="signals"
     )
-    incident: Mapped[Incident] = relationship(
-        "Incident", passive_deletes=True, back_populates="signals"
+    event_signals: Mapped[list[EventSignal]] = relationship(
+        "EventSignal", passive_deletes=True, back_populates="signal"
     )
 
     # datetime

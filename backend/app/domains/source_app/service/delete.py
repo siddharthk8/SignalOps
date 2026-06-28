@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.source_app import SourceAppRepository
-from app.domains.users.dependencies import CurrentUser
+from app.domains.user.dependencies import CurrentUser
 
 
 async def delete_source_app(
@@ -22,5 +22,5 @@ async def delete_source_app(
             detail="Not Authorized to perform this action.",
         )
 
-    await source_app_repo.delete_source_app(source_app_orm)
+    await source_app_repo.remove_source_app(source_app_orm)
     await db.commit()

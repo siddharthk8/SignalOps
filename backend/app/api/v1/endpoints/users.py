@@ -1,9 +1,9 @@
 from fastapi import APIRouter, UploadFile, status
 
 from app.db.core import DBSessionDep
-from app.domains.users import service
-from app.domains.users.dependencies import CurrentUser
-from app.domains.users.schemas import (
+from app.domains.user import service
+from app.domains.user.dependencies import CurrentUser
+from app.domains.user.schemas import (
     UserCreate,
     UserPasswordChange,
     UserPrivate,

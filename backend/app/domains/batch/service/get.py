@@ -3,9 +3,11 @@ from fastapi import HTTPException, status
 from app.db.core import DBSessionDep
 from app.db.repositories.batch import BatchRepository
 from app.db.repositories.event import EventRepository
+from app.db.repositories.event_signal import EventSignalRepository
 from app.db.repositories.incident import IncidentRepository
 from app.db.repositories.signal import SignalRepository
-from app.domains.batches.schemas import (
+from app.db.repositories.signal_incident import SignalIncidentRepository
+from app.domains.batch.schemas import (
     AIAnalysisResponse,
     EntityResponse,
     EventResponse,
@@ -14,14 +16,14 @@ from app.domains.batches.schemas import (
     LogResponse,
     SignalResponse,
 )
-from app.domains.users.dependencies import CurrentUser
+from app.domains.user.dependencies import CurrentUser
 
 
 async def get_batch(batch_id: int, current_user: CurrentUser, db: DBSessionDep):
     batch_repo = BatchRepository(db)
     event_repo = EventRepository(db)
-    signal_repo = SignalRepository(db)
-    incident_repo = IncidentRepository(db)
+    event_signal_repo = EventSignalRepository(db)
+    signal_incident_repo = SignalIncidentRepository(db)
 
     batch = await batch_repo.get(batch_id)
 
@@ -43,13 +45,18 @@ async def get_batch(batch_id: int, current_user: CurrentUser, db: DBSessionDep):
     signals = []
     incidents = []
 
-    unique_signal_ids = {e.signal_id for e in events if e.signal_id}
-    if len(unique_signal_ids) > 0:
-        signals = await signal_repo.filter_for_response(unique_signal_ids)
-        unique_incident_ids = {s.incident_id for s in signals if s.incident_id}
+    event_ids = {e.id for e in events}
+    if len(event_ids) > 0:
+        event_signals = await event_signal_repo.filter_for_response(event_ids)
+        u_signal_ids = {o.signal_id for o in event_signals}
+        signals = await SignalRepository(db).filter_for_response(u_signal_ids)
 
-        if len(unique_incident_ids) > 0:
-            incidents = await incident_repo.filter_for_response(unique_signal_ids)
+        if len(signals) > 0:
+            signal_incidents = await signal_incident_repo.filter_for_response(
+                u_signal_ids
+            )
+            u_incident_ids = {o.incident_id for o in signal_incidents}
+            incidents = await IncidentRepository(db).filter_for_response(u_incident_ids)
 
     all_entities = [EntityResponse.model_validate(e.entity) for e in events if e.entity]
     seen = set()

@@ -14,11 +14,10 @@ from app.enums.event import AllEventType, ParsingMethodType
 if TYPE_CHECKING:
     from app.db.models.batch import Batch
     from app.db.models.entity import Entity
-    from app.db.models.signal import Signal
 
 
 class Event(Base):
-    __tablename__ = "event"
+    __tablename__ = "events"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     event_type: Mapped[
@@ -48,16 +47,13 @@ class Event(Base):
 
     # FK
     log_id: Mapped[int] = mapped_column(
-        ForeignKey("log.id", ondelete="CASCADE"), nullable=False, index=True
+        ForeignKey("logs.id", ondelete="CASCADE"), nullable=False, index=True
     )
     batch_id: Mapped[int] = mapped_column(
-        ForeignKey("batch.id", ondelete="CASCADE"), nullable=False, index=True
-    )
-    signal_id: Mapped[int | None] = mapped_column(
-        ForeignKey("signal.id", ondelete="CASCADE"), nullable=True, index=True
+        ForeignKey("batches.id", ondelete="CASCADE"), nullable=False, index=True
     )
     entity_id: Mapped[int | None] = mapped_column(
-        ForeignKey("entity.id", ondelete="CASCADE"), nullable=True, index=True
+        ForeignKey("entities.id", ondelete="CASCADE"), nullable=True, index=True
     )
 
     # relationships
@@ -67,11 +63,8 @@ class Event(Base):
     log: Mapped[Batch] = relationship(
         "Log", passive_deletes=True, back_populates="event"
     )
-    entity: Mapped[Entity] = relationship(
+    entity: Mapped[Entity | None] = relationship(
         "Entity", passive_deletes=True, back_populates="event"
-    )
-    signal: Mapped[Signal] = relationship(
-        "Signal", passive_deletes=True, back_populates="events"
     )
 
     # datetime

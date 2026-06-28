@@ -13,7 +13,7 @@ class RefreshTokenRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create_refresh_token(self, refresh_token_obj: RefreshToken):
+    async def save_refresh_token(self, refresh_token_obj: RefreshToken):
         self.db.add(ORMRefreshToken(**refresh_token_obj.model_dump()))
         await self.db.flush()
 

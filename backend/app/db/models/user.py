@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "users"
 
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid,
@@ -43,7 +43,7 @@ class User(Base):
 
     # relationships
     source_apps: Mapped[list[SourceApp]] = relationship(
-        "SourceApp", passive_deletes=True, back_populates="creator"
+        "SourceApp", passive_deletes=True, back_populates="user"
     )
     refresh_tokens: Mapped[list[RefreshToken]] = relationship(
         "RefreshToken", passive_deletes=True, back_populates="user"

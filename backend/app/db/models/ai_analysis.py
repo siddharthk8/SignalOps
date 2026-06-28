@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 
 class AIAnalysis(Base):
-    __tablename__ = "ai_analysis"
+    __tablename__ = "ai_analyses"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     summary: Mapped[str] = mapped_column(String(1000), nullable=False)
@@ -51,11 +51,14 @@ class AIAnalysis(Base):
 
     # FK
     batch_id: Mapped[int] = mapped_column(
-        ForeignKey("batch.id", ondelete="CASCADE"), nullable=False, index=True
+        ForeignKey("batches.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    incident_id: Mapped[int] = mapped_column(
+        ForeignKey("incidents.id", ondelete="CASCADE"), nullable=True, index=True
     )
 
     # relationships
-    incidents: Mapped[list[Incident]] = relationship(
+    incident: Mapped[Incident] = relationship(
         "Incident", passive_deletes=True, back_populates="ai_analysis"
     )
     batch: Mapped[Batch] = relationship(

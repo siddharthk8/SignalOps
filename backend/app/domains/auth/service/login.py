@@ -12,7 +12,7 @@ from app.domains.auth.utils import (
     generate_refresh_token,
     verify_password,
 )
-from app.domains.users.utils import get_user
+from app.domains.user.utils import get_user
 
 
 async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
@@ -31,7 +31,7 @@ async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
 
     rt = create_refresh_token_obj(user, refresh_token)
     rt_repo = RefreshTokenRepository(db)
-    await rt_repo.create_refresh_token(rt)
+    await rt_repo.save_refresh_token(rt)
 
     await db.commit()
     return TokenResponse(access_token=access_token, refresh_token=refresh_token)

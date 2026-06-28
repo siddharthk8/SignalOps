@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, StringConstraints
 
-from app.domains.users.schemas import PasswordField, PasswordValidationMixin
+from app.domains.user.schemas import PasswordField, PasswordValidationMixin
 
 
 class TokenResponse(BaseModel):

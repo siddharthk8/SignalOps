@@ -19,6 +19,6 @@ class CorrelationStage:
         incidents = self.correlator.process(signals=signals, source_app=source_app)
 
         # save incidents in db
-        await self.incident_repo.save_incidents(incidents=incidents)
+        await self.incident_repo.save(incidents=incidents)
 
         return incidents

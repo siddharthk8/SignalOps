@@ -24,7 +24,7 @@ async def forgot_password(
 
     user = await user_repo.get_by_email(data.email)
     if user:
-        await password_reset_token_repo.delete_all(user.id)
+        await password_reset_token_repo.remove_all(user.id)
 
         token = generate_reset_token()
         token_hash = get_reset_token_hash(token)
@@ -32,7 +32,7 @@ async def forgot_password(
             minutes=settings.reset_token_expire_minutes,
         )
 
-        await password_reset_token_repo.create(
+        await password_reset_token_repo.save(
             token_hash=token_hash, user_id=user.id, expires_at=expires_at
         )
         await db.commit()

@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, status
 from app.db.core import DBSessionDep
 from app.db.repositories.batch import BatchRepository
 from app.db.repositories.source_app import SourceAppRepository
-from app.domains.users.dependencies import CurrentUser
+from app.domains.user.dependencies import CurrentUser
 from app.engine.pipeline.orchestration import LogPipeline
 from app.schemas.analysis import IncidentAnalysis
 from app.schemas.log import LogBatchRequest
@@ -35,7 +35,7 @@ async def ingest_logs(
         )
 
     # create batch
-    batch_orm = await BatchRepository(db).create_and_get_batch(source_app_orm.id)
+    batch_orm = await BatchRepository(db).save_and_get_batch(source_app_orm.id)
 
     pipeline = LogPipeline(db, batch_orm, source_app_orm)
     return await pipeline.process(data.logs)

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class RefreshToken(Base):
-    __tablename__ = "refresh_token"
+    __tablename__ = "refresh_tokens"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     token_hash: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
@@ -22,7 +22,7 @@ class RefreshToken(Base):
 
     # FK
     user_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # relationships

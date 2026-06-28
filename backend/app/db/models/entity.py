@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class Entity(Base):
-    __tablename__ = "entity"
+    __tablename__ = "entities"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user: Mapped[str | None] = mapped_column(String(100), nullable=True)

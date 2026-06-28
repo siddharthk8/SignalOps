@@ -1,12 +1,12 @@
 from collections.abc import Sequence
 from typing import cast
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.incident import Incident as ORMIncident
-from app.db.models.incident_entities import IncidentEntities
-from app.db.repositories.signal import SignalRepository
+from app.db.repositories.entity_incident import EntityIncidentRepository
+from app.db.repositories.signal_incident import SignalIncidentRepository
 from app.schemas.incident import Incident
 
 
@@ -21,19 +21,12 @@ class IncidentRepository:
         result = query.scalars().all()
         return result
 
-    async def save_ai_analysis_id(self, incident_id: int, ai_analysis_id: int):
-        await self.db.execute(
-            update(ORMIncident)
-            .where(ORMIncident.id == incident_id)
-            .values(ai_analysis_id=ai_analysis_id)
-        )
-
-    async def save_incidents(
+    async def save(
         self,
         *,
         incidents: list[Incident],
     ) -> None:
-        orm_incidents: list[ORMIncident] = []
+        incident_models: list[ORMIncident] = []
 
         for incident in incidents:
             incident_payload = incident.model_dump(
@@ -48,31 +41,32 @@ class IncidentRepository:
             incident_payload["severity"] = incident.severity.value
             incident_payload["status"] = incident.status.value
 
-            orm_incident = ORMIncident(
-                **incident_payload,
-            )
+            incident_model = ORMIncident(**incident_payload)
+            incident_models.append(incident_model)
 
-            orm_incidents.append(orm_incident)
-            self.db.add(orm_incident)
-            await self.db.flush()
-
-            for entity in incident.entities:
-                self.db.add(
-                    IncidentEntities(
-                        entity_id=entity.id,
-                        incident_id=orm_incident.id,
-                    )
-                )
+            self.db.add(incident_model)
 
         await self.db.flush()
 
-        signal_repo = SignalRepository(self.db)
+        entity_incident_repo = EntityIncidentRepository(self.db)
+        signal_incident_repo = SignalIncidentRepository(self.db)
 
-        for i, orm_incident in enumerate(orm_incidents):
+        for i, i_model in enumerate(incident_models):
             # store ids of incidents.
-            incidents[i].id = orm_incident.id
+            incidents[i].id = i_model.id
 
-            # store id in signals.
-            related_signals = incidents[i].related_signals
-            signal_ids = [cast(int, s.id) for s in related_signals]
-            await signal_repo.save_incident_id(orm_incident.id, signal_ids)
+            # mapping entities with incidents
+            for entity in incidents[i].entities:
+                await entity_incident_repo.save(
+                    entity_id=cast(int, entity.id),
+                    incident_id=i_model.id,
+                )
+
+            # mapping signals with incidents
+            for signal in incidents[i].related_signals:
+                await signal_incident_repo.save(
+                    signal_id=cast(int, signal.id),
+                    incident_id=i_model.id,
+                )
+
+        await self.db.flush()

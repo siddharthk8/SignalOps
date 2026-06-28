@@ -5,8 +5,8 @@ from app.db.repositories.password_reset_token import PasswordResetTokenRepositor
 from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.db.repositories.user import UserRepository
 from app.domains.auth.utils import get_password_hash, verify_password
-from app.domains.users.dependencies import CurrentUser
-from app.domains.users.schemas import UserPasswordChange
+from app.domains.user.dependencies import CurrentUser
+from app.domains.user.schemas import UserPasswordChange
 
 
 async def change_password(
@@ -32,6 +32,6 @@ async def change_password(
     # and successfully changes it through the normal flow, any pending reset tokens
     # should be invalidated to prevent reuse or confusion.
     password_reset_token_repo = PasswordResetTokenRepository(db)
-    await password_reset_token_repo.delete_all(current_user.id)
+    await password_reset_token_repo.remove_all(current_user.id)
 
     await db.commit()

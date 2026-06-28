@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status
 
 from app.db.core import DBSessionDep
-from app.domains.batches import service
-from app.domains.batches.schemas import GetBatch
-from app.domains.users.dependencies import CurrentUser
+from app.domains.batch import service
+from app.domains.batch.schemas import GetBatch
+from app.domains.user.dependencies import CurrentUser
 
 router = APIRouter()
 

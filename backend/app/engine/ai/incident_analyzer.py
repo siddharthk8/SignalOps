@@ -30,7 +30,7 @@ class AIIncidentAnalyzer:
         *,
         incidents: list[Incident],
         source_app: SourceAppType,
-        analyzed_incidents: list[IncidentAnalysis],
+        ai_analyses: list[IncidentAnalysis],
     ) -> None:
         if len(incidents) == 0:
             return
@@ -223,6 +223,8 @@ INPUT INCIDENTS:
                     },
                 )
 
+                # print("AI RESPONSE 2 : ", response)
+
                 content = response["output"]["message"]["content"]
 
                 tool_blocks = [
@@ -260,7 +262,7 @@ INPUT INCIDENTS:
 
                     original_incident = incidents[idx]
 
-                    analyzed_incidents.append(
+                    ai_analyses.append(
                         IncidentAnalysis(
                             summary=item.get(
                                 "summary",

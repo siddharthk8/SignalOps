@@ -16,13 +16,13 @@ if TYPE_CHECKING:
 
 
 class Batch(Base):
-    __tablename__ = "batch"
+    __tablename__ = "batches"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
     # FK
     source_app_id: Mapped[int] = mapped_column(
-        ForeignKey("source_app.id", ondelete="CASCADE"), nullable=False, index=True
+        ForeignKey("source_apps.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # relationships

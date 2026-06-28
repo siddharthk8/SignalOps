@@ -2,13 +2,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.batch import BatchRepository
 from app.db.repositories.source_app import SourceAppRepository
-from app.domains.batches.schemas import Batch
+from app.domains.batch.schemas import Batch
 from app.domains.source_app.schemas import (
     PaginatedBatchesResponse,
     PaginatedSourceAppResponse,
     SourceAppModel,
 )
-from app.domains.users.dependencies import CurrentUser
+from app.domains.user.dependencies import CurrentUser
 
 
 async def get_source_app_batches(

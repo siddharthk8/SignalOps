@@ -45,23 +45,18 @@ class EventResponse(_BaseModel):
     parsing_method: ParsingMethodType
     log_id: int
     entity_id: int | None
-    signal_id: int | None
 
 
 class SignalResponse(_BaseModel):
     id: int
     signal_type: StrEnum
     confidence: float
-    entity_id: int | None
-    incident_id: int | None
     triggered_at: datetime
     entity_id: int | None
-    incident_id: int | None
 
 
 class IncidentResponse(_BaseModel):
     id: int
-    ai_analysis_id: int | None
     incident_type: IncidentType
     severity: Severity
     status: IncidentStatus
@@ -75,6 +70,7 @@ class IncidentResponse(_BaseModel):
 
 class AIAnalysisResponse(_BaseModel):
     id: int
+    incident_id: int | None
     summary: str
     root_cause: str
     business_impact: str

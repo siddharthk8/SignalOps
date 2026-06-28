@@ -11,7 +11,7 @@ class BatchRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create_and_get_batch(self, source_app_id: int) -> Batch:
+    async def save_and_get_batch(self, source_app_id: int) -> Batch:
         batch = Batch(source_app_id=source_app_id)
         self.db.add(batch)
         await self.db.flush()

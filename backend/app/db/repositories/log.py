@@ -24,7 +24,7 @@ class LogRepository:
 
         return persisted_logs
 
-    async def save_logs(self, *, batch_id: int, logs: LogsField) -> list[PersistedLog]:
+    async def save(self, *, batch_id: int, logs: LogsField) -> list[PersistedLog]:
         data: list[Log] = []
 
         for log in logs:

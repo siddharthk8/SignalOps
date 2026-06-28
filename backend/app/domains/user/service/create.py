@@ -5,7 +5,7 @@ from app.db.repositories.user import UserRepository
 from app.domains.auth.utils import (
     get_password_hash,
 )
-from app.domains.users.schemas import UserCreate, UserPrivate
+from app.domains.user.schemas import UserCreate, UserPrivate
 
 
 async def create_user(data: UserCreate, db: AsyncSession) -> UserPrivate:
@@ -17,7 +17,7 @@ async def create_user(data: UserCreate, db: AsyncSession) -> UserPrivate:
             detail="User with this email already exists.",
         )
 
-    await user_repo.create_user(data, password_hash=get_password_hash(data.password))
+    await user_repo.save_user(data, password_hash=get_password_hash(data.password))
     response = UserPrivate(
         **data.model_dump(exclude={"password"}), is_active=True, profile_image_path=None
     )

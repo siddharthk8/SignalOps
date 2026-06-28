@@ -21,7 +21,7 @@ class PasswordResetTokenRepository:
         result = query.scalar_one_or_none()
         return result
 
-    async def create(self, token_hash: str, user_id: UUID, expires_at: datetime):
+    async def save(self, token_hash: str, user_id: UUID, expires_at: datetime):
         self.db.add(
             PasswordResetToken(
                 token_hash=token_hash, user_id=user_id, expires_at=expires_at
@@ -29,7 +29,7 @@ class PasswordResetTokenRepository:
         )
         await self.db.flush()
 
-    async def delete_all(self, user_id: UUID):
+    async def remove_all(self, user_id: UUID):
         await self.db.execute(
             delete(PasswordResetToken).where(PasswordResetToken.user_id == user_id)
         )

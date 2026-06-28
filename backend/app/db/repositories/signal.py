@@ -1,11 +1,11 @@
 from collections.abc import Sequence
 from typing import cast
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.signal import Signal as ORMSignal
-from app.db.repositories.event import EventRepository
+from app.db.repositories.event_signal import EventSignalRepository
 from app.schemas.signal import Signal
 
 
@@ -18,15 +18,8 @@ class SignalRepository:
         result = query.scalars().all()
         return result
 
-    async def save_incident_id(self, incident_id: int, signal_ids: list[int]):
-        await self.db.execute(
-            update(ORMSignal)
-            .where(ORMSignal.id.in_(signal_ids))
-            .values(incident_id=incident_id)
-        )
-
-    async def save_signals(self, *, signals: list[Signal]) -> None:
-        db_signals: list[ORMSignal] = []
+    async def save(self, *, signals: list[Signal]) -> None:
+        signal_models: list[ORMSignal] = []
 
         for signal in signals:
             signal_payload = signal.model_dump(
@@ -36,20 +29,21 @@ class SignalRepository:
             if signal.entity:
                 signal_payload["entity_id"] = signal.entity.id
 
-            orm_signal = ORMSignal(
-                **signal_payload,
-            )
+            signal_model = ORMSignal(**signal_payload)
+            signal_models.append(signal_model)
 
-            db_signals.append(orm_signal)
-            self.db.add(orm_signal)
+            self.db.add(signal_model)
+
+        # Flushed to get db ids in signal_models
         await self.db.flush()
+        event_signal_repo = EventSignalRepository(self.db)
 
-        event_repo = EventRepository(self.db)
-
-        for i, signal_orm in enumerate(db_signals):
+        for i, s_model in enumerate(signal_models):
             # store ids of signals.
-            signals[i].id = signal_orm.id
+            signals[i].id = s_model.id
 
-            supporting_events = signals[i].supporting_events
-            event_ids = [cast(int, e.id) for e in supporting_events]
-            await event_repo.save_signal_id(signal_orm.id, event_ids)
+            # mapping events with signals
+            for event in signal.supporting_events:
+                await event_signal_repo.save(cast(int, event.id), s_model.id)
+
+        await self.db.flush()

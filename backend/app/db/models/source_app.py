@@ -2,9 +2,9 @@ from __future__ import (
     annotations,  # delays evaluation of type hints, prevents circular import issues
 )
 
-import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -20,7 +20,7 @@ if TYPE_CHECKING:  # this block runs only for type checkers (mypy/IDE), not at r
 
 
 class SourceApp(Base):
-    __tablename__ = "source_app"
+    __tablename__ = "source_apps"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
@@ -35,14 +35,14 @@ class SourceApp(Base):
     )
 
     # FK
-    user_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE"),
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,  # FKs are not indexed by default. So we need to index imp FKs.
     )
 
     # relationships (these works only at ORM/Python level)
-    creator: Mapped[User] = relationship(
+    user: Mapped[User] = relationship(
         "User", passive_deletes=True, back_populates="source_apps"
     )
     batches: Mapped[list[Batch]] = relationship(

@@ -5,7 +5,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.user import User
-from app.domains.users.schemas import UserCreate
+from app.domains.user.schemas import UserCreate
 
 
 class UserRepository:
@@ -30,14 +30,14 @@ class UserRepository:
         result = query.scalar_one_or_none()
         return result is not None
 
-    async def create_user(self, user: UserCreate, password_hash: str):
+    async def save_user(self, user: UserCreate, password_hash: str):
         db_user = User(**user.model_dump(exclude={"id", "password"}))
         db_user.password_hash = password_hash
         self.db.add(db_user)
         await self.db.flush()
         user.id = db_user.id
 
-    async def delete_user(self, user: User):
+    async def remove_user(self, user: User):
         await self.db.delete(user)
 
     async def increment_token_version(self, user: User):

@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 
 
 class PasswordResetToken(Base):
-    __tablename__ = "password_reset_token"
+    __tablename__ = "password_reset_tokens"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
 
     # FK
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
 
     # relationships

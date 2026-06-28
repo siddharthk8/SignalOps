@@ -12,7 +12,7 @@ class SourceAppRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create_source_app(
+    async def save_source_app(
         self, *, user_id: UUID, name: str, app_type: SourceAppType
     ) -> SourceApp:
         source_app_orm = SourceApp(
@@ -49,5 +49,5 @@ class SourceAppRepository:
         result = query.scalars().all()
         return result
 
-    async def delete_source_app(self, source_app: SourceApp):
+    async def remove_source_app(self, source_app: SourceApp):
         await self.db.delete(source_app)

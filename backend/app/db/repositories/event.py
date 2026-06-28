@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -22,18 +22,13 @@ class EventRepository:
         result = query.scalars().all()
         return result
 
-    async def save_signal_id(self, signal_id: int, event_ids: list[int]):
-        await self.db.execute(
-            update(Event).where(Event.id.in_(event_ids)).values(signal_id=signal_id)
-        )
-
-    async def save_events(
+    async def save(
         self,
         *,
         batch_id: int,
         events: list[SemanticEvent],
     ) -> None:
-        db_events: list[Event] = []
+        event_models: list[Event] = []
         entity_repo = EntityRepository(self.db)
 
         for event in events:
@@ -55,10 +50,10 @@ class EventRepository:
             entity_id = None
 
             if any(value is not None for _, value in event.entity):
-                entity_orm = await entity_repo.save(event.entity)
-                entity_id = entity_orm.id
+                entity_model = await entity_repo.save(event.entity)
+                entity_id = entity_model.id
 
-            db_event = Event(
+            event_model = Event(
                 batch_id=batch_id,
                 entity_id=entity_id,
                 **event_payload,
@@ -67,11 +62,11 @@ class EventRepository:
             # storing id of entity
             event.entity.id = entity_id
 
-            self.db.add(db_event)
-            db_events.append(db_event)
+            self.db.add(event_model)
+            event_models.append(event_model)
 
         await self.db.flush()
 
         # store ids of events.
-        for i, orm_event in enumerate(db_events):
-            events[i].id = orm_event.id
+        for i, e_model in enumerate(event_models):
+            events[i].id = e_model.id

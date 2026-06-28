@@ -11,7 +11,7 @@ from app.domains.source_app.schemas import (
     SourceAppModel,
     SourceAppRequest,
 )
-from app.domains.users.dependencies import CurrentUser
+from app.domains.user.dependencies import CurrentUser
 
 router = APIRouter()
 

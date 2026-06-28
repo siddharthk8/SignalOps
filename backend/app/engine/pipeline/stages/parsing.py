@@ -22,9 +22,7 @@ class ParsingStage:
     ) -> tuple[list[SemanticEvent], list[tuple[int, PersistedLog]]]:
 
         # save raw logs in db
-        persisted_logs = await self.log_repo.save_logs(
-            batch_id=self.batch_orm.id, logs=logs
-        )
+        persisted_logs = await self.log_repo.save(batch_id=self.batch_orm.id, logs=logs)
 
         parser = PARSER_REGISTRY[source_app]
         resolved_events: list[SemanticEvent] = []
@@ -39,7 +37,7 @@ class ParsingStage:
 
         if len(unresolved_logs) == 0 and len(resolved_events) > 0:
             # save sementic events in db, if no unresolved_logs exists
-            await self.event_repo.save_events(
+            await self.event_repo.save(
                 batch_id=self.batch_orm.id, events=resolved_events
             )
 
@@ -61,4 +59,4 @@ class ParsingStage:
         events.sort(key=lambda e: e.sequence)
 
         # save sementic events in db
-        await self.event_repo.save_events(batch_id=self.batch_orm.id, events=events)
+        await self.event_repo.save(batch_id=self.batch_orm.id, events=events)

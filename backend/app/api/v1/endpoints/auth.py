@@ -12,7 +12,7 @@ from app.domains.auth.schemas import (
     ResetPasswordRequest,
     TokenResponse,
 )
-from app.domains.users.dependencies import CurrentUser
+from app.domains.user.dependencies import CurrentUser
 
 router = APIRouter()
 

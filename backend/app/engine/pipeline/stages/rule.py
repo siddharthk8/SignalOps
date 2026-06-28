@@ -26,6 +26,6 @@ class RuleStage:
         signals.extend(self.generic_rule.evaluate(events))
 
         # save signals in db
-        await self.signal_repo.save_signals(signals=signals)
+        await self.signal_repo.save(signals=signals)
 
         return signals

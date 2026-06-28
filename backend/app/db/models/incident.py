@@ -8,7 +8,6 @@ from sqlalchemy import (
     DateTime,
     Enum,
     Float,
-    ForeignKey,
     Integer,
     String,
     func,
@@ -16,16 +15,16 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
+from app.db.models.signal_incident import SignalIncident
 from app.enums.common import Severity
 from app.enums.incident import IncidentStatus, IncidentType
 
 if TYPE_CHECKING:
     from app.db.models.ai_analysis import AIAnalysis
-    from app.db.models.signal import Signal
 
 
 class Incident(Base):
-    __tablename__ = "incident"
+    __tablename__ = "incidents"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     incident_type: Mapped[IncidentType] = mapped_column(
@@ -53,17 +52,12 @@ class Incident(Base):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     summary: Mapped[str] = mapped_column(String(1000), nullable=False)
 
-    # FK
-    ai_analysis_id: Mapped[int | None] = mapped_column(
-        ForeignKey("ai_analysis.id", ondelete="CASCADE"), nullable=True, index=True
-    )
-
     # relationships
-    signals: Mapped[list[Signal]] = relationship(
-        "Signal", passive_deletes=True, back_populates="incident"
-    )
     ai_analysis: Mapped[AIAnalysis] = relationship(
-        "AIAnalysis", passive_deletes=True, back_populates="incidents"
+        "AIAnalysis", passive_deletes=True, back_populates="incident"
+    )
+    signal_incidents: Mapped[list[SignalIncident]] = relationship(
+        "SignalIncident", passive_deletes=True, back_populates="incident"
     )
 
     # datetime

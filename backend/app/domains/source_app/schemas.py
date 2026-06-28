@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from app.domains.batches.schemas import Batch
+from app.domains.batch.schemas import Batch
 from app.enums.common import SourceAppType
 
 

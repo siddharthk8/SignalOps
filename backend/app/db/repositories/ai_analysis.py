@@ -1,10 +1,8 @@
 import json
-from typing import cast
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.ai_analysis import AIAnalysis
-from app.db.repositories.incident import IncidentRepository
 from app.schemas.analysis import IncidentAnalysis
 from app.schemas.incident import Incident
 
@@ -13,16 +11,16 @@ class AIAnalysisRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def save_ai_analysis(
+    async def save(
         self,
         *,
-        analyzed_incidents: list[IncidentAnalysis],
-        incidents: list[Incident],
         batch_id: int,
+        incidents: list[Incident],
+        ai_analyses: list[IncidentAnalysis],
     ) -> None:
-        db_ai_analysis_orms: list[AIAnalysis] = []
+        ai_analysis_models: list[AIAnalysis] = []
 
-        for a in analyzed_incidents:
+        for i, a in enumerate(ai_analyses):
             analyzed_payload = a.model_dump(exclude={"id"})
             analyzed_payload["batch_id"] = batch_id
             analyzed_payload["severity"] = a.severity.value
@@ -30,17 +28,12 @@ class AIAnalysisRepository:
             analyzed_payload["business_impact"] = json.dumps(a.business_impact)
             analyzed_payload["recommendations"] = json.dumps(a.recommendations)
 
-            ai_analysis_orm = AIAnalysis(**analyzed_payload)
-            db_ai_analysis_orms.append(ai_analysis_orm)
-            self.db.add(ai_analysis_orm)
-
-        incident_repo = IncidentRepository(self.db)
+            ai_analysis_model = AIAnalysis(
+                **analyzed_payload, incident_id=incidents[i].id
+            )
+            ai_analysis_models.append(ai_analysis_model)
+            self.db.add(ai_analysis_model)
 
         await self.db.flush()
-        for i, orm in enumerate(db_ai_analysis_orms):
-            analyzed_incidents[i].id = orm.id
-            if i < len(incidents):
-                # This condition fails when there is no incident - so we generated a default analyzed_incident
-                await incident_repo.save_ai_analysis_id(
-                    cast(int, incidents[i].id), orm.id
-                )
+        for i, a_model in enumerate(ai_analysis_models):
+            ai_analyses[i].id = a_model.id

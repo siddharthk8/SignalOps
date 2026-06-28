@@ -5,9 +5,9 @@ from PIL import UnidentifiedImageError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.domains.users.dependencies import CurrentUser
-from app.domains.users.schemas import UserPrivate
-from app.domains.users.utils import (
+from app.domains.user.dependencies import CurrentUser
+from app.domains.user.schemas import UserPrivate
+from app.domains.user.utils import (
     process_profile_image,
     remove_profile_image,
     save_profile_image,
