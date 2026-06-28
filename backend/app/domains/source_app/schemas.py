@@ -23,7 +23,7 @@ class SourceAppRequest(_BaseModel):
 
 
 class PaginatedSourceAppResponse(_BaseModel):
-    batches: list[SourceAppModel]
+    source_apps: list[SourceAppModel]
     total: int
     skip: int
     limit: int

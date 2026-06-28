@@ -57,7 +57,7 @@ async def get_source_apps(
         has_more = True
 
     return PaginatedSourceAppResponse(
-        batches=paginated_source_apps,
+        source_apps=paginated_source_apps,
         total=total_source_apps,
         limit=limit,
         skip=skip,
