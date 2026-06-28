@@ -50,3 +50,59 @@ async def test_delete_source_app_success(client: AsyncClient):
     )
 
     assert response.status_code == 204
+
+
+@pytest.mark.anyio
+async def test_get_source_apps_with_pagination(client: AsyncClient):
+    user = await create_test_user(client)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
+
+    for i in range(10):
+        response = await client.post(
+            "/api/v1/source-apps",
+            json={
+                "name": f"{DEFAULT_SOURCE_APP.name} : {i}",
+                "app_type": "auth-app"
+                if i < 3
+                else "order-app"
+                if i < 7
+                else "payment-app",
+            },
+            headers=header,
+        )
+
+        assert response.status_code == 200
+
+    response = await client.get(
+        "/api/v1/source-apps?skip=2&limit=2",
+        headers=header,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "source_apps" in data
+    assert data["total"] == 10
+    assert data["skip"] == 2
+    assert data["limit"] == 2
+    assert data["has_more"] is True
+
+    response = await client.get(
+        "/api/v1/source-apps?skip=5&limit=3",
+        headers=header,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] == 10
+    assert data["has_more"] is True
+
+    response = await client.get(
+        "/api/v1/source-apps?skip=5&limit=5",
+        headers=header,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] == 10
+    assert data["has_more"] is False
