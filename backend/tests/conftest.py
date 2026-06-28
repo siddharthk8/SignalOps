@@ -167,3 +167,13 @@ async def login_user(
 
 def auth_header(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
+
+
+# other
+@dataclass
+class TestSourceApp:
+    name: str = "sample-app"
+    app_type: str = "auth-app"
+
+
+DEFAULT_SOURCE_APP = TestSourceApp()

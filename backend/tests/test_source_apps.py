@@ -1,0 +1,52 @@
+import pytest
+from httpx import AsyncClient
+
+from tests.conftest import DEFAULT_SOURCE_APP, auth_header, create_test_user, login_user
+
+
+@pytest.mark.anyio
+async def test_create_source_app_success(client: AsyncClient):
+    user = await create_test_user(client)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
+
+    response = await client.post(
+        "/api/v1/source-apps",
+        json={
+            "name": DEFAULT_SOURCE_APP.name,
+            "app_type": DEFAULT_SOURCE_APP.app_type,
+        },
+        headers=header,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["name"] == DEFAULT_SOURCE_APP.name
+    assert data["app_type"] == DEFAULT_SOURCE_APP.app_type
+    assert "id" in data
+    assert "created_at" in data
+
+
+@pytest.mark.anyio
+async def test_delete_source_app_success(client: AsyncClient):
+    user = await create_test_user(client)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
+
+    response = await client.post(
+        "/api/v1/source-apps",
+        json={
+            "name": DEFAULT_SOURCE_APP.name,
+            "app_type": DEFAULT_SOURCE_APP.app_type,
+        },
+        headers=header,
+    )
+
+    assert response.status_code == 200
+
+    response = await client.delete(
+        f"/api/v1/source-apps/{response.json()['id']}",
+        headers=header,
+    )
+
+    assert response.status_code == 204
