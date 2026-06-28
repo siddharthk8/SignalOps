@@ -14,10 +14,12 @@ from uuid import UUID
 
 os.environ["SECRET_KEY"] = "dummy-secret-key-for-testing-only"
 os.environ["DATABASE_URL"] = "postgresql+psycopg://testuser:testpass85@localhost/testdb"
-os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+os.environ["BEDROCK_MODEL_ID"] = "testing-model"
 os.environ["S3_BUCKET_NAME"] = "test-bucket"
 os.environ["S3_BUCKET_REGION"] = "ap-south-1"
+os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+os.environ["MAIL_FROM"] = "test.sender@example.com"
 
 
 import boto3
