@@ -83,11 +83,23 @@ def group_by_user(events: list[SemanticEvent]) -> dict[str, list[SemanticEvent]]
 
     # group by users
     for event in events:
-        user = event.entity.user
-        if not user:
+        e = event.entity
+        if e.user:
+            key = f"user:{e.user}"
+        elif e.email:
+            key = f"email:{e.email}"
+        elif e.ip_address:
+            key = f"ip:{e.ip_address}"
+        elif e.session_id:
+            key = f"session:{e.session_id}"
+        elif e.token_id:
+            key = f"token:{e.token_id}"
+        elif e.request_id:
+            key = f"request:{e.request_id}"
+        else:
             continue
 
-        events_by_user[user].append(event)
+        events_by_user[key].append(event)
 
     return events_by_user
 
@@ -99,13 +111,13 @@ def group_by_user_and_filter(
 ) -> dict[str, list[SemanticEvent]]:
     filtered_events: list[SemanticEvent] = []
 
-    # group by users
     for event in events:
         if functional_check(event) is False:
             continue
 
         filtered_events.append(event)
 
+    # group by users
     events_by_user = group_by_user(filtered_events)
     return events_by_user
 
