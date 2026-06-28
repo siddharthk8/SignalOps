@@ -21,6 +21,15 @@ class PasswordResetTokenRepository:
         result = query.scalar_one_or_none()
         return result
 
+    async def get_by_user_id(self, user_id: UUID) -> PasswordResetToken | None:
+        query = await self.db.execute(
+            select(PasswordResetToken)
+            .options(selectinload(PasswordResetToken.user))
+            .where(PasswordResetToken.user_id == user_id)
+        )
+        result = query.scalar_one_or_none()
+        return result
+
     async def save(self, token_hash: str, user_id: UUID, expires_at: datetime):
         self.db.add(
             PasswordResetToken(

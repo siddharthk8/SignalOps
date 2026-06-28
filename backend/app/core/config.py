@@ -23,6 +23,7 @@ class Settings(BaseSettings):
 
     # forgot password email configuration
     mail_from: str
+    password_reset_request_cooldown_seconds: int = 120
     reset_token_expire_minutes: int = 30
 
     frontend_url: str = "http://localhost:8000"

@@ -24,6 +24,25 @@ async def forgot_password(
 
     user = await user_repo.get_by_email(data.email)
     if user:
+        last_prt_model = await password_reset_token_repo.get_by_user_id(user.id)
+        if last_prt_model:
+            created = last_prt_model.created_at
+            if created.tzinfo is None:
+                created = created.replace(tzinfo=UTC)
+
+            remaining_secs = (
+                created
+                + timedelta(seconds=settings.password_reset_request_cooldown_seconds)
+                - datetime.now(UTC)
+            ).total_seconds()
+
+            if remaining_secs > 0:
+                raise HTTPException(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    detail="Too many password reset requests.",
+                    headers={"Retry-After": str(int(remaining_secs))},
+                )
+
         await password_reset_token_repo.remove_all(user.id)
 
         token = generate_reset_token()
