@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/",
+    "",
     response_model=list[IncidentAnalysis],
     status_code=status.HTTP_200_OK,
     name="ingest_logs",
