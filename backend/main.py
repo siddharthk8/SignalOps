@@ -13,7 +13,6 @@ from app.core.exceptions import (
     validation_exception_handler,
 )
 from app.db.core import engine
-from app.db.models import *  # triggers model loading (This ensures all tables are registered before DB usage.)  # noqa: F403
 
 VERSION = "0.1.0"
 
