@@ -98,10 +98,7 @@ def mocked_aws():
 
 
 @pytest.fixture
-async def client(
-    db_session: AsyncSession,
-    mocked_aws,
-) -> AsyncGenerator[AsyncClient]:
+async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient]:
 
     async def override_get_db():
         yield db_session

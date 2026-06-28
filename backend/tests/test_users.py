@@ -1,3 +1,7 @@
+import os
+from io import BytesIO
+from pathlib import Path
+
 import pytest
 from httpx import AsyncClient
 
@@ -163,3 +167,30 @@ async def test_change_password_same_password(client: AsyncClient):
 
     assert response.status_code == 422
     assert response.json()["message"] == "Validation failed"
+
+
+@pytest.mark.anyio
+async def test_upload_profile_image(client: AsyncClient, mocked_aws):
+    user = await create_test_user(client)
+    token = await login_user(client, user["id"])
+    header = auth_header(token)
+
+    test_image_path = Path(__file__).parent / "test_image.jpg"
+    image_bytes = test_image_path.read_bytes()
+
+    response = await client.post(
+        "/api/v1/users/me/profile-image",
+        files={"file": ("temp_image.jpg", BytesIO(image_bytes), "image/jpeg")},
+        headers=header,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["profile_image_path"] is not None
+    assert data["profile_image_path"].endswith(".jpg")
+    assert "s3" in data["profile_image_path"]
+
+    s3_objects = mocked_aws.list_objects_v2(Bucket=os.environ["S3_BUCKET_NAME"])
+    assert "Contents" in s3_objects
+    assert len(s3_objects["Contents"]) == 1
+    assert data["profile_image_path"].endswith(s3_objects["Contents"][0]["Key"])
