@@ -1,6 +1,5 @@
 import asyncio
 import sys
-from dataclasses import dataclass
 
 # Fix for Windows compatibility with async PostgreSQL (psycopg) and Alembic
 # Forces SelectorEventLoop instead of ProactorEventLoop
@@ -8,9 +7,6 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 import os
-from collections.abc import AsyncGenerator
-from typing import Any
-from uuid import UUID
 
 os.environ["SECRET_KEY"] = "dummy-secret-key-for-testing-only"
 os.environ["DATABASE_URL"] = "postgresql+psycopg://testuser:testpass85@localhost/testdb"
@@ -21,6 +17,11 @@ os.environ["AWS_ACCESS_KEY_ID"] = "testing"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
 os.environ["MAIL_FROM"] = "test.sender@example.com"
 
+from collections.abc import AsyncGenerator
+from dataclasses import dataclass
+from typing import Any
+from unittest.mock import Mock, patch
+from uuid import UUID
 
 import boto3
 import pytest
@@ -116,6 +117,17 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient]:
         yield async_client
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+async def mocked_bedrock_client():
+    client = Mock()
+
+    with patch(
+        "app.engine.pipeline.stages.ai.boto3.client",
+        return_value=client,
+    ):
+        yield client
 
 
 @dataclass
