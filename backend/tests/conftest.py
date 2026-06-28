@@ -150,8 +150,8 @@ async def create_test_user(
 async def login_user(
     client: AsyncClient,
     id: UUID,
-    password: str = "String123",
-) -> str:
+    password: str = DEFAULT_USER.password,
+) -> tuple[str, str]:
     response = await client.post(
         "/api/v1/auth/login",
         data={
@@ -160,7 +160,7 @@ async def login_user(
         },
     )
     assert response.status_code == 200, f"Failed to login: {response.text}"
-    return response.json()["access_token"]
+    return response.json()["access_token"], response.json()["refresh_token"]
 
 
 def auth_header(token: str) -> dict[str, str]:

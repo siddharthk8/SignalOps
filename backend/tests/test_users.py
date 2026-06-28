@@ -40,8 +40,8 @@ async def test_create_user_duplicate_email(client: AsyncClient):
 @pytest.mark.anyio
 async def test_get_me_success(client: AsyncClient):
     user = await create_test_user(client)
-    token = await login_user(client, user["id"])
-    header = auth_header(token)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
 
     response = await client.get("/api/v1/users/me", headers=header)
 
@@ -56,8 +56,8 @@ async def test_get_me_success(client: AsyncClient):
 @pytest.mark.anyio
 async def test_update_me_success(client: AsyncClient):
     user = await create_test_user(client)
-    token = await login_user(client, user["id"])
-    header = auth_header(token)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
 
     response = await client.patch(
         "/api/v1/users/me",
@@ -88,8 +88,8 @@ async def test_update_me_success(client: AsyncClient):
 @pytest.mark.anyio
 async def test_update_me_no_data(client: AsyncClient):
     user = await create_test_user(client)
-    token = await login_user(client, user["id"])
-    header = auth_header(token)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
 
     response = await client.patch(
         "/api/v1/users/me",
@@ -104,8 +104,8 @@ async def test_update_me_no_data(client: AsyncClient):
 @pytest.mark.anyio
 async def test_delete_me_success(client: AsyncClient):
     user = await create_test_user(client)
-    token = await login_user(client, user["id"])
-    header = auth_header(token)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
 
     response = await client.delete(
         "/api/v1/users/me",
@@ -118,8 +118,8 @@ async def test_delete_me_success(client: AsyncClient):
 @pytest.mark.anyio
 async def test_change_password_success(client: AsyncClient):
     user = await create_test_user(client)
-    token = await login_user(client, user["id"])
-    header = auth_header(token)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
 
     new_password = "String1234"
 
@@ -153,8 +153,8 @@ async def test_change_password_success(client: AsyncClient):
 @pytest.mark.anyio
 async def test_change_password_same_password(client: AsyncClient):
     user = await create_test_user(client)
-    token = await login_user(client, user["id"])
-    header = auth_header(token)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
 
     response = await client.post(
         "/api/v1/users/me/change-password",
@@ -172,8 +172,8 @@ async def test_change_password_same_password(client: AsyncClient):
 @pytest.mark.anyio
 async def test_upload_profile_image(client: AsyncClient, mocked_aws):
     user = await create_test_user(client)
-    token = await login_user(client, user["id"])
-    header = auth_header(token)
+    access_token, _ = await login_user(client, user["id"])
+    header = auth_header(access_token)
 
     test_image_path = Path(__file__).parent / "test_image.jpg"
     image_bytes = test_image_path.read_bytes()
