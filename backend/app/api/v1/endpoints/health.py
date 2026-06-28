@@ -6,7 +6,7 @@ from app.db.core import DBSessionDep
 router = APIRouter()
 
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 async def health_check(db: DBSessionDep):
     try:
         await db.execute(text("SELECT 1"))
