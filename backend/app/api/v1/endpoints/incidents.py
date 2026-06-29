@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/{incident_id}",
+    "/{incident_id}/resolve",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def mark_incident_resolved(
