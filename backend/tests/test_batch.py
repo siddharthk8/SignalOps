@@ -1,8 +1,14 @@
 import pytest
 from httpx import AsyncClient
 
-from tests.conftest import DEFAULT_SOURCE_APP, auth_header, create_test_user, login_user
-from tests.test_logs import ANALYZE_INCIDENTS_RESPONSE, NORMALIZE_LOGS_RESPONSE
+from tests.conftest import (
+    ANALYZE_INCIDENTS_RESPONSE,
+    DEFAULT_SOURCE_APP,
+    NORMALIZE_LOGS_RESPONSE,
+    auth_header,
+    create_test_user,
+    login_user,
+)
 
 
 @pytest.mark.anyio
@@ -45,7 +51,16 @@ async def test_batch_success(client: AsyncClient, mocked_bedrock_client):
     assert response.status_code == 200
 
     response = await client.get(
-        "/api/v1/batch/1",
+        f"/api/v1/source-apps/{source_app_id}/batches",
+        headers=header,
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    batch_id = data["batches"][0]["id"]
+
+    response = await client.get(
+        f"/api/v1/batches/{batch_id}",
         headers=header,
     )
 

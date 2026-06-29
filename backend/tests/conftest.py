@@ -69,6 +69,14 @@ async def db_session(
     test_engine,
     setup_database,
 ) -> AsyncGenerator[AsyncSession]:
+    # NOTE:
+    # Each test runs inside a transaction that is rolled back after completion,
+    # so table data is isolated between tests.
+    #
+    # PostgreSQL sequences (SERIAL/IDENTITY), however, are NOT transactional.
+    # Auto-increment IDs continue to increase across tests even though rows are
+    # rolled back. Tests must therefore never assume IDs start at 1; instead,
+    # obtain generated IDs from the API response or query the database.
     conn = await test_engine.connect()
     trans = await conn.begin()
 
@@ -190,3 +198,61 @@ class TestSourceApp:
 
 
 DEFAULT_SOURCE_APP = TestSourceApp()
+
+# Constants
+NORMALIZE_LOGS_RESPONSE = {
+    "output": {
+        "message": {
+            "content": [
+                {
+                    "toolUse": {
+                        "input": {
+                            "events": [
+                                {
+                                    "severity": "low",
+                                    "event_type": "other",
+                                    "confidence": 0.8,
+                                    "id": 4,
+                                }
+                            ]
+                        },
+                    }
+                }
+            ],
+        }
+    }
+}
+
+ANALYZE_INCIDENTS_RESPONSE = {
+    "output": {
+        "message": {
+            "content": [
+                {
+                    "toolUse": {
+                        "input": {
+                            "analyses": [
+                                {
+                                    "summary": "An excessive number of authentication failures originating from IP address 192.168.1.10 within a 5-minute window between 09:00 UTC and 09:01 UTC on June 28, 2026, triggered a high-severity security alert.",
+                                    "severity": "high",
+                                    "incident_type": "account_security",
+                                    "incident_index": 0,
+                                    "confidence": 0.9,
+                                    "business_impact": [
+                                        "Potential account compromise if the failed attempts were malicious.",
+                                        "Possible unauthorized access attempts.",
+                                    ],
+                                    "recommendations": [
+                                        "Investigate the source IP address 192.168.1.10 to determine the nature of the failed login attempts.",
+                                        "Review authentication logs for further details on the failed attempts (e.g., attempted passwords).",
+                                        "Consider implementing rate limiting or account lockout policies for suspicious IP addresses.",
+                                    ],
+                                    "root_cause": "Excessive authentication failures from a single IP address likely indicate a brute-force attack or other malicious activity attempting to gain unauthorized access to user accounts.",
+                                }
+                            ]
+                        },
+                    }
+                }
+            ],
+        }
+    }
+}
