@@ -11,6 +11,7 @@ from app.core.config import settings
 from app.db.core import Base
 
 if TYPE_CHECKING:
+    from app.db.models.incident import Incident
     from app.db.models.password_reset_token import PasswordResetToken
     from app.db.models.refresh_token import RefreshToken
     from app.db.models.source_app import SourceApp
@@ -42,6 +43,9 @@ class User(Base):
     token_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
 
     # relationships
+    incidents: Mapped[list[Incident]] = relationship(
+        "Incident", passive_deletes=True, back_populates="user"
+    )
     source_apps: Mapped[list[SourceApp]] = relationship(
         "SourceApp", passive_deletes=True, back_populates="user"
     )

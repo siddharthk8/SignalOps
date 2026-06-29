@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 from sqlalchemy import (
     CheckConstraint,
     DateTime,
     Enum,
     Float,
+    ForeignKey,
     Integer,
     String,
     func,
@@ -21,6 +23,7 @@ from app.enums.incident import IncidentStatus, IncidentType
 
 if TYPE_CHECKING:
     from app.db.models.ai_analysis import AIAnalysis
+    from app.db.models.user import User
 
 
 class Incident(Base):
@@ -52,7 +55,17 @@ class Incident(Base):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     summary: Mapped[str] = mapped_column(String(1000), nullable=False)
 
+    # FK
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+
     # relationships
+    user: Mapped[User] = relationship(
+        "User", passive_deletes=True, back_populates="incidents"
+    )
     ai_analysis: Mapped[AIAnalysis] = relationship(
         "AIAnalysis", passive_deletes=True, back_populates="incident"
     )
