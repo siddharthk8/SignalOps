@@ -71,7 +71,7 @@ def get_user(log: PersistedLog) -> UserField | None:
     message = normalize_log(message=log.message)
 
     for m in ENTITY_USER_ALIASES:
-        match = re.search(rf"{m}=([\w.@-_]+)", message)
+        match = re.search(rf"{m}=([A-Za-z0-9_.@-]+)", message)
         if match:
             return match.group(1)
 
@@ -84,13 +84,14 @@ def get_email(log: PersistedLog) -> EmailField | None:
 
     message = normalize_log(message=log.message)
 
+    # '*' is included because email addresses may be masked in logs.
     match = re.search(
-        r"email=([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)", message
+        r"email=([a-zA-Z0-9_.*+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)", message
     )
     if match:
         return match.group(1)
     else:
-        match = re.search(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)", message)
+        match = re.search(r"([a-zA-Z0-9_.*+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)", message)
         if match:
             return match.group(1)
 
@@ -134,6 +135,12 @@ def get_timestamp(log: PersistedLog) -> datetime | None:
         (
             r"\b\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{1,6}\b",
             "%Y-%m-%d %H:%M:%S.%f",
+            False,
+        ),
+        # 2026-05-17 14:32:45,123456
+        (
+            r"\b\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\,\d{1,6}\b",
+            "%Y-%m-%d %H:%M:%S,%f",
             False,
         ),
         # 2026-05-17 14:32:45
