@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.batch import Batch
 from app.db.models.source_app import SourceApp
+from app.db.models.user import User
 from app.engine.pipeline.stages.ai import AIStage
 from app.engine.pipeline.stages.correlation import CorrelationStage
 from app.engine.pipeline.stages.parsing import ParsingStage
@@ -12,15 +13,22 @@ from app.schemas.log import LogsField
 
 
 class LogPipeline:
-    def __init__(self, db: AsyncSession, batch_orm: Batch, source_app_orm: SourceApp):
+    def __init__(
+        self,
+        db: AsyncSession,
+        current_user: User,
+        batch_orm: Batch,
+        source_app_orm: SourceApp,
+    ):
         self.db = db
         self.batch_orm = batch_orm
         self.source_app_orm = source_app_orm
+        self.current_user = current_user
 
         self.parsing_stage = ParsingStage(db, batch_orm)
         self.ai_stage = AIStage(db, batch_orm)
         self.rule_stage = RuleStage(db)
-        self.correlation_stage = CorrelationStage(db)
+        self.correlation_stage = CorrelationStage(db, current_user)
 
     async def process(self, logs: LogsField) -> list[IncidentAnalysis]:
         source_app = SourceAppType(self.source_app_orm.app_type)

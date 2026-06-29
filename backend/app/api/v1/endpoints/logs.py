@@ -37,5 +37,5 @@ async def ingest_logs(
     # create batch
     batch_orm = await BatchRepository(db).save_and_get_batch(source_app_orm.id)
 
-    pipeline = LogPipeline(db, batch_orm, source_app_orm)
+    pipeline = LogPipeline(db, current_user, batch_orm, source_app_orm)
     return await pipeline.process(data.logs)

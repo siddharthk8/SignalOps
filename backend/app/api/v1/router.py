@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.api.v1.endpoints import auth
 
-from .endpoints import batch, health, logs, source_apps, users
+from .endpoints import batch, health, incidents, logs, source_apps, users
 
 v1_router = APIRouter()
 
@@ -17,3 +17,4 @@ v1_router.include_router(batch.router, prefix="/batch", tags=["batch"])
 v1_router.include_router(users.router, prefix="/users", tags=["users"])
 v1_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 v1_router.include_router(logs.router, prefix="/logs", tags=["logs"])
+v1_router.include_router(incidents.router, prefix="/incidents", tags=["incidents"])

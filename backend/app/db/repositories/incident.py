@@ -1,7 +1,9 @@
 from collections.abc import Sequence
+from datetime import UTC, datetime
 from typing import cast
+from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.incident import Incident as ORMIncident
@@ -21,9 +23,22 @@ class IncidentRepository:
         result = query.scalars().all()
         return result
 
+    async def get_by_id(self, id: int) -> ORMIncident | None:
+        query = await self.db.execute(select(ORMIncident).where(ORMIncident.id == id))
+        result = query.scalar_one_or_none()
+        return result
+
+    async def save_resolved_at(self, id: int):
+        await self.db.execute(
+            update(ORMIncident)
+            .where(ORMIncident.id == id)
+            .values(resolved_at=datetime.now(UTC))
+        )
+
     async def save(
         self,
         *,
+        user_id: UUID,
         incidents: list[Incident],
     ) -> None:
         incident_models: list[ORMIncident] = []
@@ -40,6 +55,7 @@ class IncidentRepository:
             incident_payload["incident_type"] = incident.incident_type.value
             incident_payload["severity"] = incident.severity.value
             incident_payload["status"] = incident.status.value
+            incident_payload["user_id"] = user_id
 
             incident_model = ORMIncident(**incident_payload)
             incident_models.append(incident_model)
