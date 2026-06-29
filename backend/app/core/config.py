@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     # Testing environment
     testing: bool = False
 
+    # development/production environment
+    env: str = "development"
+
     # forgot password email configuration
     mail_from: str
     password_reset_request_cooldown_seconds: int = 120
