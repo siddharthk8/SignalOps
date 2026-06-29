@@ -5,7 +5,6 @@ __pycache__/
 *.py[cod]
 *.pyd
 *.so
-.python-version
 
 # Type checkers / linters / tooling
 .mypy_cache/
@@ -98,4 +97,4 @@ temp/
 *.tmp
 
 # Others
-logs/
+backend/logs/
