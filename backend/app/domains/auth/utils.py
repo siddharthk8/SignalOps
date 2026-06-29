@@ -9,6 +9,7 @@ from fastapi.templating import Jinja2Templates
 from pwdlib import PasswordHash
 
 from app.core.config import settings
+from app.core.logger import auth_logger
 from app.db.models.user import User
 from app.domains.auth.schemas import RefreshToken
 
@@ -34,7 +35,7 @@ def create_access_token(data: dict) -> str:
     token_expiration = now + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": token_expiration, "iat": now})
 
-    print("CREATING TOKEN")
+    # print("CREATING TOKEN")
     # jwt usage
     encoded_jwt = jwt.encode(
         to_encode, settings.secret_key.get_secret_value(), algorithm=ALGORITHM
@@ -48,6 +49,9 @@ def get_access_token_data(token: str) -> dict[str, Any] | None:
             token, settings.secret_key.get_secret_value(), algorithms=[ALGORITHM]
         )
     except jwt.InvalidTokenError:
+        auth_logger.warning(
+            "Authentication failed: JWT validation failed (invalid token).",
+        )
         return None
     return decoded_jwt
 

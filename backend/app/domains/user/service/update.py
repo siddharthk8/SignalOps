@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.logger import auth_logger
 from app.domains.user.dependencies import CurrentUser
 from app.domains.user.schemas import UserPrivate, UserUpdate
 
@@ -18,6 +19,10 @@ async def update_current_user(
         current_user.last_name = data.last_name
 
     if has_changes is False:
+        auth_logger.warning(
+            "User profile update rejected: no fields provided. user_id=%s",
+            current_user.id,
+        )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No fields provided for update.",

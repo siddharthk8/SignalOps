@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.logger import auth_logger
 from app.db.repositories.password_reset_token import PasswordResetTokenRepository
 from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.db.repositories.user import UserRepository
@@ -15,6 +16,10 @@ async def change_password(
     user_repo = UserRepository(db)
 
     if not verify_password(data.current_password, current_user.password_hash):
+        auth_logger.warning(
+            "Password change rejected (invalid current password). user_id=%s",
+            current_user.id,
+        )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Current password is incorrect.",

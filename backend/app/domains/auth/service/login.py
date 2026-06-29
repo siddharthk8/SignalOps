@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.logger import auth_logger
 from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.domains.auth.schemas import TokenResponse
 from app.domains.auth.utils import (
@@ -16,15 +17,24 @@ from app.domains.user.utils import get_user
 
 
 async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
+    exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
     id = form_data.username
     user = await get_user(db, UUID(id))
 
-    if not user or not verify_password(form_data.password, user.password_hash):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
+    if not user:
+        raise exception
+
+    if not verify_password(form_data.password, user.password_hash):
+        auth_logger.warning(
+            "Authentication failed: invalid password. user_id=%s",
+            user.id,
         )
+        raise exception
 
     access_token = create_access_token({"sub": str(user.id), "tv": user.token_version})
     refresh_token = generate_refresh_token()

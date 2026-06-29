@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     source_apps_per_page: int = 10
     batches_per_page: int = 10
 
+    # Testing environment
+    testing: bool = False
+
     # forgot password email configuration
     mail_from: str
     password_reset_request_cooldown_seconds: int = 120

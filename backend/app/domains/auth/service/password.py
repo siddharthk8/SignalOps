@@ -4,6 +4,7 @@ from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core.logger import auth_logger
 from app.db.repositories.password_reset_token import PasswordResetTokenRepository
 from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.db.repositories.user import UserRepository
@@ -37,6 +38,11 @@ async def forgot_password(
             ).total_seconds()
 
             if remaining_secs > 0:
+                auth_logger.warning(
+                    "Password reset rate limit exceeded. user_id=%s retry_after=%ss",
+                    user.id,
+                    int(remaining_secs),
+                )
                 raise HTTPException(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                     detail="Too many password reset requests.",

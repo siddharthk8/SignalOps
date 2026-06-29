@@ -103,3 +103,14 @@ async def remove_profile_image(image_name: str):
         _remove_profile_image,
         path,
     )
+
+
+def mask_email_for_log(email: str) -> str:
+    local, domain = email.split("@", 1)
+
+    if len(local) <= 2:
+        masked_local = local[0] + "*"
+    else:
+        masked_local = local[:2] + "*" * (len(local) - 2)
+
+    return f"{masked_local}@{domain}"
