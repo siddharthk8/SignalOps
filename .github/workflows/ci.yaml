@@ -1,15 +1,19 @@
 name: Backend Tests
 
 on:
+  workflow_dispatch: # Enables the manual "Run workflow" button
+
   push:
     branches:
       - main
     paths:
       - 'backend/**'
+      - ".github/workflows/ci.yaml"
 
   pull_request:
     paths:
       - "backend/**"
+      - ".github/workflows/ci.yaml"
 
 permissions:
   contents: read
@@ -42,9 +46,16 @@ jobs:
 
     # Environment variables for backend/tests
     env:
-      # Required by the Alembic migration step, which runs before pytest.
-      # Other test-only environment variables are configured in conftest.py.
+      # Required because Alembic migrations and Pydantic settings are loaded before pytest starts.
+      SECRET_KEY: "dummy-secret-key-for-testing-only"
       DATABASE_URL: "postgresql+psycopg://testuser:testpass85@localhost:5432/testdb"
+      BEDROCK_MODEL_ID: "testing-model"
+      S3_BUCKET_NAME: "test-bucket"
+      S3_BUCKET_REGION: "ap-south-1"
+      AWS_ACCESS_KEY_ID: "testing"
+      AWS_SECRET_ACCESS_KEY: "testing"
+      MAIL_FROM: "test.sender@example.com"
+      TESTING: "true"
 
     steps:
       # Get code into this Github runner VM
