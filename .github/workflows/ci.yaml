@@ -1,0 +1,74 @@
+name: Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+
+  pull_request:
+    paths:
+      - "backend/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: backend # This setting applies only to `run:` steps, not `uses:` actions.
+
+    # PostgreSQL service
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass85
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U testuser -d testdb"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    # Environment variables for backend/tests
+    env:
+      # Required by the Alembic migration step, which runs before pytest.
+      # Other test-only environment variables are configured in conftest.py.
+      DATABASE_URL: "postgresql+psycopg://testuser:testpass85@localhost:5432/testdb"
+
+    steps:
+      # Get code into this Github runner VM
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.10"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Run migrations (Alembic)
+      - name: Run Alembic migrations
+        run: alembic upgrade head
+
+      # Run tests
+      - name: Run pytest
+        run: pytest tests -v
