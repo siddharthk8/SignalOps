@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
 from app.core.config import settings
@@ -23,7 +24,12 @@ def get_logger(name: str):
 
     # File logging is disabled in test environments
     if not settings.testing:
-        handler = logging.FileHandler(LOG_DIR / f"{name}.log")
+        handler = TimedRotatingFileHandler(
+            LOG_DIR / f"{name}.log",
+            when="midnight",
+            interval=1,
+            backupCount=20,
+        )
         handler.setFormatter(
             logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
         )
