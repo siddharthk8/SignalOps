@@ -15,7 +15,9 @@ from app.domains.auth.utils import (
 )
 
 
-async def refresh_token(refresh_token_data: RefreshTokenRequest, db: AsyncSession):
+async def get_new_access_token(
+    refresh_token_data: RefreshTokenRequest, db: AsyncSession
+):
     refresh_token = refresh_token_data.refresh_token
     token_hash = get_refresh_token_hash(refresh_token)
 

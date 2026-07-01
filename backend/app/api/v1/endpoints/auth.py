@@ -37,11 +37,11 @@ async def create_token(
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(public_rate_limit(capacity=20, refill_rate=1))],
 )
-async def refresh_token(
+async def get_new_access_token(
     refresh_token_data: RefreshTokenRequest,
     db: DBSessionDep,
 ):
-    return await service.refresh_token(refresh_token_data, db)
+    return await service.get_new_access_token(refresh_token_data, db)
 
 
 @router.post(
