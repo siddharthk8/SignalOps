@@ -1,12 +1,17 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import text
 
+from app.core.rate_limiter.dependencies import public_rate_limit
 from app.db.core import DBSessionDep
 
 router = APIRouter()
 
 
-@router.get("", status_code=status.HTTP_200_OK)
+@router.get(
+    "",
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(public_rate_limit(capacity=60, refill_rate=2))],
+)
 async def health_check(db: DBSessionDep):
     try:
         await db.execute(text("SELECT 1"))

@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
+from app.core.rate_limiter.dependencies import user_rate_limit
 from app.db.core import DBSessionDep
 from app.db.repositories.batch import BatchRepository
 from app.db.repositories.source_app import SourceAppRepository
@@ -16,6 +17,7 @@ router = APIRouter()
     response_model=list[IncidentAnalysis],
     status_code=status.HTTP_200_OK,
     name="ingest_logs",
+    dependencies=[Depends(user_rate_limit(capacity=20, refill_rate=0.2))],
 )
 async def ingest_logs(
     data: LogBatchRequest,

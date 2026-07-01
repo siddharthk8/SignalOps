@@ -7,7 +7,7 @@ from app.core.rate_limiter.utils import get_client_ip
 from app.domains.user.dependencies import CurrentUser
 
 
-def public_rate_limit(capacity: int, refill_rate: int) -> Callable:
+def public_rate_limit(capacity: int, refill_rate: float) -> Callable:
     async def dependency(request: Request, response: Response):
         await rate_limiter.check(
             request=request,
