@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -21,11 +22,16 @@ class Settings(BaseSettings):
     source_apps_per_page: int = 10
     batches_per_page: int = 10
 
+    # Redis configuration
+    redis_host: str = "localhost"
+    redis_port: int = 6379
+    redis_password: str | None = None
+
     # Testing environment
     testing: bool = False
 
     # development/production environment
-    env: str = "development"
+    env: Literal["development"] | Literal["production"] = "development"
 
     # forgot password email configuration
     mail_from: str
