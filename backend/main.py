@@ -1,6 +1,6 @@
 from typing import cast
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.concurrency import asynccontextmanager
 from fastapi.exceptions import RequestValidationError
 from fastapi.routing import APIRoute
@@ -45,6 +45,27 @@ app = FastAPI(
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+    # HSTS must only be used in production over HTTPS.
+    # Behind reverse proxies (e.g. Nginx/ALB), request.url.scheme may not
+    # reflect the original protocol, we skip HSTS for localhost and
+    # assume all other hosts are served over HTTPS.
+    if request.url.hostname not in ("localhost", "127.0.0.1"):
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=63072000; includeSubDomains"
+        )
+
+    return response
+
 
 app.include_router(v1_router, prefix="/api/v1")
 
