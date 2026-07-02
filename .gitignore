@@ -37,16 +37,18 @@ ENV/
 # =========================================================
 # Node / Frontend
 # =========================================================
-node_modules/
-.pnpm-store/
-.npm/
-.yarn/
-.yarn-cache/
-.next/
-.nuxt/
-.svelte-kit/
-vite.svg
-*.tsbuildinfo
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
 
 # Frontend build output
 dist/
@@ -72,15 +74,14 @@ coverage/
 # =========================================================
 # IDEs / Editors
 # =========================================================
-.vscode/*
-!.vscode/extensions.json
-.idea/
-*.swp
-*.swo
-
-# OS files
+.vscode/
+.idea
 .DS_Store
-Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # =========================================================
 # Temporary / Cache
