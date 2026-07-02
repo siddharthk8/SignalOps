@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# build outputs
+dist/
+build/
+out/
+
+# coverage reports
+coverage/
+
+# framework builds
+.vite/
+
+# logs
+*.log
+
+# lock files
+package-lock.json
