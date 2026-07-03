@@ -4,7 +4,16 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, Integer, String, Uuid, func
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    Integer,
+    String,
+    Uuid,
+    func,
+    true,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.config import settings
@@ -34,10 +43,10 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(200), nullable=False)
     first_name: Mapped[str] = mapped_column(String(60), nullable=False)
     last_name: Mapped[str] = mapped_column(String(80), nullable=False)
-    profile_image: Mapped[str | None] = mapped_column(
-        String(200), nullable=True, default=None
+    profile_image: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=true()
     )
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     # Increment it to invalidate all previously issued JWTs.
     token_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
