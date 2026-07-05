@@ -145,7 +145,7 @@ async def test_forgot_and_reset_password_success(client: AsyncClient):
         assert "token" in call_kwargs
 
         token = call_kwargs["token"]
-        new_password = "String1234"
+        new_password = "String@1234"
 
         response = await client.post(
             "/api/v1/auth/reset-password",

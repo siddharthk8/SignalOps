@@ -28,7 +28,7 @@ async def test_create_user_duplicate_email(client: AsyncClient):
             "first_name": "first-name",
             "last_name": "last-name",
             "email": DEFAULT_USER.email,
-            "password": "String123",
+            "password": "String@123",
         },
     )
 
@@ -121,7 +121,7 @@ async def test_change_password_success(client: AsyncClient):
     access_token, _ = await login_user(client, user["id"])
     header = auth_header(access_token)
 
-    new_password = "String1234"
+    new_password = "String@1234"
 
     response = await client.post(
         "/api/v1/users/me/change-password",

@@ -144,7 +144,7 @@ class TestUser:
     first_name: str = "First"
     last_name: str = "Last"
     email: str = "test@example.com"
-    password: str = "String123"
+    password: str = "String@123"
 
 
 DEFAULT_USER = TestUser()

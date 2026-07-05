@@ -89,7 +89,7 @@ class UserCreate(PasswordValidationMixin):
                 "first_name": "sid",
                 "last_name": "k",
                 "email": "sid@example.com",
-                "password": "String123",
+                "password": "String@123",
             }
         }
     )
