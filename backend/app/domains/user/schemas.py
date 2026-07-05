@@ -56,8 +56,14 @@ class PasswordValidationMixin(BaseUserSchema):
     )
     @classmethod
     def validate_password(cls, password: str) -> str:
-        if not any(ch.isupper() for ch in password):
-            raise ValueError("Password must contain an uppercase letter")
+        if len(password) < 8:
+            raise ValueError("Password must be at least 8 characters long")
+        if len(password) > 50:
+            raise ValueError("Password must not exceed 50 characters")
+        if not any(not ch.isalnum() for ch in password):
+            raise ValueError("Password must contain a special character")
+        if not any(ch.isalpha() for ch in password):
+            raise ValueError("Password must contain a letter")
         if not any(ch.isdigit() for ch in password):
             raise ValueError("Password must contain a digit")
         if any(ch.isspace() for ch in password):
