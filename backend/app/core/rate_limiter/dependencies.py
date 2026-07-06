@@ -8,6 +8,7 @@ from app.domains.user.dependencies import CurrentUser
 
 
 def public_rate_limit(capacity: int, refill_rate: float) -> Callable:
+    # Creates a rate limiter dependency for public endpoints using the client's IP address.
     async def dependency(request: Request, response: Response):
         await rate_limiter.check(
             request=request,
@@ -21,6 +22,7 @@ def public_rate_limit(capacity: int, refill_rate: float) -> Callable:
 
 
 def user_rate_limit(capacity: int, refill_rate: float) -> Callable:
+    # Creates a rate limiter dependency for authenticated endpoints using the user's ID.
     async def dependency(
         request: Request,
         response: Response,
