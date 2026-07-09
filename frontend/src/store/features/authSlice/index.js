@@ -5,7 +5,7 @@ import { getUserFromLS } from "@/shared/utils/userLocalStorage";
 const LSUser = getUserFromLS();
 const initialState = {
 	user: LSUser,
-	status: LSUser != null ? "succeeded" : "idle", // 'idle' | 'pending' | 'succeeded' | 'failed'
+	status: LSUser !== null ? "succeeded" : "idle", // 'idle' | 'pending' | 'succeeded' | 'failed'
 };
 
 const authSlice = createSlice({
