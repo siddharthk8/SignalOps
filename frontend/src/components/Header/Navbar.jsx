@@ -36,14 +36,9 @@ export default function Navbar({ auth }) {
 		location.pathname === "/"
 			? [
 					{
-						name: "Overview",
-						link: "#overview",
-						isActive: location.hash === "#overview",
-					},
-					{
-						name: "Pipeline",
-						link: "#pipeline",
-						isActive: location.hash === "#pipeline",
+						name: "Philosophy",
+						link: "#philosophy",
+						isActive: location.hash === "#philosophy",
 					},
 					{
 						name: "Features",
@@ -56,9 +51,14 @@ export default function Navbar({ auth }) {
 						isActive: location.hash === "#architecture",
 					},
 					{
-						name: "Demo",
-						link: "#demo",
-						isActive: location.hash === "#demo",
+						name: "Workflow",
+						link: "#workflow",
+						isActive: location.hash === "#workflow",
+					},
+					{
+						name: "Technology",
+						link: "#technology",
+						isActive: location.hash === "#technology",
 					},
 				]
 			: auth.user
@@ -158,7 +158,7 @@ export default function Navbar({ auth }) {
 							<Logo className="w-5 h-5 sm:w-6 sm:h-6" />
 							<span className="font-medium text-2xl font-dancing">
 								<span className="font-bold text-primary-500">S</span>ignal
-								<span className="font-bold text-primary-500 ml-1">O</span>ps
+								<span className="font-bold text-accent-500 ml-1">O</span>ps
 							</span>
 						</button>
 
