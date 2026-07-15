@@ -76,16 +76,14 @@ const router = createBrowserRouter([
 							{
 								path: "source-apps",
 								element: <SourceAppsPage />,
-								children: [
-									{
-										path: ":sourceAppId/batches",
-										element: <BatchesPage />,
-									},
-									{
-										path: ":sourceAppId/batches/:batchId",
-										element: <BatchDetailsPage />,
-									},
-								],
+							},
+							{
+								path: "source-apps/:sourceAppId/batches",
+								element: <BatchesPage />,
+							},
+							{
+								path: "source-apps/:sourceAppId/batches/:batchId",
+								element: <BatchDetailsPage />,
 							},
 							{
 								path: "create-source-app",
