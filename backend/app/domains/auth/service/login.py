@@ -1,11 +1,10 @@
-from uuid import UUID
-
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.logger import auth_logger
 from app.db.repositories.refresh_token import RefreshTokenRepository
+from app.db.repositories.user import UserRepository
 from app.domains.auth.schemas import TokenResponse
 from app.domains.auth.utils import (
     create_access_token,
@@ -13,7 +12,6 @@ from app.domains.auth.utils import (
     generate_refresh_token,
     verify_password,
 )
-from app.domains.user.utils import get_user
 
 
 async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
@@ -23,8 +21,8 @@ async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    id = form_data.username
-    user = await get_user(db, UUID(id))
+    email = form_data.username
+    user = await UserRepository(db).get_by_email(email)
 
     if not user:
         raise exception
