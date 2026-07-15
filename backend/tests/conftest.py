@@ -22,7 +22,6 @@ from collections.abc import AsyncGenerator
 from dataclasses import dataclass
 from typing import Any
 from unittest.mock import Mock, patch
-from uuid import UUID
 
 import boto3
 import pytest
@@ -172,13 +171,13 @@ async def create_test_user(
 
 async def login_user(
     client: AsyncClient,
-    id: UUID,
+    email: str = DEFAULT_USER.email,
     password: str = DEFAULT_USER.password,
 ) -> tuple[str, str]:
     response = await client.post(
         "/api/v1/auth/login",
         data={
-            "username": id,
+            "username": email,
             "password": password,
         },
     )

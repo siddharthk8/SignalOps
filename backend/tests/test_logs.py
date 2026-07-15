@@ -14,7 +14,7 @@ from tests.conftest import (
 @pytest.mark.anyio
 async def test_ingest_logs_text_success(client: AsyncClient, mocked_bedrock_client):
     user = await create_test_user(client)
-    access_token, _ = await login_user(client, user["id"])
+    access_token, _ = await login_user(client, user["email"])
     header = auth_header(access_token)
 
     response = await client.post(
@@ -62,7 +62,7 @@ async def test_ingest_logs_text_success(client: AsyncClient, mocked_bedrock_clie
 @pytest.mark.anyio
 async def test_ingest_logs_json_success(client: AsyncClient, mocked_bedrock_client):
     user = await create_test_user(client)
-    access_token, _ = await login_user(client, user["id"])
+    access_token, _ = await login_user(client, user["email"])
     header = auth_header(access_token)
 
     response = await client.post(

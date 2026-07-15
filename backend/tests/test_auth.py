@@ -13,7 +13,7 @@ async def test_login_success(client: AsyncClient):
     response = await client.post(
         "/api/v1/auth/login",
         data={
-            "username": user["id"],
+            "username": user["email"],
             "password": DEFAULT_USER.password,
         },
     )
@@ -42,7 +42,7 @@ async def test_login_missing_password(client: AsyncClient):
     response = await client.post(
         "/api/v1/auth/login",
         data={
-            "username": user["id"],
+            "username": user["email"],
         },
     )
 
@@ -55,7 +55,7 @@ async def test_login_incorrect_password(client: AsyncClient):
 
     response = await client.post(
         "/api/v1/auth/login",
-        data={"username": user["id"], "password": "random_password"},
+        data={"username": user["email"], "password": "random_password"},
     )
 
     assert response.status_code == 401
@@ -77,7 +77,7 @@ async def test_login_nonexistent_user(client: AsyncClient):
 @pytest.mark.anyio
 async def test_refresh_access_token_success(client: AsyncClient):
     user = await create_test_user(client)
-    _, refresh_token = await login_user(client, user["id"])
+    _, refresh_token = await login_user(client, user["email"])
 
     response = await client.post(
         "/api/v1/auth/refresh",
@@ -94,7 +94,7 @@ async def test_refresh_access_token_success(client: AsyncClient):
 @pytest.mark.anyio
 async def test_logout_success(client: AsyncClient):
     user = await create_test_user(client)
-    access_token, refresh_token = await login_user(client, user["id"])
+    access_token, refresh_token = await login_user(client, user["email"])
     header = auth_header(access_token)
 
     response = await client.post(
@@ -107,7 +107,7 @@ async def test_logout_success(client: AsyncClient):
 @pytest.mark.anyio
 async def test_logout_all_success(client: AsyncClient):
     user = await create_test_user(client)
-    access_token, _ = await login_user(client, user["id"])
+    access_token, _ = await login_user(client, user["email"])
     header = auth_header(access_token)
 
     response = await client.post(

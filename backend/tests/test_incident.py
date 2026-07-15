@@ -14,7 +14,7 @@ from tests.conftest import (
 @pytest.mark.anyio
 async def test_resolved_at_success(client: AsyncClient, mocked_bedrock_client):
     user = await create_test_user(client)
-    access_token, _ = await login_user(client, user["id"])
+    access_token, _ = await login_user(client, user["email"])
     header = auth_header(access_token)
 
     response = await client.post(

@@ -7,7 +7,7 @@ from tests.conftest import DEFAULT_SOURCE_APP, auth_header, create_test_user, lo
 @pytest.mark.anyio
 async def test_create_source_app_success(client: AsyncClient):
     user = await create_test_user(client)
-    access_token, _ = await login_user(client, user["id"])
+    access_token, _ = await login_user(client, user["email"])
     header = auth_header(access_token)
 
     response = await client.post(
@@ -30,7 +30,7 @@ async def test_create_source_app_success(client: AsyncClient):
 @pytest.mark.anyio
 async def test_delete_source_app_success(client: AsyncClient):
     user = await create_test_user(client)
-    access_token, _ = await login_user(client, user["id"])
+    access_token, _ = await login_user(client, user["email"])
     header = auth_header(access_token)
 
     response = await client.post(
@@ -55,7 +55,7 @@ async def test_delete_source_app_success(client: AsyncClient):
 @pytest.mark.anyio
 async def test_get_source_apps_with_pagination(client: AsyncClient):
     user = await create_test_user(client)
-    access_token, _ = await login_user(client, user["id"])
+    access_token, _ = await login_user(client, user["email"])
     header = auth_header(access_token)
 
     for i in range(10):
