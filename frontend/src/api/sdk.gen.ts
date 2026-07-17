@@ -21,12 +21,17 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 /**
  * Health Check
  */
-export const healthCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckData, ThrowOnError>): RequestResult<HealthCheckResponses, unknown, ThrowOnError> => (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({ url: '/api/v1/health', ...options });
+export const healthCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckData, ThrowOnError>): RequestResult<HealthCheckResponses, unknown, ThrowOnError> => (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/v1/health',
+    ...options
+});
 
 /**
  * Get Source Apps
  */
 export const getSourceApps = <ThrowOnError extends boolean = false>(options?: Options<GetSourceAppsData, ThrowOnError>): RequestResult<GetSourceAppsResponses, GetSourceAppsErrors, ThrowOnError> => (options?.client ?? client).get<GetSourceAppsResponses, GetSourceAppsErrors, ThrowOnError>({
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/source-apps',
     ...options
@@ -36,6 +41,7 @@ export const getSourceApps = <ThrowOnError extends boolean = false>(options?: Op
  * Create Source App
  */
 export const createSourceApp = <ThrowOnError extends boolean = false>(options: Options<CreateSourceAppData, ThrowOnError>): RequestResult<CreateSourceAppResponses, CreateSourceAppErrors, ThrowOnError> => (options.client ?? client).post<CreateSourceAppResponses, CreateSourceAppErrors, ThrowOnError>({
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/source-apps',
     ...options,
@@ -58,6 +64,7 @@ export const deleteSourceApp = <ThrowOnError extends boolean = false>(options: O
  * Get Source App Batches
  */
 export const getSourceAppBatches = <ThrowOnError extends boolean = false>(options: Options<GetSourceAppBatchesData, ThrowOnError>): RequestResult<GetSourceAppBatchesResponses, GetSourceAppBatchesErrors, ThrowOnError> => (options.client ?? client).get<GetSourceAppBatchesResponses, GetSourceAppBatchesErrors, ThrowOnError>({
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/source-apps/{source_app_id}/batches',
     ...options
@@ -67,6 +74,7 @@ export const getSourceAppBatches = <ThrowOnError extends boolean = false>(option
  * Get Batch
  */
 export const getBatch = <ThrowOnError extends boolean = false>(options: Options<GetBatchData, ThrowOnError>): RequestResult<GetBatchResponses, GetBatchErrors, ThrowOnError> => (options.client ?? client).get<GetBatchResponses, GetBatchErrors, ThrowOnError>({
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/batches/{batch_id}',
     ...options
@@ -76,6 +84,7 @@ export const getBatch = <ThrowOnError extends boolean = false>(options: Options<
  * Create User
  */
 export const createUser = <ThrowOnError extends boolean = false>(options: Options<CreateUserData, ThrowOnError>): RequestResult<CreateUserResponses, CreateUserErrors, ThrowOnError> => (options.client ?? client).post<CreateUserResponses, CreateUserErrors, ThrowOnError>({
+    responseType: 'json',
     url: '/api/v1/users',
     ...options,
     headers: {
@@ -97,6 +106,7 @@ export const deleteCurrentUser = <ThrowOnError extends boolean = false>(options?
  * Get Current User
  */
 export const getCurrentUser = <ThrowOnError extends boolean = false>(options?: Options<GetCurrentUserData, ThrowOnError>): RequestResult<GetCurrentUserResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetCurrentUserResponses, unknown, ThrowOnError>({
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/users/me',
     ...options
@@ -106,6 +116,7 @@ export const getCurrentUser = <ThrowOnError extends boolean = false>(options?: O
  * Update Current User
  */
 export const updateCurrentUser = <ThrowOnError extends boolean = false>(options: Options<UpdateCurrentUserData, ThrowOnError>): RequestResult<UpdateCurrentUserResponses, UpdateCurrentUserErrors, ThrowOnError> => (options.client ?? client).patch<UpdateCurrentUserResponses, UpdateCurrentUserErrors, ThrowOnError>({
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/users/me',
     ...options,
@@ -142,6 +153,7 @@ export const deleteProfileImage = <ThrowOnError extends boolean = false>(options
  */
 export const uploadProfileImage = <ThrowOnError extends boolean = false>(options: Options<UploadProfileImageData, ThrowOnError>): RequestResult<UploadProfileImageResponses, UploadProfileImageErrors, ThrowOnError> => (options.client ?? client).post<UploadProfileImageResponses, UploadProfileImageErrors, ThrowOnError>({
     ...formDataBodySerializer,
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/users/me/profile-image',
     ...options,
@@ -156,6 +168,7 @@ export const uploadProfileImage = <ThrowOnError extends boolean = false>(options
  */
 export const createToken = <ThrowOnError extends boolean = false>(options: Options<CreateTokenData, ThrowOnError>): RequestResult<CreateTokenResponses, CreateTokenErrors, ThrowOnError> => (options.client ?? client).post<CreateTokenResponses, CreateTokenErrors, ThrowOnError>({
     ...urlSearchParamsBodySerializer,
+    responseType: 'json',
     url: '/api/v1/auth/login',
     ...options,
     headers: {
@@ -168,6 +181,7 @@ export const createToken = <ThrowOnError extends boolean = false>(options: Optio
  * Get New Access Token
  */
 export const getNewAccessToken = <ThrowOnError extends boolean = false>(options: Options<GetNewAccessTokenData, ThrowOnError>): RequestResult<GetNewAccessTokenResponses, GetNewAccessTokenErrors, ThrowOnError> => (options.client ?? client).post<GetNewAccessTokenResponses, GetNewAccessTokenErrors, ThrowOnError>({
+    responseType: 'json',
     url: '/api/v1/auth/refresh',
     ...options,
     headers: {
@@ -202,6 +216,7 @@ export const revokeAllRefreshTokens = <ThrowOnError extends boolean = false>(opt
  * Forgot Password
  */
 export const forgotPassword = <ThrowOnError extends boolean = false>(options: Options<ForgotPasswordData, ThrowOnError>): RequestResult<ForgotPasswordResponses, ForgotPasswordErrors, ThrowOnError> => (options.client ?? client).post<ForgotPasswordResponses, ForgotPasswordErrors, ThrowOnError>({
+    responseType: 'json',
     url: '/api/v1/auth/forgot-password',
     ...options,
     headers: {
@@ -214,6 +229,7 @@ export const forgotPassword = <ThrowOnError extends boolean = false>(options: Op
  * Reset Password
  */
 export const resetPassword = <ThrowOnError extends boolean = false>(options: Options<ResetPasswordData, ThrowOnError>): RequestResult<ResetPasswordResponses, ResetPasswordErrors, ThrowOnError> => (options.client ?? client).post<ResetPasswordResponses, ResetPasswordErrors, ThrowOnError>({
+    responseType: 'json',
     url: '/api/v1/auth/reset-password',
     ...options,
     headers: {
@@ -226,6 +242,7 @@ export const resetPassword = <ThrowOnError extends boolean = false>(options: Opt
  * Ingest Logs
  */
 export const ingestLogs = <ThrowOnError extends boolean = false>(options: Options<IngestLogsData, ThrowOnError>): RequestResult<IngestLogsResponses, IngestLogsErrors, ThrowOnError> => (options.client ?? client).post<IngestLogsResponses, IngestLogsErrors, ThrowOnError>({
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/logs',
     ...options,

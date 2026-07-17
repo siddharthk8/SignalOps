@@ -9,7 +9,7 @@ export default defineConfig({
 			name: "@hey-api/typescript",
 			comments: false,
 		},
-		"@hey-api/client-fetch",
+		"@hey-api/client-axios",
 		"@hey-api/sdk",
 	],
 });
