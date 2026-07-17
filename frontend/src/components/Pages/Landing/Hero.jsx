@@ -4,7 +4,7 @@ export default function HeroSection() {
 	return (
 		<section
 			id="overview"
-			className="relative isolate overflow-hidden border-b border-border bg-bg"
+			className="border-border bg-bg relative isolate overflow-hidden border-b"
 		>
 			{/* Background */}
 			<div className="absolute inset-0 -z-20">
@@ -12,17 +12,17 @@ export default function HeroSection() {
 				<div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] [background-size:64px_64px] opacity-[0.05]" />
 			</div>
 
-			<div className="absolute left-1/2 top-0 -z-10 h-[38rem] w-[38rem] -translate-x-1/2 rounded-full bg-primary/10 blur-[140px]" />
+			<div className="bg-primary/10 absolute top-0 left-1/2 -z-10 h-[38rem] w-[38rem] -translate-x-1/2 rounded-full blur-[140px]" />
 
 			<div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col justify-center gap-20 px-6 py-28 lg:flex-row lg:items-center lg:justify-between">
 				{/* Left */}
 				<div className="max-w-3xl">
-					<div className="inline-flex items-center gap-2 rounded-full border border-primary-300/70 bg-primary-100 px-4 py-2 text-sm font-semibold text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300">
+					<div className="border-primary-300/70 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						Application Logs Intelligence System
 					</div>
 
-					<h1 className="mt-8 font-['Space_Grotesk'] text-5xl font-bold leading-[1.05] tracking-tight text-t-primary md:text-6xl xl:text-7xl">
+					<h1 className="text-t-primary mt-8 font-['Space_Grotesk'] text-5xl leading-[1.05] font-bold tracking-tight md:text-6xl xl:text-7xl">
 						Transform
 						<br />
 						<span className="text-primary">Application Logs</span>
@@ -31,7 +31,7 @@ export default function HeroSection() {
 						<span className="text-accent"> Intelligence.</span>
 					</h1>
 
-					<p className="mt-8 max-w-2xl text-lg leading-8 text-t-muted">
+					<p className="text-t-muted mt-8 max-w-2xl text-lg leading-8">
 						SignalOps converts heterogeneous application logs into semantic events,
 						detects meaningful operational signals, correlates related activities into
 						incidents, and delivers AI-generated operational analysis powered by Amazon
@@ -59,21 +59,21 @@ export default function HeroSection() {
 
 				{/* Right */}
 				<div className="relative flex w-full max-w-xl justify-center">
-					<div className="relative w-full rounded-3xl border border-border bg-surface/70 p-8 shadow-lg backdrop-blur">
+					<div className="border-border bg-surface/70 relative w-full rounded-3xl border p-8 shadow-lg backdrop-blur">
 						<div className="mb-8 flex items-center justify-between">
 							<div>
-								<p className="text-sm text-t-muted">
+								<p className="text-t-muted text-sm">
 									Semantic Intelligence Pipeline
 								</p>
 
-								<h3 className="mt-1 text-xl font-bold text-t-primary">
+								<h3 className="text-t-primary mt-1 text-xl font-bold">
 									Live Processing Flow
 								</h3>
 							</div>
 
 							<div className="flex items-center gap-2">
-								<span className="h-2.5 w-2.5 rounded-full bg-success animate-pulse" />
-								<span className="text-xs font-medium text-success">ACTIVE</span>
+								<span className="bg-success h-2.5 w-2.5 animate-pulse rounded-full" />
+								<span className="text-success text-xs font-medium">ACTIVE</span>
 							</div>
 						</div>
 
@@ -111,12 +111,12 @@ export default function HeroSection() {
 					</div>
 
 					{/* Floating Raw Log */}
-					<div className="absolute -left-10 top-15 hidden w-52 rounded-2xl border border-border bg-surface p-4 shadow-md backdrop-blur lg:block">
-						<div className="text-xs font-semibold uppercase tracking-wider text-t-muted">
+					<div className="border-border bg-surface absolute top-15 -left-10 hidden w-52 rounded-2xl border p-4 shadow-md backdrop-blur lg:block">
+						<div className="text-t-muted text-xs font-semibold tracking-wider uppercase">
 							Incoming Log
 						</div>
 
-						<div className="mt-3 rounded-lg bg-elevated p-3 font-mono text-sm text-warning">
+						<div className="bg-elevated text-warning mt-3 rounded-lg p-3 font-mono text-sm">
 							LOGIN_FAIL
 							<br />
 							user=alex
@@ -124,15 +124,15 @@ export default function HeroSection() {
 					</div>
 
 					{/* Floating Incident */}
-					<div className="absolute -bottom-6 -right-10 hidden w-60 rounded-2xl border border-border bg-surface p-4 shadow-md backdrop-blur lg:block">
-						<div className="text-xs font-semibold uppercase tracking-wider text-t-muted">
+					<div className="border-border bg-surface absolute -right-10 -bottom-6 hidden w-60 rounded-2xl border p-4 shadow-md backdrop-blur lg:block">
+						<div className="text-t-muted text-xs font-semibold tracking-wider uppercase">
 							Generated Incident
 						</div>
 
 						<div className="mt-3">
-							<div className="font-semibold text-primary">ACCOUNT_TAKEOVER</div>
+							<div className="text-primary font-semibold">ACCOUNT_TAKEOVER</div>
 
-							<p className="mt-2 text-sm leading-6 text-t-muted">
+							<p className="text-t-muted mt-2 text-sm leading-6">
 								Multiple authentication failures followed by a successful login
 								indicate suspicious account activity.
 							</p>
@@ -155,8 +155,8 @@ function PipelineStep({ title, description, active = false }) {
 		>
 			<div className="flex items-center justify-between">
 				<div>
-					<h4 className="font-semibold text-t-primary">{title}</h4>
-					<p className="mt-1 text-sm text-t-muted">{description}</p>
+					<h4 className="text-t-primary font-semibold">{title}</h4>
+					<p className="text-t-muted mt-1 text-sm">{description}</p>
 				</div>
 
 				<div className={`h-3 w-3 rounded-full ${active ? "bg-primary" : "bg-border"}`} />
@@ -168,7 +168,7 @@ function PipelineStep({ title, description, active = false }) {
 function Connector() {
 	return (
 		<div className="flex justify-center">
-			<div className="h-6 w-px bg-border" />
+			<div className="bg-border h-6 w-px" />
 		</div>
 	);
 }
@@ -176,13 +176,13 @@ function Connector() {
 function Stat({ icon, title, subtitle }) {
 	return (
 		<div className="flex items-center gap-4">
-			<div className="rounded-xl bg-primary-100 p-3 text-primary dark:bg-primary-500/10">
+			<div className="bg-primary-100 text-primary dark:bg-primary-500/10 rounded-xl p-3">
 				{icon}
 			</div>
 
 			<div>
-				<div className="font-semibold text-t-primary">{title}</div>
-				<div className="text-sm text-t-muted">{subtitle}</div>
+				<div className="text-t-primary font-semibold">{title}</div>
+				<div className="text-t-muted text-sm">{subtitle}</div>
 			</div>
 		</div>
 	);

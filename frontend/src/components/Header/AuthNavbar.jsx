@@ -56,15 +56,15 @@ export default function AuthNavbar({ auth, isUserMenuOpen, setIsUserMenuOpen, us
 					size="sm"
 				/>
 				<ChevronDown
-					className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${
+					className={`h-4 w-4 transition-transform sm:h-5 sm:w-5 ${
 						isUserMenuOpen ? "rotate-180" : ""
 					}`}
 				/>
 			</HoverButton>
 
 			{isUserMenuOpen && (
-				<div className="absolute right-0 mt-2 w-52 sm:w-56 rounded-lg bg-surface border border-border shadow-lg z-50">
-					<div className="py-1 px-2">
+				<div className="bg-surface border-border absolute right-0 z-50 mt-2 w-52 rounded-lg border shadow-lg sm:w-56">
+					<div className="px-2 py-1">
 						{userMenuItems.map((item) => (
 							<button
 								key={item.name}
@@ -87,7 +87,7 @@ export default function AuthNavbar({ auth, isUserMenuOpen, setIsUserMenuOpen, us
 										navigate(item.link);
 									}
 								}}
-								className="w-full px-3 py-2 my-1 text-sm text-left rounded-md hover:bg-surface-elevated"
+								className="hover:bg-surface-elevated my-1 w-full rounded-md px-3 py-2 text-left text-sm"
 							>
 								{item.name}
 							</button>

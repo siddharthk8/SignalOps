@@ -15,23 +15,14 @@ export default function Avatar({ firstName, lastName, profileImage, size = "md" 
 			<img
 				src={profileImage}
 				alt={`${firstName} ${lastName}`}
-				className={`${dimension} rounded-full object-cover border border-border shadow-sm`}
+				className={`${dimension} border-border rounded-full border object-cover shadow-sm`}
 			/>
 		);
 	}
 
 	return (
 		<div
-			className={`
-				${dimension}
-				rounded-full
-				bg-primary-200 text-primary-800
-				dark:bg-primary-400 dark:text-primary-900
-				flex items-center justify-center
-				font-semibold
-				border border-border
-				shadow-sm
-			`}
+			className={` ${dimension} bg-primary-200 text-primary-800 dark:bg-primary-400 dark:text-primary-900 border-border flex items-center justify-center rounded-full border font-semibold shadow-sm`}
 		>
 			{initials}
 		</div>

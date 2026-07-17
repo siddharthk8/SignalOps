@@ -122,7 +122,7 @@ export default function SignupPage() {
 				<FormMessage message={errors.root?.message} />
 
 				<form onSubmit={handleSubmit(onSubmit)} noValidate className={FormStyle}>
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<Input
 							label="First name"
 							placeholder="Siddharth"

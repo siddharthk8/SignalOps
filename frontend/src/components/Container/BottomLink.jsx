@@ -7,11 +7,11 @@ const FormBottomLink = ({
 	className = "",
 }) => {
 	return (
-		<p className={`text-sm text-t-muted text-center ${className}`}>
+		<p className={`text-t-muted text-center text-sm ${className}`}>
 			{text}{" "}
 			<Link
 				to={to}
-				className="text-primary font-medium hover:underline transition-colors cursor-pointer duration-200"
+				className="text-primary cursor-pointer font-medium transition-colors duration-200 hover:underline"
 			>
 				{linkTextOrComp}
 			</Link>

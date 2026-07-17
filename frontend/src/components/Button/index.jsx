@@ -7,11 +7,11 @@ export default function Button({
 }) {
 	return (
 		<button
-			className={`group relative inline-flex items-center justify-center overflow-hidden rounded-lg border border-border bg-surface px-3 py-1.5 text-sm ${textColor} transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary hover:shadow-sm active:translate-y-0 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary/20 ${className}`}
+			className={`group border-border bg-surface relative inline-flex items-center justify-center overflow-hidden rounded-lg border px-3 py-1.5 text-sm ${textColor} hover:border-primary focus:ring-primary/20 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-sm focus:ring-2 focus:outline-none active:translate-y-0 active:scale-[0.98] ${className}`}
 			{...props}
 		>
 			<div
-				className={`absolute left-0 top-0 h-full w-1 ${buttonColor} transition-all duration-300 group-hover:w-1.5`}
+				className={`absolute top-0 left-0 h-full w-1 ${buttonColor} transition-all duration-300 group-hover:w-1.5`}
 			/>
 
 			<div className="absolute inset-0 bg-linear-to-r from-white/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

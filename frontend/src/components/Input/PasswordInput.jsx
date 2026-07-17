@@ -15,11 +15,7 @@ const PasswordInput = ({ ...props }) => {
 				<button
 					type="button"
 					onClick={() => setVisible((v) => !v)}
-					className="
-						text-t-muted
-						hover:text-t-primary
-						transition-colors
-					"
+					className="text-t-muted hover:text-t-primary transition-colors"
 					aria-label={visible ? "Hide password" : "Show password"}
 					tabIndex={-1}
 				>

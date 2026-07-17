@@ -29,7 +29,7 @@ export default function LoginPage() {
 	const queryClient = useQueryClient();
 
 	const { mutate } = useMutation({
-		mutationFn: async ({ email, password }) => {
+		mutationFn: ({ email, password }) => {
 			return createToken({
 				body: {
 					username: email,

@@ -9,8 +9,8 @@ export default function AuthMainLayout({
 	children,
 }) {
 	return (
-		<div className="min-h-full grid grid-cols-1 lg:grid-cols-2 bg-bg">
-			<div className="hidden lg:block relative overflow-hidden border-r border-border">
+		<div className="bg-bg grid min-h-full grid-cols-1 lg:grid-cols-2">
+			<div className="border-border relative hidden overflow-hidden border-r lg:block">
 				{/* Background image */}
 				<img
 					// src="none"
@@ -23,11 +23,11 @@ export default function AuthMainLayout({
 
 				<div className="relative z-10 flex h-full items-end p-12">
 					<div className="max-w-md">
-						<h2 className="text-4xl font-semibold leading-tight text-white mb-3 drop-shadow-lg">
+						<h2 className="mb-3 text-4xl leading-tight font-semibold text-white drop-shadow-lg">
 							{title}
 						</h2>
 
-						<p className="text-sm text-white/90 leading-relaxed drop-shadow">
+						<p className="text-sm leading-relaxed text-white/90 drop-shadow">
 							{description}
 						</p>
 					</div>

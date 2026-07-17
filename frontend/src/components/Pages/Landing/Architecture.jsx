@@ -31,11 +31,11 @@ function ArchitectureSection() {
 	];
 
 	return (
-		<section id="architecture" className="relative overflow-hidden bg-surface py-32">
+		<section id="architecture" className="bg-surface relative overflow-hidden py-32">
 			{/* Background */}
 
 			<div className="absolute inset-0">
-				<div className="absolute bottom-0 left-1/2 h-[30rem] w-[30rem] -translate-x-1/2 rounded-full bg-accent/5 blur-[150px]" />
+				<div className="bg-accent/5 absolute bottom-0 left-1/2 h-[30rem] w-[30rem] -translate-x-1/2 rounded-full blur-[150px]" />
 
 				<div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] [background-size:80px_80px] opacity-[0.03]" />
 			</div>
@@ -44,18 +44,18 @@ function ArchitectureSection() {
 				{/* Header */}
 
 				<div className="mx-auto max-w-3xl text-center">
-					<div className="inline-flex items-center gap-2 rounded-full border border-primary-300 bg-primary-100 px-4 py-2 text-sm font-semibold text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300">
+					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						System Architecture
 					</div>
 
-					<h2 className="mt-6 font-['Space_Grotesk'] text-4xl font-bold tracking-tight text-t-primary md:text-5xl">
+					<h2 className="text-t-primary mt-6 font-['Space_Grotesk'] text-4xl font-bold tracking-tight md:text-5xl">
 						Built as an intelligence
 						<br />
 						<span className="text-primary">pipeline, not a log collector.</span>
 					</h2>
 
-					<p className="mt-6 text-lg leading-8 text-t-muted">
+					<p className="text-t-muted mt-6 text-lg leading-8">
 						SignalOps separates ingestion, normalization, detection, correlation, and
 						reasoning into independent layers. Each component has a focused
 						responsibility and can evolve independently.
@@ -65,7 +65,7 @@ function ArchitectureSection() {
 				{/* Architecture Flow */}
 
 				<div className="relative mt-20">
-					<div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-border lg:block" />
+					<div className="bg-border absolute top-0 left-1/2 hidden h-full w-px -translate-x-1/2 lg:block" />
 
 					<div className="space-y-8">
 						{layers.map((layer, index) => (
@@ -77,7 +77,7 @@ function ArchitectureSection() {
 							>
 								{/* Connector */}
 
-								<div className="absolute left-1/2 top-12 hidden -translate-x-1/2 lg:block">
+								<div className="absolute top-12 left-1/2 hidden -translate-x-1/2 lg:block">
 									<div
 										className={`h-5 w-5 rounded-full border-4 ${
 											layer.highlight
@@ -108,12 +108,12 @@ function ArchitectureSection() {
 												{layer.icon}
 											</div>
 
-											<div className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-t-muted">
+											<div className="border-border text-t-muted rounded-full border px-3 py-1 text-xs font-semibold">
 												LAYER {index + 1}
 											</div>
 										</div>
 
-										<h3 className="mt-7 text-2xl font-bold text-t-primary">
+										<h3 className="text-t-primary mt-7 text-2xl font-bold">
 											{layer.title}
 										</h3>
 
@@ -121,11 +121,11 @@ function ArchitectureSection() {
 											{layer.items.map((item) => (
 												<div
 													key={item}
-													className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3"
+													className="border-border bg-surface flex items-center gap-3 rounded-xl border px-4 py-3"
 												>
-													<div className="h-2 w-2 rounded-full bg-primary" />
+													<div className="bg-primary h-2 w-2 rounded-full" />
 
-													<span className="text-sm font-medium text-t-secondary">
+													<span className="text-t-secondary text-sm font-medium">
 														{item}
 													</span>
 												</div>
@@ -144,43 +144,43 @@ function ArchitectureSection() {
 
 				{/* Bottom Architecture Summary */}
 
-				<div className="mt-24 rounded-[2rem] border border-border bg-bg p-10 shadow-md lg:p-14">
+				<div className="border-border bg-bg mt-24 rounded-[2rem] border p-10 shadow-md lg:p-14">
 					<div className="flex flex-col items-center justify-between gap-10 lg:flex-row">
 						<div>
 							<div className="flex items-center gap-3">
-								<div className="rounded-xl bg-primary-100 p-3 text-primary dark:bg-primary-500/10">
+								<div className="bg-primary-100 text-primary dark:bg-primary-500/10 rounded-xl p-3">
 									<Boxes size={22} />
 								</div>
 
-								<p className="font-semibold text-primary">Core Design Principle</p>
+								<p className="text-primary font-semibold">Core Design Principle</p>
 							</div>
 
-							<h3 className="mt-5 font-['Space_Grotesk'] text-3xl font-bold text-t-primary">
+							<h3 className="text-t-primary mt-5 font-['Space_Grotesk'] text-3xl font-bold">
 								Every stage creates a more meaningful layer of understanding.
 							</h3>
 
-							<p className="mt-5 max-w-3xl text-lg leading-8 text-t-muted">
+							<p className="text-t-muted mt-5 max-w-3xl text-lg leading-8">
 								Raw logs are preserved for auditing and replay, while normalized
 								events become the foundation for rules, analytics, correlation, and
 								AI reasoning.
 							</p>
 						</div>
 
-						<div className="shrink-0 rounded-3xl border border-border bg-surface px-8 py-6">
+						<div className="border-border bg-surface shrink-0 rounded-3xl border px-8 py-6">
 							<div className="flex items-center gap-4 text-sm font-semibold">
-								<span className="rounded-xl bg-elevated px-4 py-3 text-t-primary">
+								<span className="bg-elevated text-t-primary rounded-xl px-4 py-3">
 									Logs
 								</span>
 
 								<span className="text-primary">→</span>
 
-								<span className="rounded-xl bg-primary-100 px-4 py-3 text-primary dark:bg-primary-500/10">
+								<span className="bg-primary-100 text-primary dark:bg-primary-500/10 rounded-xl px-4 py-3">
 									Events
 								</span>
 
 								<span className="text-primary">→</span>
 
-								<span className="rounded-xl bg-accent-100 px-4 py-3 text-accent-700 dark:bg-accent-500/10">
+								<span className="bg-accent-100 text-accent-700 dark:bg-accent-500/10 rounded-xl px-4 py-3">
 									Intelligence
 								</span>
 							</div>

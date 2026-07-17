@@ -75,7 +75,6 @@ export default function ForgotPasswordPage() {
 						message="If an account exists, a reset code has been sent to your email."
 					/>
 				)}
-
 				<form onSubmit={handleSubmit(onSubmit)} noValidate className={FormStyle}>
 					<Input
 						label="Email address"
