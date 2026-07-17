@@ -1,13 +1,14 @@
 import "./index.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import axios from "axios";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 import { client } from "@/api/client.gen";
-import { BASIC_API_CONFIG } from "@/api/client/custom";
+import { BASIC_API_CONFIG } from "@/core/api/customClient";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Layout from "@/layouts/Layout.jsx";
 // pages
@@ -123,7 +124,24 @@ const queryClient = new QueryClient({
 		queries: {
 			staleTime: Infinity,
 			gcTime: 5 * 60 * 1000, // 5 minutes
-			retry: false,
+			retry: (failureCount, error) => {
+				if (!axios.isAxiosError(error)) {
+					return false;
+				}
+
+				const status = error.response?.status;
+				// Network error (no response)
+				if (!status) {
+					return failureCount < 3;
+				}
+				// Don't retry client errors
+				if (status >= 400 && status < 500) {
+					return false;
+				}
+
+				// Retry server errors
+				return failureCount < 3;
+			},
 		},
 		mutations: {
 			retry: false,
