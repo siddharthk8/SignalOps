@@ -5,8 +5,9 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
 
+// npx eslint --fix eslint.config.js
 export default defineConfig([
-	globalIgnores(["dist"]),
+	globalIgnores(["dist", "src/api"]),
 	{
 		files: ["**/*.{js,jsx}"],
 		plugins: {
