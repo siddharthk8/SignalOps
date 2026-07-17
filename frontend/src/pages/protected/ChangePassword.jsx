@@ -121,7 +121,7 @@ export default function ChangePasswordPage() {
 					/>
 
 					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? "Resetting…" : "Reset Password"}
+						{isSubmitting ? "Changing..." : "Change Password"}
 					</Button>
 				</form>
 			</>
