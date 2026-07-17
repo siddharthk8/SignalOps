@@ -59,3 +59,16 @@ export const LAST_NAME_RULES = {
 		message: "Last name is too long",
 	},
 };
+
+export const APP_NAME_RULES = {
+	...TRIM_RULE,
+	required: "Application name is required",
+	minLength: {
+		value: 2,
+		message: "Application name is too short",
+	},
+	maxLength: {
+		value: 50,
+		message: "Application name is too long",
+	},
+};
