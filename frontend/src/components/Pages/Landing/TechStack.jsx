@@ -41,27 +41,27 @@ function TechStackSection() {
 	];
 
 	return (
-		<section id="technology" className="relative overflow-hidden bg-surface py-32">
+		<section id="technology" className="bg-surface relative overflow-hidden py-32">
 			<div className="absolute inset-0">
-				<div className="absolute right-1/3 top-0 h-[30rem] w-[30rem] rounded-full bg-primary/5 blur-[150px]" />
+				<div className="bg-primary/5 absolute top-0 right-1/3 h-[30rem] w-[30rem] rounded-full blur-[150px]" />
 			</div>
 
 			<div className="relative mx-auto max-w-7xl px-6">
 				{/* Header */}
 
 				<div className="mx-auto max-w-3xl text-center">
-					<div className="inline-flex items-center gap-2 rounded-full border border-primary-300 bg-primary-100 px-4 py-2 text-sm font-semibold text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300">
+					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						Technology Foundation
 					</div>
 
-					<h2 className="mt-6 font-['Space_Grotesk'] text-4xl font-bold tracking-tight text-t-primary md:text-5xl">
+					<h2 className="text-t-primary mt-6 font-['Space_Grotesk'] text-4xl font-bold tracking-tight md:text-5xl">
 						Built with modern
 						<br />
 						<span className="text-primary">engineering foundations.</span>
 					</h2>
 
-					<p className="mt-6 text-lg leading-8 text-t-muted">
+					<p className="text-t-muted mt-6 text-lg leading-8">
 						SignalOps combines reliable backend engineering with modern AI capabilities
 						to create a scalable application log intelligence platform.
 					</p>
@@ -73,31 +73,31 @@ function TechStackSection() {
 					{technologies.map((tech, index) => (
 						<div
 							key={tech.name}
-							className="group relative overflow-hidden rounded-3xl border border-border bg-bg p-8 transition-all duration-500 hover:-translate-y-2 hover:border-primary/40 hover:shadow-lg"
+							className="group border-border bg-bg hover:border-primary/40 relative overflow-hidden rounded-3xl border p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-lg"
 						>
-							<div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-primary/5 blur-3xl transition-all duration-500 group-hover:bg-primary/10" />
+							<div className="bg-primary/5 group-hover:bg-primary/10 absolute top-0 right-0 h-32 w-32 rounded-full blur-3xl transition-all duration-500" />
 
 							<div className="relative">
 								<div className="flex items-start justify-between">
-									<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-primary transition-transform duration-300 group-hover:scale-110 dark:bg-primary-500/10">
+									<div className="bg-primary-100 text-primary dark:bg-primary-500/10 flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110">
 										{tech.icon}
 									</div>
 
-									<div className="text-5xl font-bold text-border/40">
+									<div className="text-border/40 text-5xl font-bold">
 										0{index + 1}
 									</div>
 								</div>
 
 								<div className="mt-8">
-									<p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+									<p className="text-primary text-xs font-semibold tracking-[0.25em] uppercase">
 										{tech.category}
 									</p>
 
-									<h3 className="mt-3 text-2xl font-bold text-t-primary">
+									<h3 className="text-t-primary mt-3 text-2xl font-bold">
 										{tech.name}
 									</h3>
 
-									<p className="mt-4 leading-7 text-t-muted">
+									<p className="text-t-muted mt-4 leading-7">
 										{tech.description}
 									</p>
 								</div>
@@ -108,34 +108,34 @@ function TechStackSection() {
 
 				{/* Architecture Philosophy */}
 
-				<div className="mt-20 overflow-hidden rounded-[2rem] border border-border bg-bg">
+				<div className="border-border bg-bg mt-20 overflow-hidden rounded-[2rem] border">
 					<div className="grid lg:grid-cols-2">
 						<div className="p-10 lg:p-14">
 							<div className="flex items-center gap-3">
-								<div className="rounded-xl bg-primary-100 p-3 text-primary dark:bg-primary-500/10">
+								<div className="bg-primary-100 text-primary dark:bg-primary-500/10 rounded-xl p-3">
 									<Award size={22} />
 								</div>
 
-								<p className="font-semibold text-primary">Engineering Approach</p>
+								<p className="text-primary font-semibold">Engineering Approach</p>
 							</div>
 
-							<h3 className="mt-6 font-['Space_Grotesk'] text-3xl font-bold leading-tight text-t-primary">
+							<h3 className="text-t-primary mt-6 font-['Space_Grotesk'] text-3xl leading-tight font-bold">
 								Designed for clarity, reliability, and evolution.
 							</h3>
 
-							<p className="mt-5 text-lg leading-8 text-t-muted">
+							<p className="text-t-muted mt-5 text-lg leading-8">
 								Every component has a focused responsibility. Parsing, detection,
 								correlation, persistence, and AI reasoning are separated into
 								independent layers.
 							</p>
 
-							<p className="mt-5 text-lg leading-8 text-t-muted">
+							<p className="text-t-muted mt-5 text-lg leading-8">
 								This allows SignalOps to scale from simple log analysis into a
 								complete operational intelligence platform.
 							</p>
 						</div>
 
-						<div className="border-t border-border bg-surface p-10 lg:border-l lg:border-t-0 lg:p-14">
+						<div className="border-border bg-surface border-t p-10 lg:border-t-0 lg:border-l lg:p-14">
 							<div className="space-y-4">
 								<ArchitectureItem
 									title="Deterministic First"
@@ -167,10 +167,10 @@ function TechStackSection() {
 
 function ArchitectureItem({ title, description }) {
 	return (
-		<div className="rounded-2xl border border-border bg-bg p-5">
-			<h4 className="font-bold text-t-primary">{title}</h4>
+		<div className="border-border bg-bg rounded-2xl border p-5">
+			<h4 className="text-t-primary font-bold">{title}</h4>
 
-			<p className="mt-2 text-sm leading-6 text-t-muted">{description}</p>
+			<p className="text-t-muted mt-2 text-sm leading-6">{description}</p>
 		</div>
 	);
 }

@@ -1,12 +1,16 @@
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { forgotPassword } from "@/api";
 import AuthBgImage from "@/assets/images/auth-bg.jpg";
 import Button from "@/components/Button";
 import FormMessage from "@/components/Form/FormMessage";
 import Input from "@/components/Input/Input";
 import AuthRecoveryLayout from "@/layouts/Form/AuthRecoveryLayout";
 import { EMAIL_RULES } from "@/shared/constants/HookFormValidatonRules";
+import { SERVER_ERROR_MSG } from "@/shared/constants/messages";
 import { FormStyle } from "@/shared/constants/Styles";
 
 export default function ForgotPasswordPage() {
@@ -15,16 +19,43 @@ export default function ForgotPasswordPage() {
 		handleSubmit,
 		setError,
 		clearErrors,
+		reset,
 		formState: { errors, isSubmitting },
 	} = useForm({ mode: "onBlur" });
 
 	const [success, setSuccess] = useState(false);
 
-	const onSubmit = async ({ email }) => {
+	const { mutate } = useMutation({
+		mutationFn: ({ email }) => {
+			return forgotPassword({
+				body: {
+					email: email,
+				},
+			});
+		},
+		onSuccess: () => {
+			setSuccess(true);
+			reset();
+		},
+		onError: (error) => {
+			if (!axios.isAxiosError(error)) {
+				setError("root", {
+					type: "server",
+					message: SERVER_ERROR_MSG,
+				});
+			} else {
+				setError(error.response?.data.field || "root", {
+					type: "server",
+					message: error.response?.data.message || SERVER_ERROR_MSG,
+				});
+			}
+		},
+	});
+
+	const onSubmit = ({ email }) => {
 		clearErrors("root");
 		setSuccess(false);
-
-		// ...
+		mutate({ email });
 	};
 
 	return (
@@ -38,8 +69,12 @@ export default function ForgotPasswordPage() {
 			<>
 				<FormMessage message={errors.root?.message} />
 
-				{success && <FormMessage message="..." />}
-
+				{success && (
+					<FormMessage
+						type="success"
+						message="If an account exists, a reset code has been sent to your email."
+					/>
+				)}
 				<form onSubmit={handleSubmit(onSubmit)} noValidate className={FormStyle}>
 					<Input
 						label="Email address"

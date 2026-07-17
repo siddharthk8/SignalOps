@@ -1,10 +1,14 @@
 import "./index.css";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import axios from "axios";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
+import { client } from "@/api/client.gen";
+import { BASIC_API_CONFIG } from "@/core/api/customClient";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Layout from "@/layouts/Layout.jsx";
 // pages
@@ -56,7 +60,7 @@ const router = createBrowserRouter([
 						element: <ForgotPasswordPage />,
 					},
 					{
-						path: "reset-password/:token",
+						path: "reset-password",
 						element: <ResetPasswordPage />,
 					},
 				],
@@ -111,10 +115,46 @@ const router = createBrowserRouter([
 	},
 ]);
 
+// api client config
+client.setConfig(BASIC_API_CONFIG);
+
+// tanstack query client
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: Infinity,
+			gcTime: 5 * 60 * 1000, // 5 minutes
+			retry: (failureCount, error) => {
+				if (!axios.isAxiosError(error)) {
+					return false;
+				}
+
+				const status = error.response?.status;
+				// Network error (no response)
+				if (!status) {
+					return failureCount < 3;
+				}
+				// Don't retry client errors
+				if (status >= 400 && status < 500) {
+					return false;
+				}
+
+				// Retry server errors
+				return failureCount < 3;
+			},
+		},
+		mutations: {
+			retry: false,
+		},
+	},
+});
+
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
-		<Provider store={store}>
-			<RouterProvider router={router} />
-		</Provider>
+		<QueryClientProvider client={queryClient}>
+			<Provider store={store}>
+				<RouterProvider router={router} />
+			</Provider>
+		</QueryClientProvider>
 	</StrictMode>,
 );

@@ -22,26 +22,12 @@ const Input = ({
 					type={type}
 					disabled={disabled}
 					autoComplete={autoComplete}
-					className={`
-						w-full rounded-md border px-3 py-2 text-sm
-						bg-surface text-t-primary
-						border-border shadow-sm
-						transition-colors duration-200
-						focus:outline-none focus:ring-2
-
-						${error ? "border-error focus:ring-error" : "focus:border-primary focus:ring-primary-300"}
-
-						${disabled ? "bg-elevated text-t-disabled cursor-not-allowed opacity-70" : ""}
-
-						${rightIcon ? "pr-10" : ""}
-						placeholder:text-t-muted
-						${className}
-					`}
+					className={`bg-surface text-t-primary border-border w-full rounded-md border px-3 py-2 text-sm shadow-sm transition-colors duration-200 focus:ring-2 focus:outline-none ${error ? "border-error focus:ring-error" : "focus:border-primary focus:ring-primary-300"} ${disabled ? "bg-elevated text-t-disabled cursor-not-allowed opacity-70" : ""} ${rightIcon ? "pr-10" : ""} placeholder:text-t-muted ${className} `}
 					{...props}
 				/>
 
 				{rightIcon && (
-					<div className="absolute inset-y-0 right-3 flex items-center text-t-muted">
+					<div className="text-t-muted absolute inset-y-0 right-3 flex items-center">
 						{rightIcon}
 					</div>
 				)}

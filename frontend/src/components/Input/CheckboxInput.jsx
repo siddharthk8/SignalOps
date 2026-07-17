@@ -10,22 +10,13 @@ const Checkbox = ({ label, error, className = "", disabled = false, link, ...pro
 		<FormField error={error} className={className}>
 			<label
 				htmlFor={id}
-				className={`
-					flex items-start gap-3 text-sm text-t-secondary
-					${disabled ? "opacity-70 cursor-not-allowed" : "cursor-pointer"}
-				`}
+				className={`text-t-secondary flex items-start gap-3 text-sm ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"} `}
 			>
 				<input
 					id={id}
 					type="checkbox"
 					disabled={disabled}
-					className={`
-						h-4 w-4 my-auto
-						accent-primary-400
-						border-border
-						focus:ring-2 focus:ring-primary-300
-						transition-colors
-					`}
+					className={`accent-primary-400 border-border focus:ring-primary-300 my-auto h-4 w-4 transition-colors focus:ring-2`}
 					{...props}
 				/>
 

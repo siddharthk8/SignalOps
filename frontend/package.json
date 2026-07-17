@@ -1,43 +1,46 @@
 {
-  "name": "signalops",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "format": "prettier --write .",
-    "openapi-ts": "openapi-ts"
-  },
-  "dependencies": {
-    "@reduxjs/toolkit": "^2.12.0",
-    "@tailwindcss/vite": "^4.3.2",
-    "lucide-react": "^1.21.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-hook-form": "^7.80.0",
-    "react-redux": "^9.3.0",
-    "react-router": "^7.18.1",
-    "recharts": "^3.9.2",
-    "tailwindcss": "^4.3.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@eslint/js": "^10.0.1",
-    "@hey-api/openapi-ts": "0.99.0",
-    "@rolldown/plugin-babel": "^0.2.3",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
-    "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^10.6.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.3",
-    "eslint-plugin-simple-import-sort": "^13.0.0",
-    "globals": "^17.7.0",
-    "prettier": "3.9.4",
-    "vite": "^8.1.1"
-  }
+	"name": "signalops",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"lint": "eslint .",
+		"preview": "vite preview",
+		"format": "prettier --write .",
+		"openapi-ts": "openapi-ts"
+	},
+	"dependencies": {
+		"@reduxjs/toolkit": "^2.12.0",
+		"@tailwindcss/vite": "^4.3.2",
+		"@tanstack/react-query": "^5.101.2",
+		"axios": "^1.18.1",
+		"lucide-react": "^1.21.0",
+		"react": "^19.2.7",
+		"react-dom": "^19.2.7",
+		"react-hook-form": "^7.80.0",
+		"react-redux": "^9.3.0",
+		"react-router": "^7.18.1",
+		"recharts": "^3.9.2",
+		"tailwindcss": "^4.3.2"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.29.7",
+		"@eslint/js": "^10.0.1",
+		"@hey-api/openapi-ts": "0.99.0",
+		"@rolldown/plugin-babel": "^0.2.3",
+		"@types/react": "^19.2.17",
+		"@types/react-dom": "^19.2.3",
+		"@vitejs/plugin-react": "^6.0.3",
+		"babel-plugin-react-compiler": "^1.0.0",
+		"eslint": "^10.6.0",
+		"eslint-plugin-react-hooks": "^7.1.1",
+		"eslint-plugin-react-refresh": "^0.5.3",
+		"eslint-plugin-simple-import-sort": "^13.0.0",
+		"globals": "^17.7.0",
+		"prettier": "^3.9.4",
+		"prettier-plugin-tailwindcss": "^0.8.1",
+		"vite": "^8.1.1"
+	}
 }

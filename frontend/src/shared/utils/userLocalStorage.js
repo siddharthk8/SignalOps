@@ -16,6 +16,20 @@ export const saveUserInLS = (user) => {
 	}
 };
 
+export const updateUserAccessTokenInLS = (accessToken) => {
+	try {
+		localStorage.setItem(
+			"user",
+			JSON.stringify({
+				...getUserFromLS(),
+				accessToken,
+			}),
+		);
+	} catch (err) {
+		console.warn("Failed to save user to localStorage", err);
+	}
+};
+
 export const removeUserFromLS = () => {
 	try {
 		localStorage.removeItem("user");

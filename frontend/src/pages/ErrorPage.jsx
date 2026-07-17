@@ -5,27 +5,26 @@ import Container from "@/components/Container/Container";
 
 function ErrorPage() {
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-bg">
+		<div className="bg-bg flex min-h-screen items-center justify-center">
 			<Container>
 				<div className="mx-auto max-w-xl text-center">
 					<div className="mt-2 flex justify-center">
-						<div className="rounded-full bg-error/10 p-4">
-							<AlertTriangle className="size-10 text-error" />
+						<div className="bg-error/10 rounded-full p-4">
+							<AlertTriangle className="text-error size-10" />
 						</div>
 					</div>
 
-					<h1 className="mt-6 text-4xl font-bold text-t-primary">Something went wrong</h1>
+					<h1 className="text-t-primary mt-6 text-4xl font-bold">Something went wrong</h1>
 
-					<p className="mx-auto mt-4 max-w-md text-lg text-t-muted">
+					<p className="text-t-muted mx-auto mt-4 max-w-md text-lg">
 						We're sorry, but an unexpected error occurred. Please try refreshing the
 						page or come back in a few moments.
 					</p>
-
 					<Button onClick={() => (window.location.href = "/")} className="mt-8 mb-4 py-2">
 						Go Home
 					</Button>
 
-					<p className="mt-8 text-sm text-t-muted">
+					<p className="text-t-muted mt-8 text-sm">
 						If the problem persists, please contact support.
 					</p>
 				</div>

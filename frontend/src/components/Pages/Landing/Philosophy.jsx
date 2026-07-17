@@ -38,11 +38,11 @@ function PhilosophySection() {
 	return (
 		<section
 			id="philosophy"
-			className="relative overflow-hidden border-y border-border bg-surface py-32"
+			className="border-border bg-surface relative overflow-hidden border-y py-32"
 		>
 			{/* Background */}
 			<div className="absolute inset-0">
-				<div className="absolute left-1/2 top-0 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full bg-primary/5 blur-[130px]" />
+				<div className="bg-primary/5 absolute top-0 left-1/2 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full blur-[130px]" />
 
 				<div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] [background-size:72px_72px] opacity-[0.03]" />
 			</div>
@@ -51,18 +51,18 @@ function PhilosophySection() {
 				{/* Header */}
 
 				<div className="mx-auto max-w-3xl text-center">
-					<div className="inline-flex items-center gap-2 rounded-full border border-primary-300 bg-primary-100 px-4 py-2 text-sm font-semibold text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300">
+					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						Engineering Philosophy
 					</div>
 
-					<h2 className="mt-6 font-['Space_Grotesk'] text-4xl font-bold tracking-tight text-t-primary md:text-5xl">
+					<h2 className="text-t-primary mt-6 font-['Space_Grotesk'] text-4xl font-bold tracking-tight md:text-5xl">
 						Stop Reading Logs.
 						<br />
 						<span className="text-primary">Start Understanding Systems.</span>
 					</h2>
 
-					<p className="mt-6 text-lg leading-8 text-t-muted">
+					<p className="text-t-muted mt-6 text-lg leading-8">
 						Traditional log management focuses on storing and searching logs. SignalOps
 						focuses on understanding their meaning. Every stage in the pipeline
 						progressively transforms noisy, unstructured application logs into
@@ -74,7 +74,7 @@ function PhilosophySection() {
 
 				<div className="relative mt-24">
 					{/* Desktop Timeline */}
-					<div className="absolute z-5 left-0 right-0 top-9 hidden h-px bg-border lg:block" />
+					<div className="bg-border absolute top-9 right-0 left-0 z-5 hidden h-px lg:block" />
 
 					<div className="grid gap-8 lg:grid-cols-5">
 						{stages.map((stage, index) => (
@@ -82,8 +82,8 @@ function PhilosophySection() {
 								<div
 									className={`group h-full rounded-3xl border p-7 transition-all duration-300 ${
 										stage.highlight
-											? "border-primary/40 bg-primary-100 shadow-md dark:bg-primary-100"
-											: "border-border bg-bg hover:-translate-y-2 hover:border-primary/30 hover:shadow-lg"
+											? "border-primary/40 bg-primary-100 dark:bg-primary-100 shadow-md"
+											: "border-border bg-bg hover:border-primary/30 hover:-translate-y-2 hover:shadow-lg"
 									}`}
 								>
 									<div
@@ -97,26 +97,26 @@ function PhilosophySection() {
 									</div>
 
 									<div className="mt-6">
-										<div className="text-xs font-semibold uppercase tracking-[0.25em] text-t-muted">
+										<div className="text-t-muted text-xs font-semibold tracking-[0.25em] uppercase">
 											Step {index + 1}
 										</div>
 
-										<h3 className="mt-2 text-xl font-bold text-t-primary">
+										<h3 className="text-t-primary mt-2 text-xl font-bold">
 											{stage.title}
 										</h3>
 
-										<p className="mt-4 leading-7 text-t-muted">
+										<p className="text-t-muted mt-4 leading-7">
 											{stage.description}
 										</p>
 									</div>
 								</div>
 
 								{/* Connection Node */}
-								<div className="absolute left-1/2 top-8 hidden -translate-x-1/2 lg:block">
+								<div className="absolute top-8 left-1/2 hidden -translate-x-1/2 lg:block">
 									<div
 										className={`h-4 w-4 rounded-full border-4 ${
 											stage.highlight
-												? "border-primary bg-white dark:bg-bg"
+												? "border-primary dark:bg-bg bg-white"
 												: "border-border bg-bg"
 										}`}
 									/>
@@ -128,18 +128,18 @@ function PhilosophySection() {
 
 				{/* Bottom Statement */}
 
-				<div className="mt-24 overflow-hidden rounded-[2rem] border border-primary/20 bg-gradient-to-r from-primary-100 via-bg to-accent-100 dark:from-primary-500/10 dark:via-bg dark:to-accent-500/10">
+				<div className="border-primary/20 from-primary-100 via-bg to-accent-100 dark:from-primary-500/10 dark:via-bg dark:to-accent-500/10 mt-24 overflow-hidden rounded-[2rem] border bg-gradient-to-r">
 					<div className="grid items-center gap-10 px-10 py-12 lg:grid-cols-[1.3fr_0.7fr]">
 						<div>
-							<p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">
+							<p className="text-primary text-sm font-semibold tracking-[0.3em] uppercase">
 								Core Architectural Principle
 							</p>
 
-							<h3 className="mt-4 font-['Space_Grotesk'] text-3xl font-bold leading-tight text-t-primary">
+							<h3 className="text-t-primary mt-4 font-['Space_Grotesk'] text-3xl leading-tight font-bold">
 								The platform never reasons over raw log strings.
 							</h3>
 
-							<p className="mt-5 max-w-3xl text-lg leading-8 text-t-muted">
+							<p className="text-t-muted mt-5 max-w-3xl text-lg leading-8">
 								Application logs are merely the input. Every decision—from anomaly
 								detection to AI-powered incident analysis—is driven by normalized
 								semantic events that represent the true operational meaning of the
@@ -148,8 +148,8 @@ function PhilosophySection() {
 						</div>
 
 						<div className="flex justify-center">
-							<div className="rounded-3xl border border-border bg-surface px-10 py-8 shadow-lg">
-								<div className="space-y-3 font-['Space_Grotesk'] text-center text-xl font-bold">
+							<div className="border-border bg-surface rounded-3xl border px-10 py-8 shadow-lg">
+								<div className="space-y-3 text-center font-['Space_Grotesk'] text-xl font-bold">
 									<div className="text-error">Raw Logs</div>
 
 									<div className="text-t-muted">↓</div>

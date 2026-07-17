@@ -2,14 +2,14 @@ const FormField = ({ label = null, labelId = undefined, error, children, classNa
 	return (
 		<div className={`flex flex-col gap-1 py-1 ${className}`}>
 			{label && (
-				<label htmlFor={labelId} className="text-sm font-medium text-t-secondary">
+				<label htmlFor={labelId} className="text-t-secondary text-sm font-medium">
 					{label}
 				</label>
 			)}
 
 			{children}
 
-			{error && <p className="text-xs text-error mt-1">{error}</p>}
+			{error && <p className="text-error mt-1 text-xs">{error}</p>}
 		</div>
 	);
 };

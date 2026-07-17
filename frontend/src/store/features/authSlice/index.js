@@ -16,6 +16,10 @@ const authSlice = createSlice({
 			state.user = action.payload;
 			state.status = "succeeded";
 		},
+		setAccessToken: (state, action) => {
+			state.user = { ...state.user, accessToken: action.payload };
+			state.status = "succeeded";
+		},
 		clearUser: (state) => {
 			state.user = null;
 			state.status = "idle";
@@ -23,5 +27,5 @@ const authSlice = createSlice({
 	},
 });
 
-export const { setUser, clearUser } = authSlice.actions;
+export const { setUser, setAccessToken, clearUser } = authSlice.actions;
 export const authReducer = authSlice.reducer;

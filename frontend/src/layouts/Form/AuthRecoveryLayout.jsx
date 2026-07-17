@@ -9,23 +9,23 @@ export default function AuthRecoveryLayout({
 	children,
 }) {
 	return (
-		<div className="min-h-full grid grid-cols-1 lg:grid-cols-2 bg-bg">
-			<div className="hidden lg:block relative overflow-hidden m-16 mr-0">
+		<div className="bg-bg grid min-h-full grid-cols-1 lg:grid-cols-2">
+			<div className="relative m-16 mr-0 hidden overflow-hidden lg:block">
 				{/* Background image */}
 				<img
 					// src="none"
 					src={imageSrc}
 					alt="Brand background"
-					className="absolute inset-0 h-full w-full object-cover rounded-2xl"
+					className="absolute inset-0 h-full w-full rounded-2xl object-cover"
 				/>
 
-				<div className="absolute inset-0 bg-black/40 rounded-2xl" />
+				<div className="absolute inset-0 rounded-2xl bg-black/40" />
 
-				<div className="relative z-10 flex flex-col justify-center h-full px-8 sm:px-12 lg:px-16">
-					<h2 className="text-4xl font-bold text-white mb-4 leading-tight drop-shadow-md">
+				<div className="relative z-10 flex h-full flex-col justify-center px-8 sm:px-12 lg:px-16">
+					<h2 className="mb-4 text-4xl leading-tight font-bold text-white drop-shadow-md">
 						{title}
 					</h2>
-					<p className="text-lg text-white/90 leading-relaxed drop-shadow">
+					<p className="text-lg leading-relaxed text-white/90 drop-shadow">
 						{description}
 					</p>
 				</div>
