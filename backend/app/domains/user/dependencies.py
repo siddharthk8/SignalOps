@@ -1,6 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
+import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,9 +29,21 @@ async def get_current_active_user(
         },  # this header should be returned with 401, as per OpenAPI standards.
     )
 
-    payload = get_access_token_data(token)
-    if payload is None:
-        raise credentials_exception
+    try:
+        payload = get_access_token_data(token)
+    except jwt.ExpiredSignatureError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Access token expired.",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from e
+
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Access token is invalid.",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from e
 
     id = payload.get("sub")
     if id is None:

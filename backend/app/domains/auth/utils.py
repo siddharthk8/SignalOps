@@ -43,17 +43,23 @@ def create_access_token(data: dict) -> str:
     return encoded_jwt
 
 
-def get_access_token_data(token: str) -> dict[str, Any] | None:
+def get_access_token_data(token: str) -> dict[str, Any]:
     try:
-        decoded_jwt = jwt.decode(
+        return jwt.decode(
             token, settings.secret_key.get_secret_value(), algorithms=[ALGORITHM]
         )
-    except jwt.InvalidTokenError:
+
+    except jwt.ExpiredSignatureError as e:
+        auth_logger.warning(
+            "Authentication failed: JWT validation failed (expired token).",
+        )
+        raise jwt.ExpiredSignatureError() from e
+
+    except jwt.InvalidTokenError as e:
         auth_logger.warning(
             "Authentication failed: JWT validation failed (invalid token).",
         )
-        return None
-    return decoded_jwt
+        raise jwt.ExpiredSignatureError() from e
 
 
 # refresh token utils
@@ -114,7 +120,7 @@ For your security, this link will expire in {settings.reset_token_expire_minutes
 
 If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.
 
-Best regards,  
+Best regards,
 The SignalOps Team
 """
 
