@@ -1,10 +1,13 @@
 import "./index.css";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
+import { client } from "@/api/client.gen";
+import { BASIC_API_CONFIG } from "@/api/client/custom";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Layout from "@/layouts/Layout.jsx";
 // pages
@@ -111,10 +114,29 @@ const router = createBrowserRouter([
 	},
 ]);
 
+// api client config
+client.setConfig(BASIC_API_CONFIG);
+
+// tanstack query client
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: Infinity,
+			gcTime: 5 * 60 * 1000, // 5 minutes
+			retry: false,
+		},
+		mutations: {
+			retry: false,
+		},
+	},
+});
+
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
-		<Provider store={store}>
-			<RouterProvider router={router} />
-		</Provider>
+		<QueryClientProvider client={queryClient}>
+			<Provider store={store}>
+				<RouterProvider router={router} />
+			</Provider>
+		</QueryClientProvider>
 	</StrictMode>,
 );
