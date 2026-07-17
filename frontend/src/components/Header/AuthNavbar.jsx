@@ -1,7 +1,10 @@
+import { useMutation } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 
+import { revokeAllRefreshTokens, revokeRefreshToken } from "@/api";
+import authenticatedClient from "@/core/api/customClient";
 import { clearUser } from "@/store/features/authSlice";
 
 import Avatar from "../Avatar";
@@ -10,6 +13,28 @@ import HoverButton from "../Button/HoverButton";
 export default function AuthNavbar({ auth, isUserMenuOpen, setIsUserMenuOpen, userMenuRef }) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+
+	const userLogoutMutation = useMutation({
+		mutationFn: ({ refresh_token }) =>
+			revokeRefreshToken({
+				client: authenticatedClient,
+				body: {
+					refresh_token: refresh_token,
+				},
+			}),
+		onSuccess: () => {
+			dispatch(clearUser());
+		},
+	});
+	const revokeAllLogoutMutation = useMutation({
+		mutationFn: () =>
+			revokeAllRefreshTokens({
+				client: authenticatedClient,
+			}),
+		onSuccess: () => {
+			dispatch(clearUser());
+		},
+	});
 
 	const userMenuItems = [
 		{ name: "Your Profile", link: "/profile" },
@@ -51,11 +76,13 @@ export default function AuthNavbar({ auth, isUserMenuOpen, setIsUserMenuOpen, us
 									) {
 										if (item.name === "Sign out from all devices") {
 											// request server to sign out from all devices
+											revokeAllLogoutMutation.mutate();
 										} else {
 											// request server to sign out from current device
+											userLogoutMutation.mutate({
+												refresh_token: auth.user.refreshToken,
+											});
 										}
-										dispatch(clearUser());
-										navigate("/login", { replace: true });
 									} else {
 										navigate(item.link);
 									}
