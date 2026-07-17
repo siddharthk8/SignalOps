@@ -3,6 +3,7 @@ from typing import cast
 from fastapi import FastAPI, Request
 from fastapi.concurrency import asynccontextmanager
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.types import ExceptionHandler
@@ -44,6 +45,20 @@ app = FastAPI(
     redoc_url=None if IS_PRODUCTION else "/redoc",
     openapi_url=None if IS_PRODUCTION else "/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
+)
+
+if IS_PRODUCTION:
+    origins = []
+else:
+    origins = [
+        "http://localhost:5173",  # Vite (Development)
+    ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
