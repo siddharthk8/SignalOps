@@ -1,15 +1,17 @@
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router";
 
+import { resetPassword } from "@/api";
 import AuthBgImage from "@/assets/images/auth-bg.jpg";
 import Button from "@/components/Button";
-import FormBottomLink from "@/components/Container/BottomLink";
 import FormMessage from "@/components/Form/FormMessage";
 import PasswordInput from "@/components/Input/PasswordInput";
 import { PASSWORD_RULES } from "@/shared/constants/HookFormValidatonRules";
+import { SERVER_ERROR_MSG } from "@/shared/constants/messages";
 import { FormStyle } from "@/shared/constants/Styles";
-import useResendCoolDown from "@/shared/hooks/useResendCoolDownTime";
 
 import AuthRecoveryLayout from "../../layouts/Form/AuthRecoveryLayout";
 
@@ -22,30 +24,48 @@ export default function ResetPasswordPage() {
 		clearErrors,
 		formState: { errors, isSubmitting },
 	} = useForm({ mode: "onBlur" });
-	const { formattedTime, isCooldownActive, startCooldown } = useResendCoolDown(120); // 2 minutes
 
 	const [searchParams] = useSearchParams();
 	const token = searchParams.get("token");
 
 	const [success, setSuccess] = useState(false);
-	const [resendLoading, setResendLoading] = useState(false);
-	const [resendSuccess, setResendSuccess] = useState(false);
-
 	const newPassword = watch("newPassword", "");
+
+	const { mutate: mutateOnSubmit } = useMutation({
+		mutationFn: ({ newPassword }) => {
+			return resetPassword({
+				body: {
+					token: token,
+					new_password: newPassword,
+				},
+			});
+		},
+		onSuccess: () => {
+			setSuccess(true);
+		},
+		onError: (error) => {
+			if (!axios.isAxiosError(error)) {
+				setError("root", {
+					type: "server",
+					message: SERVER_ERROR_MSG,
+				});
+			} else {
+				setError(error.response?.data.field || "root", {
+					type: "server",
+					message: error.response?.data.message || SERVER_ERROR_MSG,
+				});
+			}
+		},
+	});
 
 	const onSubmit = async ({ newPassword, code }) => {
 		clearErrors("root");
 		setSuccess(false);
 
-		// ...
-	};
-
-	const handleResend = async () => {
-		clearErrors("root");
-		setResendSuccess(false);
-		setResendLoading(true);
-
-		// ...
+		mutateOnSubmit({
+			token: code,
+			newPassword,
+		});
 	};
 
 	return (
@@ -63,13 +83,6 @@ export default function ResetPasswordPage() {
 					<FormMessage
 						type="success"
 						message="Your password has been reset successfully."
-					/>
-				)}
-
-				{resendSuccess && (
-					<FormMessage
-						type="success"
-						message="A new verification code has been sent to your email."
 					/>
 				)}
 				<form onSubmit={handleSubmit(onSubmit)} noValidate className={FormStyle}>
@@ -98,31 +111,6 @@ export default function ResetPasswordPage() {
 						{isSubmitting ? "Resetting…" : "Reset Password"}
 					</Button>
 				</form>
-
-				<div className="flex flex-col items-center gap-2 py-4">
-					<FormBottomLink
-						text="Didn’t receive the code?"
-						linkTextOrComp={
-							<button
-								type="button"
-								disabled={
-									resendLoading ||
-									isCooldownActive ||
-									isSubmitting || // ❌ Disable resend while submitting password reset
-									success // ❌ Disable resend after success
-								}
-								onClick={handleResend}
-								className="disabled:opacity-50"
-							>
-								{resendLoading
-									? "Resending…"
-									: isCooldownActive
-										? `Resend in ${formattedTime}`
-										: "Resend"}
-							</button>
-						}
-					/>
-				</div>
 			</>
 		</AuthRecoveryLayout>
 	);
