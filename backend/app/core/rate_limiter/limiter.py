@@ -86,7 +86,7 @@ class RateLimiter:
         refill_rate: float,
     ) -> None:
         # Disable rate limiting in the test environment.
-        if settings.testing:
+        if settings.testing or settings.env == "development":
             return
 
         route = get_route_key(request)
