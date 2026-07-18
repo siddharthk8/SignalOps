@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape, urlSearchParamsBodySerializer } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSourceAppData, CreateSourceAppErrors, CreateSourceAppResponses, CreateTokenData, CreateTokenErrors, CreateTokenResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DeleteCurrentUserData, DeleteCurrentUserResponses, DeleteProfileImageData, DeleteProfileImageResponses, DeleteSourceAppData, DeleteSourceAppErrors, DeleteSourceAppResponses, ForgotPasswordData, ForgotPasswordErrors, ForgotPasswordResponses, GetBatchData, GetBatchErrors, GetBatchResponses, GetCurrentUserData, GetCurrentUserResponses, GetNewAccessTokenData, GetNewAccessTokenErrors, GetNewAccessTokenResponses, GetSourceAppBatchesData, GetSourceAppBatchesErrors, GetSourceAppBatchesResponses, GetSourceAppsData, GetSourceAppsErrors, GetSourceAppsResponses, HealthCheckData, HealthCheckResponses, IngestLogsData, IngestLogsErrors, IngestLogsResponses, MarkIncidentResolvedData, MarkIncidentResolvedErrors, MarkIncidentResolvedResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllRefreshTokensData, RevokeAllRefreshTokensResponses, RevokeRefreshTokenData, RevokeRefreshTokenErrors, RevokeRefreshTokenResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UploadProfileImageData, UploadProfileImageErrors, UploadProfileImageResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSourceAppData, CreateSourceAppErrors, CreateSourceAppResponses, CreateTokenData, CreateTokenErrors, CreateTokenResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DashboardOverviewData, DashboardOverviewResponses, DeleteCurrentUserData, DeleteCurrentUserResponses, DeleteProfileImageData, DeleteProfileImageResponses, DeleteSourceAppData, DeleteSourceAppErrors, DeleteSourceAppResponses, ForgotPasswordData, ForgotPasswordErrors, ForgotPasswordResponses, GetBatchData, GetBatchErrors, GetBatchResponses, GetCurrentUserData, GetCurrentUserResponses, GetNewAccessTokenData, GetNewAccessTokenErrors, GetNewAccessTokenResponses, GetSourceAppBatchesData, GetSourceAppBatchesErrors, GetSourceAppBatchesResponses, GetSourceAppsData, GetSourceAppsErrors, GetSourceAppsResponses, HealthCheckData, HealthCheckResponses, IngestLogsData, IngestLogsErrors, IngestLogsResponses, MarkIncidentResolvedData, MarkIncidentResolvedErrors, MarkIncidentResolvedResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllRefreshTokensData, RevokeAllRefreshTokensResponses, RevokeRefreshTokenData, RevokeRefreshTokenErrors, RevokeRefreshTokenResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UploadProfileImageData, UploadProfileImageErrors, UploadProfileImageResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -258,5 +258,15 @@ export const ingestLogs = <ThrowOnError extends boolean = false>(options: Option
 export const markIncidentResolved = <ThrowOnError extends boolean = false>(options: Options<MarkIncidentResolvedData, ThrowOnError>): RequestResult<MarkIncidentResolvedResponses, MarkIncidentResolvedErrors, ThrowOnError> => (options.client ?? client).post<MarkIncidentResolvedResponses, MarkIncidentResolvedErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/incidents/{incident_id}/resolve',
+    ...options
+});
+
+/**
+ * Dashboard Overview
+ */
+export const dashboardOverview = <ThrowOnError extends boolean = false>(options?: Options<DashboardOverviewData, ThrowOnError>): RequestResult<DashboardOverviewResponses, unknown, ThrowOnError> => (options?.client ?? client).get<DashboardOverviewResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/dashboard',
     ...options
 });
