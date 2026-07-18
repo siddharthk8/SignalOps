@@ -34,9 +34,8 @@ export const PASSWORD_RULES = {
 	},
 };
 
-export const FIRST_NAME_RULES = {
+export const FIRST_NAME_RULES_NRQ = {
 	...TRIM_RULE,
-	required: "First name is required",
 	minLength: {
 		value: 2,
 		message: "First name is too short",
@@ -47,9 +46,8 @@ export const FIRST_NAME_RULES = {
 	},
 };
 
-export const LAST_NAME_RULES = {
+export const LAST_NAME_RULES_NRQ = {
 	...TRIM_RULE,
-	required: "Last name is required",
 	minLength: {
 		value: 2,
 		message: "Last name is too short",
@@ -58,6 +56,16 @@ export const LAST_NAME_RULES = {
 		value: 80,
 		message: "Last name is too long",
 	},
+};
+
+export const FIRST_NAME_RULES = {
+	...FIRST_NAME_RULES_NRQ,
+	required: "First name is required",
+};
+
+export const LAST_NAME_RULES = {
+	...LAST_NAME_RULES_NRQ,
+	required: "Last name is required",
 };
 
 export const APP_NAME_RULES = {
