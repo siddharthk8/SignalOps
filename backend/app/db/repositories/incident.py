@@ -1,9 +1,9 @@
 from collections.abc import Sequence
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import cast
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.incident import Incident as ORMIncident
@@ -34,6 +34,51 @@ class IncidentRepository:
             .where(ORMIncident.id == id)
             .values(resolved_at=datetime.now(UTC))
         )
+
+    async def get_daily_incidents_over_last_30_days_by_user(self, user_id: UUID):
+        start_date = datetime.now(UTC) - timedelta(days=30)
+
+        query = await self.db.execute(
+            select(
+                func.date(ORMIncident.detected_at).label("date"),
+                func.count(ORMIncident.id).label("count"),
+            )
+            .where(
+                ORMIncident.user_id == user_id, ORMIncident.detected_at >= start_date
+            )
+            .group_by(func.date(ORMIncident.detected_at))
+            .order_by(func.date(ORMIncident.detected_at))
+        )
+        return query.all()
+
+    async def get_last_5_incidents_by_user(
+        self, user_id: UUID
+    ) -> Sequence[ORMIncident]:
+        query = await self.db.execute(
+            select(ORMIncident)
+            .where(ORMIncident.user_id == user_id)
+            .order_by(ORMIncident.detected_at.desc())
+            .limit(5)
+        )
+        return query.scalars().all()
+
+    async def get_count_unresolved_events_by_user(self, user_id: UUID) -> int:
+        query = await self.db.execute(
+            select(func.count())
+            .select_from(ORMIncident)
+            .where(ORMIncident.user_id == user_id, ORMIncident.resolved_at.is_(None))
+        )
+        count = query.scalar()
+        return count or 0
+
+    async def get_count_by_user(self, user_id: UUID) -> int:
+        query = await self.db.execute(
+            select(func.count())
+            .select_from(ORMIncident)
+            .where(ORMIncident.user_id == user_id)
+        )
+        count = query.scalar()
+        return count or 0
 
     async def save(
         self,

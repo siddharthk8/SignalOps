@@ -51,3 +51,12 @@ class SourceAppRepository:
 
     async def remove_source_app(self, source_app: SourceApp):
         await self.db.delete(source_app)
+
+    async def get_count_by_user(self, user_id: UUID) -> int:
+        query = await self.db.execute(
+            select(func.count())
+            .select_from(SourceApp)
+            .where(SourceApp.user_id == user_id)
+        )
+        count = query.scalar()
+        return count or 0
