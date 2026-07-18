@@ -35,6 +35,16 @@ export type BodyUploadProfileImage = {
     file: Blob | File;
 };
 
+export type DashboardOverviewSchema = {
+    source_apps_count: number;
+    incidents_count: number;
+    unresolved_incidents_count: number;
+    last_5_incidents: Array<IncidentResponse>;
+    daily_incidents_over_last_30_days: Array<{
+        [key: string]: number | string;
+    }>;
+};
+
 export type EntityResponse = {
     id: number;
     user: string | null;
@@ -612,3 +622,16 @@ export type MarkIncidentResolvedResponses = {
 };
 
 export type MarkIncidentResolvedResponse = MarkIncidentResolvedResponses[keyof MarkIncidentResolvedResponses];
+
+export type DashboardOverviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/dashboard';
+};
+
+export type DashboardOverviewResponses = {
+    200: DashboardOverviewSchema;
+};
+
+export type DashboardOverviewResponse = DashboardOverviewResponses[keyof DashboardOverviewResponses];
