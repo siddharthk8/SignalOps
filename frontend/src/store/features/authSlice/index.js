@@ -18,7 +18,19 @@ const authSlice = createSlice({
 		},
 		setAccessToken: (state, action) => {
 			state.user = { ...state.user, accessToken: action.payload };
-			state.status = "succeeded";
+		},
+		updateNames: (state, action) => {
+			state.user = {
+				...state.user,
+				firstName: action.payload.firstName,
+				lastName: action.payload.lastName,
+			};
+		},
+		updateProfileImage: (state, action) => {
+			state.user = {
+				...state.user,
+				profileImage: action.payload,
+			};
 		},
 		clearUser: (state) => {
 			state.user = null;
@@ -27,5 +39,6 @@ const authSlice = createSlice({
 	},
 });
 
-export const { setUser, setAccessToken, clearUser } = authSlice.actions;
+export const { setUser, setAccessToken, updateNames, updateProfileImage, clearUser } =
+	authSlice.actions;
 export const authReducer = authSlice.reducer;

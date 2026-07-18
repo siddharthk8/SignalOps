@@ -1,11 +1,13 @@
 import { createListenerMiddleware } from "@reduxjs/toolkit";
 
+import { removeUserFromLS, saveUserInLS, updateDataInLS } from "../shared/utils/userLocalStorage";
 import {
-	removeUserFromLS,
-	saveUserInLS,
-	updateUserAccessTokenInLS,
-} from "../shared/utils/userLocalStorage";
-import { clearUser, setAccessToken, setUser } from "./features/authSlice";
+	clearUser,
+	setAccessToken,
+	setUser,
+	updateNames,
+	updateProfileImage,
+} from "./features/authSlice";
 
 export const listenerMiddleware = createListenerMiddleware();
 
@@ -19,7 +21,21 @@ listenerMiddleware.startListening({
 listenerMiddleware.startListening({
 	actionCreator: setAccessToken,
 	effect: (action) => {
-		updateUserAccessTokenInLS(action.payload);
+		updateDataInLS({ accessToken: action.payload });
+	},
+});
+
+listenerMiddleware.startListening({
+	actionCreator: updateProfileImage,
+	effect: (action) => {
+		updateDataInLS({ profileImage: action.payload });
+	},
+});
+
+listenerMiddleware.startListening({
+	actionCreator: updateNames,
+	effect: (action) => {
+		updateDataInLS(action.payload);
 	},
 });
 

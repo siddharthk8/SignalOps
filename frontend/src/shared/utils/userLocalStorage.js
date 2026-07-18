@@ -16,13 +16,13 @@ export const saveUserInLS = (user) => {
 	}
 };
 
-export const updateUserAccessTokenInLS = (accessToken) => {
+export const updateDataInLS = (data) => {
 	try {
 		localStorage.setItem(
 			"user",
 			JSON.stringify({
 				...getUserFromLS(),
-				accessToken,
+				...data,
 			}),
 		);
 	} catch (err) {
