@@ -56,12 +56,12 @@ function BatchDetailsPage() {
 				<BatchHeader batchId={batch.id} createdAt={batch.created_at} />
 				<BatchOverviewCards overview={overview} />
 				<PipelineOverview />
-				<LogsCard logs={batch.logs} />
-				<EntitiesCard entities={batch.entities} />
-				<EventsCard events={batch.events} />
-				<SignalsCard signals={batch.signals} />
-				<IncidentsCard incidents={batch.incidents} />
 				<AIAnalysisCard analyses={batch.ai_analyses} />
+				<IncidentsCard incidents={batch.incidents} />
+				<SignalsCard signals={batch.signals} />
+				<EventsCard events={batch.events} />
+				<EntitiesCard entities={batch.entities} />
+				<LogsCard logs={batch.logs} />
 			</div>
 		</Container>
 	);
