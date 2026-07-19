@@ -12,7 +12,7 @@ import {
 
 import { dashboardOverview } from "@/api";
 import Button from "@/components/Button";
-import Container from "@/components/Container/Container";
+import Container from "@/components/Container";
 import Loader from "@/components/Loader";
 import authenticatedClient from "@/core/api/customClient";
 

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 
 import { createSourceApp } from "@/api";
 import Button from "@/components/Button";
-import Container from "@/components/Container/Container";
+import Container from "@/components/Container";
 import FormMessage from "@/components/Form/FormMessage";
 import Input from "@/components/Input/Input";
 import SelectInput from "@/components/Input/SelectInput";
