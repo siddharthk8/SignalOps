@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Boxes, CreditCard, Shield, ShoppingCart } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 
 import { createSourceApp } from "@/api";
 import Button from "@/components/Button";
-import Container from "@/components/Container/Container";
+import Container from "@/components/Container";
 import FormMessage from "@/components/Form/FormMessage";
 import Input from "@/components/Input/Input";
 import SelectInput from "@/components/Input/SelectInput";
@@ -30,6 +30,7 @@ export default function CreateSourceAppPage() {
 	});
 
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const { mutate } = useMutation({
 		mutationFn: ({ appName, appType }) => {
@@ -42,6 +43,9 @@ export default function CreateSourceAppPage() {
 			});
 		},
 		onSuccess: ({ data }) => {
+			queryClient.invalidateQueries({
+				queryKey: ["source-apps"],
+			});
 			navigate(`/dashboard/source-apps/${data.id}/batches`);
 		},
 		onError: (error) => {

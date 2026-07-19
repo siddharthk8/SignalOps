@@ -18,8 +18,15 @@ export type AiAnalysisResponse = {
 
 export type Batch = {
     id: number;
-    ai_analyses: Array<AiAnalysisResponse>;
+    log_count: number;
+    ai_analyses: Array<BatchesAiAnalysisResponse>;
     created_at: string;
+};
+
+export type BatchesAiAnalysisResponse = {
+    id: number;
+    severity: Severity;
+    confidence: number;
 };
 
 export type BodyCreateToken = {

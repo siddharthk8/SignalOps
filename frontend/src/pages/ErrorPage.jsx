@@ -1,7 +1,7 @@
 import { AlertTriangle } from "lucide-react";
 
 import Button from "@/components/Button";
-import Container from "@/components/Container/Container";
+import Container from "@/components/Container";
 
 function ErrorPage() {
 	return (

@@ -11,9 +11,9 @@ import {
 } from "recharts";
 
 import { dashboardOverview } from "@/api";
-import Button from "@/components/Button";
-import Container from "@/components/Container/Container";
+import Container from "@/components/Container";
 import Loader from "@/components/Loader";
+import QueryError from "@/components/QueryError";
 import authenticatedClient from "@/core/api/customClient";
 
 function CustomTooltip({ active, payload, label }) {
@@ -52,20 +52,7 @@ function DashboardPage() {
 	}
 
 	if (isError || !overviewData) {
-		return (
-			<Container>
-				<div className="flex flex-col items-center gap-4 py-20">
-					<h2 className="text-xl font-semibold">Couldn't load dashboard</h2>
-
-					<Button
-						onClick={() => refetch()}
-						className="bg-primary rounded-lg px-4 py-2 text-white"
-					>
-						Retry
-					</Button>
-				</div>
-			</Container>
-		);
+		return <QueryError onRetry={refetch} />;
 	}
 
 	const { data } = overviewData;
