@@ -91,8 +91,14 @@ class GetBatch(_BaseModel):
     created_at: datetime
 
 
+class BatchesAIAnalysisResponse(_BaseModel):
+    id: int
+    severity: Severity
+    confidence: float
+
+
 class Batch(_BaseModel):
     id: int
     log_count: int
-    ai_analyses: list[AIAnalysisResponse]
+    ai_analyses: list[BatchesAIAnalysisResponse]
     created_at: datetime

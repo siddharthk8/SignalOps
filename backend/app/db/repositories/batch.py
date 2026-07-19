@@ -4,6 +4,7 @@ from sqlalchemy import Row, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.db.models.ai_analysis import AIAnalysis
 from app.db.models.batch import Batch
 from app.db.models.log import Log
 
@@ -36,7 +37,11 @@ class BatchRepository:
                 func.count(Log.id).label("log_count"),
             )
             .outerjoin(Log, Log.batch_id == Batch.id)
-            .options(selectinload(Batch.ai_analyses))
+            .options(
+                selectinload(Batch.ai_analyses).load_only(
+                    AIAnalysis.id, AIAnalysis.severity, AIAnalysis.confidence
+                )
+            )
             .where(Batch.source_app_id == source_app_id)
             .group_by(Batch.id)
             .order_by(Batch.created_at.desc())
@@ -44,8 +49,7 @@ class BatchRepository:
             .limit(limit)
         )
 
-        result = query.all()
-        return result
+        return query.all()
 
     async def get(self, batch_id: int):
         query = await self.db.execute(
