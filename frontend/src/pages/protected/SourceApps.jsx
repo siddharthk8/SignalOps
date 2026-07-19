@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import {
 	ChevronLeft,
@@ -7,11 +7,12 @@ import {
 	ChevronsRight,
 	Loader2,
 	Server,
+	Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
-import { getSourceApps } from "@/api";
+import { deleteSourceApp, getSourceApps } from "@/api";
 import Container from "@/components/Container";
 import Loader from "@/components/Loader";
 import QueryError from "@/components/QueryError";
@@ -26,6 +27,8 @@ function SourceAppsPage() {
 		pageSize: 10,
 	});
 
+	const queryClient = useQueryClient();
+
 	const { data, isLoading, isFetching, isError, refetch } = useQuery({
 		queryKey: ["source-apps", pagination.pageIndex, pagination.pageSize],
 		placeholderData: keepPreviousData,
@@ -37,6 +40,19 @@ function SourceAppsPage() {
 					limit: pagination.pageSize,
 				},
 			}),
+	});
+
+	const deleteMutation = useMutation({
+		mutationFn: (source_app_id) =>
+			deleteSourceApp({
+				client: authenticatedClient,
+				path: { source_app_id },
+			}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["source-apps"],
+			});
+		},
 	});
 
 	const sourceApps = data?.data?.source_apps ?? [];
@@ -168,8 +184,25 @@ function SourceAppsPage() {
 												))}
 
 												<td className="px-6">
-													<div className="text-primary flex justify-end opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100">
-														<ChevronRight size={18} />
+													<div className="flex items-center justify-end gap-3 opacity-0 transition-all group-hover:opacity-100">
+														<button
+															type="button"
+															onClick={(e) => {
+																e.stopPropagation();
+																deleteMutation.mutate(
+																	row.original.id,
+																);
+															}}
+															className="rounded-lg p-2 text-red-500 transition hover:bg-red-500/10"
+															title="Delete Source Application"
+														>
+															<Trash2 size={18} />
+														</button>
+
+														<ChevronRight
+															size={18}
+															className="text-primary transition-transform group-hover:translate-x-1"
+														/>
 													</div>
 												</td>
 											</tr>
