@@ -1,4 +1,9 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, CalendarClock, CheckCircle2, ShieldAlert } from "lucide-react";
+
+import { markIncidentResolved } from "@/api";
+import Button from "@/components/Button";
+import authenticatedClient from "@/core/api/customClient";
 
 const severityClasses = {
 	low: "bg-success/10 text-success",
@@ -13,6 +18,24 @@ const statusClasses = {
 };
 
 function IncidentsCard({ incidents }) {
+	const queryClient = useQueryClient();
+
+	const { mutate, isPending } = useMutation({
+		mutationFn: (incidentId) =>
+			markIncidentResolved({
+				client: authenticatedClient,
+				path: {
+					incident_id: incidentId,
+				},
+			}),
+
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["batch"],
+			});
+		},
+	});
+
 	return (
 		<section className="bg-surface border-border overflow-hidden rounded-md border">
 			<div className="border-border flex items-center justify-between border-b px-5 py-4">
@@ -72,6 +95,22 @@ function IncidentsCard({ incidents }) {
 												.replaceAll("_", " ")
 												.replace(/\b\w/g, (c) => c.toUpperCase())}
 										</span>
+
+										<div className="ml-auto">
+											{incident.status === "open" ? (
+												<Button
+													size="sm"
+													onClick={() => mutate(incident.id)}
+													disabled={isPending}
+												>
+													{isPending ? "Resolving..." : "Mark Resolved"}
+												</Button>
+											) : (
+												<span className="bg-success/10 text-success rounded-md px-3 py-1 text-xs font-medium">
+													Resolved
+												</span>
+											)}
+										</div>
 									</div>
 
 									<p className="text-t-muted text-sm leading-6">
