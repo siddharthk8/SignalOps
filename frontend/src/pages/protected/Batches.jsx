@@ -24,7 +24,7 @@ function BatchesPage() {
 	const { sourceAppId } = useParams();
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
-		pageSize: 1,
+		pageSize: 10,
 	});
 
 	const { data, isLoading, isFetching, isError, refetch } = useQuery({
