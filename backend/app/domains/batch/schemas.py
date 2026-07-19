@@ -93,5 +93,6 @@ class GetBatch(_BaseModel):
 
 class Batch(_BaseModel):
     id: int
+    log_count: int
     ai_analyses: list[AIAnalysisResponse]
     created_at: datetime

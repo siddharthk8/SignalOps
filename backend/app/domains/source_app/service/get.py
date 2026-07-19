@@ -24,7 +24,12 @@ async def get_source_app_batches(
     paginated_batches_orm = await batch_repo.get_paginated_batches(
         source_app_id, skip, limit
     )
-    paginated_batches = [Batch.model_validate(b) for b in paginated_batches_orm]
+    paginated_batches = []
+
+    for b, log_count in paginated_batches_orm:
+        b.log_count = log_count
+        batch = Batch.model_validate(b)
+        paginated_batches.append(batch)
 
     has_more = False
     if len(paginated_batches) + skip < total_batches:

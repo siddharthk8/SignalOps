@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 
-from sqlalchemy import func, select
+from sqlalchemy import Row, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.db.models.batch import Batch
+from app.db.models.log import Log
 
 
 class BatchRepository:
@@ -28,16 +29,22 @@ class BatchRepository:
 
     async def get_paginated_batches(
         self, source_app_id: int, skip: int, limit: int
-    ) -> Sequence[Batch]:
+    ) -> Sequence[Row[tuple[Batch, int]]]:
         query = await self.db.execute(
-            select(Batch)
+            select(
+                Batch,
+                func.count(Log.id).label("log_count"),
+            )
+            .outerjoin(Log, Log.batch_id == Batch.id)
             .options(selectinload(Batch.ai_analyses))
             .where(Batch.source_app_id == source_app_id)
+            .group_by(Batch.id)
             .order_by(Batch.created_at.desc())
             .offset(skip)
             .limit(limit)
         )
-        result = query.scalars().all()
+
+        result = query.all()
         return result
 
     async def get(self, batch_id: int):
