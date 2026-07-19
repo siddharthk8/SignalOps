@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.models.incident import Incident as ORMIncident
 from app.db.repositories.entity_incident import EntityIncidentRepository
 from app.db.repositories.signal_incident import SignalIncidentRepository
+from app.enums.incident import IncidentStatus
 from app.schemas.incident import Incident
 
 
@@ -32,7 +33,7 @@ class IncidentRepository:
         await self.db.execute(
             update(ORMIncident)
             .where(ORMIncident.id == id)
-            .values(resolved_at=datetime.now(UTC))
+            .values(resolved_at=datetime.now(UTC), status=IncidentStatus.RESOLVED)
         )
 
     async def get_daily_incidents_over_last_30_days_by_user(self, user_id: UUID):
