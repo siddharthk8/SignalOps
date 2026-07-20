@@ -1,6 +1,6 @@
 import "./index.css";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import axios from "axios";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 
 import { client } from "@/api/client.gen";
 import { BASIC_API_CONFIG } from "@/core/api/customClient";
+import config from "@/core/config";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Layout from "@/layouts/Layout.jsx";
 // pages
@@ -125,19 +126,37 @@ client.setConfig(BASIC_API_CONFIG);
 
 // tanstack query client
 const queryClient = new QueryClient({
+	queryCache: new QueryCache({
+		onError: (error, query) => {
+			if (config.isDev) {
+				console.error("Query Error:\n", query.queryKey, "\n", error);
+			}
+		},
+	}),
+	mutationCache: new MutationCache({
+		onError: (error, query) => {
+			if (config.isDev) {
+				console.error("Mutation Error:\n", query.queryKey, "\n", error);
+			}
+		},
+	}),
 	defaultOptions: {
 		queries: {
-			staleTime: Infinity,
+			staleTime: 5 * 60 * 1000, // 5 minutes
 			gcTime: 5 * 60 * 1000, // 5 minutes
 			retry: (failureCount, error) => {
 				if (!axios.isAxiosError(error)) {
 					return false;
 				}
 
+				if (config.isDev) {
+					return false;
+				}
+
 				const status = error.response?.status;
 				// Network error (no response)
 				if (!status) {
-					return failureCount < 3;
+					return failureCount < 2;
 				}
 				// Don't retry client errors
 				if (status >= 400 && status < 500) {
@@ -145,7 +164,7 @@ const queryClient = new QueryClient({
 				}
 
 				// Retry server errors
-				return failureCount < 3;
+				return failureCount < 2;
 			},
 		},
 		mutations: {
