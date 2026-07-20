@@ -19,6 +19,7 @@ import BatchesPage from "@/pages/protected/Batches.jsx";
 import ChangePasswordPage from "@/pages/protected/ChangePassword";
 import CreateSourceAppPage from "@/pages/protected/CreateSourceApp";
 import DashboardPage from "@/pages/protected/Dashboard";
+import IngestLogsPage from "@/pages/protected/IngestLogs";
 import ProfilePage from "@/pages/protected/Profile";
 import SourceAppsPage from "@/pages/protected/SourceApps";
 import ForgotPasswordPage from "@/pages/public/ForgotPassword";
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
 							{
 								path: "source-apps/:sourceAppId/batches/:batchId",
 								element: <BatchDetailsPage />,
+							},
+							{
+								path: "source-apps/:sourceAppId/batches/ingest-logs",
+								element: <IngestLogsPage />,
 							},
 							{
 								path: "create-source-app",

@@ -7,11 +7,13 @@ import {
 	ChevronsRight,
 	Database,
 	Loader2,
+	Plus,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 import { getSourceAppBatches } from "@/api";
+import Button from "@/components/Button";
 import Container from "@/components/Container";
 import Loader from "@/components/Loader";
 import QueryError from "@/components/QueryError";
@@ -80,7 +82,7 @@ function BatchesPage() {
 			<div className="space-y-8">
 				{/* Header */}
 
-				<section className="flex items-start justify-between">
+				<section className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
 					<div>
 						<div className="flex items-center gap-3">
 							<h1 className="font-['Space_Grotesk'] text-3xl font-bold">
@@ -98,7 +100,19 @@ function BatchesPage() {
 						</p>
 					</div>
 
-					{isFetching && <Loader2 size={20} className="text-primary animate-spin" />}
+					<div className="flex items-center gap-3">
+						{isFetching && <Loader2 size={18} className="text-primary animate-spin" />}
+
+						<Button
+							size="sm"
+							onClick={() => {
+								navigate("ingest-logs");
+							}}
+						>
+							<Plus size={16} />
+							Ingest Logs
+						</Button>
+					</div>
 				</section>
 
 				<section className="bg-surface border-border overflow-hidden rounded-3xl border">

@@ -55,7 +55,7 @@ export const batchColumns = [
 				<div className="space-y-1">
 					{analyses.map((analysis) => (
 						<div key={analysis.id} className="text-sm">
-							<span className="font-medium">{analysis.severity}</span> (
+							<span className="font-medium">{analysis.severity.toUpperCase()}</span> (
 							{Math.round(analysis.confidence * 100)}%)
 						</div>
 					))}
