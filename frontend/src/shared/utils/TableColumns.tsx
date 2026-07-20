@@ -16,14 +16,29 @@ export const sourceAppTableColumns = [
 	sourceAppColumnHelper.accessor("app_type", {
 		header: "App Type",
 	}),
-	sourceAppColumnHelper.accessor((row) => new Date(row.created_at).toLocaleDateString(), {
-		id: "createdDate",
-		header: "Created Date",
-	}),
-	sourceAppColumnHelper.accessor((row) => new Date(row.created_at).toLocaleTimeString(), {
-		id: "createdTime",
-		header: "Created Time",
-	}),
+	sourceAppColumnHelper.accessor(
+		(row) =>
+			new Date(row.created_at).toLocaleDateString([], {
+				month: "long",
+				day: "numeric",
+				year: "numeric",
+			}),
+		{
+			id: "createdDate",
+			header: "Created Date",
+		},
+	),
+	sourceAppColumnHelper.accessor(
+		(row) =>
+			new Date(row.created_at).toLocaleTimeString([], {
+				hour: "2-digit",
+				minute: "2-digit",
+			}),
+		{
+			id: "createdTime",
+			header: "Created Time",
+		},
+	),
 ];
 
 const batchColumnHelper = createColumnHelper<Batch>();
