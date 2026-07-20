@@ -134,9 +134,9 @@ const queryClient = new QueryClient({
 		},
 	}),
 	mutationCache: new MutationCache({
-		onError: (error, query) => {
+		onError: (error, variables, context, mutation) => {
 			if (config.isDev) {
-				console.error("Mutation Error:\n", query.queryKey, "\n", error);
+				console.error("Mutation Error:\n", mutation.options.mutationKey, "\n", error);
 			}
 		},
 	}),
