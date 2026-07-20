@@ -37,7 +37,7 @@ export default function IngestLogsPage() {
 		handleSubmit,
 		setError,
 		clearErrors,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm({
 		mode: "onBlur",
 		defaultValues: {
@@ -47,7 +47,7 @@ export default function IngestLogsPage() {
 
 	const queryClient = useQueryClient();
 
-	const { mutate } = useMutation({
+	const { mutate, isPending } = useMutation({
 		mutationFn: (body) =>
 			ingestLogs({
 				client: authenticatedClient,
@@ -191,11 +191,12 @@ export default function IngestLogsPage() {
 
 							<Button
 								type="submit"
-								disabled={isSubmitting}
+								loading={isPending}
+								disabled={isPending}
 								rightIcon={<Send size={16} />}
-								className="min-w-40"
+								loadingText="Processing..."
 							>
-								{isSubmitting ? "Ingesting..." : "Ingest Logs"}
+								Ingest Logs
 							</Button>
 						</div>
 					</div>
