@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 
 import Button from "../Button";
@@ -12,6 +13,8 @@ export default function UnauthNavbar() {
 				<Button
 					onClick={() => navigate("/signup", { replace: true })} // This prevents unwanted loop from login to signup page and vice-versa.
 					className="text-sm sm:text-base"
+					variant="accent"
+					rightIcon={<ArrowRight size={16} />}
 				>
 					Sign Up
 				</Button>
@@ -25,7 +28,9 @@ export default function UnauthNavbar() {
 								navigate("/login", { replace: true }); // This prevents unwanted loop from signup to login page and vice-versa.
 							}
 						}}
+						variant="accent"
 						className="text-sm sm:text-base"
+						rightIcon={<ArrowRight size={16} />}
 					>
 						Log In
 					</Button>

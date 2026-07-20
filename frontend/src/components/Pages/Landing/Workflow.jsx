@@ -67,7 +67,7 @@ function WorkflowSection() {
 				{/* Header */}
 
 				<div className="mx-auto max-w-3xl text-center">
-					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
+					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-600 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						End-to-End Pipeline
 					</div>
@@ -88,7 +88,7 @@ function WorkflowSection() {
 				<div className="mt-20 grid gap-8 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
 					{/* Raw Logs */}
 
-					<div className="border-border bg-surface rounded-[2rem] border p-8 shadow-md">
+					<div className="border-border bg-surface rounded-2xl border p-8 shadow-md">
 						<div className="flex items-center gap-3">
 							<div className="bg-error/10 text-error rounded-xl p-3">
 								<FileText size={22} />
@@ -136,7 +136,7 @@ function WorkflowSection() {
 
 					{/* Intelligence */}
 
-					<div className="border-primary/30 bg-primary-100 dark:bg-primary-500/10 rounded-[2rem] border p-8 shadow-lg">
+					<div className="border-primary/30 bg-primary-100 dark:bg-primary-500/10 rounded-2xl border p-8 shadow-lg">
 						<div className="flex items-center gap-3">
 							<div className="bg-primary rounded-xl p-3 text-white">
 								<BrainCircuit size={22} />
@@ -195,14 +195,14 @@ function WorkflowSection() {
 								{/* Number */}
 
 								<div className="relative z-10 hidden md:flex">
-									<div className="border-border bg-surface text-primary flex h-16 w-16 items-center justify-center rounded-2xl border shadow-md">
+									<div className="border-border bg-surface text-primary flex h-16 w-16 items-center justify-center rounded-xl border shadow-md">
 										{step.icon}
 									</div>
 								</div>
 
 								{/* Card */}
 
-								<div className="border-border bg-surface hover:border-primary/40 flex-1 rounded-3xl border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+								<div className="border-border bg-surface hover:border-primary/40 flex-1 rounded-xl border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
 									<div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 										<div className="flex gap-5">
 											<div className="bg-primary-100 text-primary dark:bg-primary-500/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl md:hidden">
@@ -240,7 +240,7 @@ function WorkflowSection() {
 
 				{/* Final Flow Card */}
 
-				<div className="border-primary/20 bg-primary-100 dark:bg-primary-500/10 mt-20 rounded-[2rem] border p-10 lg:p-14">
+				<div className="border-primary/20 bg-primary-100 dark:bg-primary-500/10 mt-20 rounded-2xl border p-10 lg:p-14">
 					<div className="flex flex-col items-center justify-between gap-10 lg:flex-row">
 						<div>
 							<div className="flex items-center gap-3">

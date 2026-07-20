@@ -44,7 +44,7 @@ function ArchitectureSection() {
 				{/* Header */}
 
 				<div className="mx-auto max-w-3xl text-center">
-					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
+					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-600 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						System Architecture
 					</div>
@@ -91,7 +91,7 @@ function ArchitectureSection() {
 
 								<div className="w-full lg:w-1/2">
 									<div
-										className={`group rounded-3xl border p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg ${
+										className={`group rounded-xl border p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg ${
 											layer.highlight
 												? "border-primary/40 bg-primary-100 dark:bg-primary-500/10"
 												: "border-border bg-bg"
@@ -99,7 +99,7 @@ function ArchitectureSection() {
 									>
 										<div className="flex items-start justify-between">
 											<div
-												className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
+												className={`flex h-14 w-14 items-center justify-center rounded-xl ${
 													layer.highlight
 														? "bg-primary text-white"
 														: "bg-elevated text-primary"
@@ -144,7 +144,7 @@ function ArchitectureSection() {
 
 				{/* Bottom Architecture Summary */}
 
-				<div className="border-border bg-bg mt-24 rounded-[2rem] border p-10 shadow-md lg:p-14">
+				<div className="border-border bg-bg mt-24 rounded-2xl border p-10 shadow-md lg:p-14">
 					<div className="flex flex-col items-center justify-between gap-10 lg:flex-row">
 						<div>
 							<div className="flex items-center gap-3">
@@ -166,7 +166,7 @@ function ArchitectureSection() {
 							</p>
 						</div>
 
-						<div className="border-border bg-surface shrink-0 rounded-3xl border px-8 py-6">
+						<div className="border-border bg-surface shrink-0 rounded-2xl border px-8 py-6">
 							<div className="flex items-center gap-4 text-sm font-semibold">
 								<span className="bg-elevated text-t-primary rounded-xl px-4 py-3">
 									Logs

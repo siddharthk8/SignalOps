@@ -12,7 +12,7 @@ function BottomSection() {
 			<div className="relative mx-auto max-w-7xl px-6 pt-24">
 				{/* Final CTA */}
 
-				<div className="border-primary/20 bg-primary-100 dark:bg-primary-500/10 overflow-hidden rounded-[2.5rem] border">
+				<div className="border-primary/20 bg-primary-100 dark:bg-primary-500/10 overflow-hidden rounded-[1.5rem] border">
 					<div className="relative px-8 py-16 text-center lg:px-20 lg:py-20">
 						<div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.12),transparent_45%)]" />
 

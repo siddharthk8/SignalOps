@@ -60,7 +60,7 @@ function FeaturesSection() {
 
 				<div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
 					<div className="max-w-3xl">
-						<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
+						<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-600 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 							<Sparkles size={15} />
 							Platform Capabilities
 						</div>
@@ -84,7 +84,7 @@ function FeaturesSection() {
 					{features.map((feature, index) => (
 						<div
 							key={feature.title}
-							className="group border-border bg-surface hover:border-primary/40 relative overflow-hidden rounded-3xl border p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-lg"
+							className="group border-border bg-surface hover:border-primary/40 relative overflow-hidden rounded-2xl border p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-lg"
 						>
 							{/* Hover glow */}
 
@@ -92,7 +92,7 @@ function FeaturesSection() {
 
 							<div className="relative">
 								<div className="flex items-center justify-between">
-									<div className="bg-primary-100 text-primary dark:bg-primary-500/10 flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110">
+									<div className="bg-primary-100 text-primary dark:bg-primary-500/10 flex h-14 w-14 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110">
 										{feature.icon}
 									</div>
 
@@ -106,11 +106,6 @@ function FeaturesSection() {
 								</h3>
 
 								<p className="text-t-muted mt-4 leading-7">{feature.description}</p>
-
-								<div className="text-primary mt-8 flex items-center gap-2 text-sm font-semibold opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100">
-									Learn more
-									<span>→</span>
-								</div>
 							</div>
 
 							{/* Index indicator */}
@@ -124,7 +119,7 @@ function FeaturesSection() {
 
 				{/* Highlight Banner */}
 
-				<div className="border-border bg-surface mt-20 rounded-[2rem] border p-10 shadow-md lg:p-14">
+				<div className="border-border bg-surface mt-20 rounded-2xl border p-10 shadow-md lg:p-14">
 					<div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
 						<div>
 							<div className="flex items-center gap-3">
@@ -151,7 +146,7 @@ function FeaturesSection() {
 						</div>
 
 						<div className="flex justify-center">
-							<div className="border-primary/20 bg-primary-100 dark:bg-primary-500/10 rounded-3xl border px-8 py-10 text-center">
+							<div className="border-primary/20 bg-primary-100 dark:bg-primary-500/10 rounded-2xl border px-8 py-10 text-center">
 								<div className="text-primary text-5xl font-bold">2</div>
 
 								<p className="text-t-muted mt-2 text-sm font-semibold tracking-widest uppercase">
