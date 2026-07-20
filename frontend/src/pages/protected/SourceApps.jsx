@@ -41,25 +41,21 @@ function SourceAppsPage() {
 	}
 
 	return (
-		<Container>
-			<div className="space-y-8">
-				<QueryPageHeader
-					title="Source Applications"
-					description="Manage applications connected to your SignalOps monitoring workspace."
-					onRefresh={refetch}
-					isRefreshing={isFetching}
-				/>
+		<Container className="space-y-8">
+			<QueryPageHeader
+				title="Source Applications"
+				description="Manage applications connected to your SignalOps monitoring workspace."
+				onRefresh={refetch}
+				isRefreshing={isFetching}
+			/>
 
-				<SourceAppsTable
-					sourceApps={data.source_apps}
-					total={data.total}
-					pagination={pagination}
-					setPagination={setPagination}
-					onRowClick={(row) =>
-						navigate(`/dashboard/source-apps/${row.original.id}/batches`)
-					}
-				/>
-			</div>
+			<SourceAppsTable
+				sourceApps={data.source_apps}
+				total={data.total}
+				pagination={pagination}
+				setPagination={setPagination}
+				onRowClick={(row) => navigate(`/dashboard/source-apps/${row.original.id}/batches`)}
+			/>
 		</Container>
 	);
 }

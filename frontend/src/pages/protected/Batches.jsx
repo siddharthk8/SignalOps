@@ -47,32 +47,30 @@ function BatchesPage() {
 	}
 
 	return (
-		<Container>
-			<div className="space-y-8">
-				<QueryPageHeader
-					title="Batch History"
-					description="Review historical log ingestion batches processed for this application."
-					onRefresh={refetch}
-					isRefreshing={isFetching}
-					actions={
-						<Button
-							variant="success"
-							onClick={() => navigate("ingest-logs")}
-							rightIcon={<Plus size={16} />}
-						>
-							Ingest Logs
-						</Button>
-					}
-				/>
+		<Container className="space-y-8">
+			<QueryPageHeader
+				title="Batch History"
+				description="Review historical log ingestion batches processed for this application."
+				onRefresh={refetch}
+				isRefreshing={isFetching}
+				actions={
+					<Button
+						variant="success"
+						onClick={() => navigate("ingest-logs")}
+						rightIcon={<Plus size={16} />}
+					>
+						Ingest Logs
+					</Button>
+				}
+			/>
 
-				<BatchesTable
-					batches={data.batches}
-					total={data.total}
-					pagination={pagination}
-					setPagination={setPagination}
-					onRowClick={(row) => navigate(`${row.original.id}`)}
-				/>
-			</div>
+			<BatchesTable
+				batches={data.batches}
+				total={data.total}
+				pagination={pagination}
+				setPagination={setPagination}
+				onRowClick={(row) => navigate(`${row.original.id}`)}
+			/>
 		</Container>
 	);
 }
