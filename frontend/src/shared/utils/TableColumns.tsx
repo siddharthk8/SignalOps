@@ -47,16 +47,28 @@ export const batchColumns = [
 	batchColumnHelper.accessor("id", {
 		header: "Batch ID",
 	}),
-
 	batchColumnHelper.accessor("log_count", {
 		header: "Logs",
 	}),
-
 	batchColumnHelper.accessor("created_at", {
 		header: "Created At",
-		cell: (info) => new Date(info.getValue()).toLocaleString(),
-	}),
+		cell: (info) => {
+			const date = new Date(info.getValue());
 
+			const formattedDate = date.toLocaleDateString([], {
+				month: "long",
+				day: "numeric",
+				year: "numeric",
+			});
+
+			const formattedTime = date.toLocaleTimeString([], {
+				hour: "2-digit",
+				minute: "2-digit",
+			});
+
+			return `${formattedDate} - ${formattedTime}`;
+		},
+	}),
 	batchColumnHelper.accessor("ai_analyses", {
 		header: "AI Analyses",
 		cell: (info) => {
