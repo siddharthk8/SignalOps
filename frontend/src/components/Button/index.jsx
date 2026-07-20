@@ -9,10 +9,17 @@ const variants = {
 	ghost: "bg-transparent text-t-primary hover:bg-surface-secondary",
 };
 
+const sizes = {
+	sm: "h-8 px-3 text-xs gap-1.5 rounded-md",
+	md: "h-10 px-5 text-sm gap-2 rounded-lg",
+	lg: "h-12 px-6 text-base gap-2.5 rounded-xl",
+};
+
 export default function Button({
 	children,
 	type = "button",
 	variant = "primary",
+	size = "md",
 	className = "",
 	loading = false,
 	loadingText = "Loading...",
@@ -25,7 +32,7 @@ export default function Button({
 		<button
 			type={type}
 			disabled={disabled || loading}
-			className={`group focus-visible:ring-primary/30 relative inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-lg border border-black/10 px-5 text-sm font-medium shadow-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:outline-none active:opacity-95 disabled:pointer-events-none disabled:opacity-60 dark:border-white/10 dark:hover:border-white/15 ${variants[variant]} ${className} `}
+			className={`group focus-visible:ring-primary/30 relative inline-flex items-center justify-center overflow-hidden border border-black/10 font-medium shadow-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:outline-none active:opacity-95 disabled:pointer-events-none disabled:opacity-60 dark:border-white/10 dark:hover:border-white/15 ${sizes[size]} ${variants[variant]} ${className}`}
 			{...props}
 		>
 			{loading ? (

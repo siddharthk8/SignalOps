@@ -1,15 +1,7 @@
-import {
-	ChevronDown,
-	ChevronUp,
-	Globe,
-	Hash,
-	KeyRound,
-	Mail,
-	Monitor,
-	User,
-	Users,
-} from "lucide-react";
-import { useState } from "react";
+import { Globe, Hash, KeyRound, Mail, Monitor, User, Users } from "lucide-react";
+
+import Collapsible from "@/components/Collapsible";
+import ExpandableList from "@/components/ExpandableList";
 
 const fields = [
 	{
@@ -45,16 +37,12 @@ const fields = [
 ];
 
 function EntityRow({ entity }) {
-	const [expanded, setExpanded] = useState(false);
-
 	const availableFields = fields.filter(({ key }) => entity[key]);
 
 	return (
-		<div className="border-border hover:bg-muted/20 border-b last:border-b-0">
-			<button
-				onClick={() => setExpanded((prev) => !prev)}
-				className="flex w-full items-center justify-between px-5 py-4 text-left"
-			>
+		<Collapsible
+			className="border-border hover:bg-muted/20 border-t last:border-b-0"
+			header={
 				<div className="min-w-0 flex-1">
 					<div className="mb-2 flex items-center gap-3">
 						<div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-md">
@@ -79,44 +67,30 @@ function EntityRow({ entity }) {
 						))}
 					</div>
 				</div>
+			}
+		>
+			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				{fields.map(({ key, label, icon: Icon }) => (
+					<div key={key} className="flex items-start gap-3">
+						<Icon size={15} className="text-t-muted mt-0.5 shrink-0" />
 
-				{expanded ? (
-					<ChevronUp size={18} className="text-t-muted ml-4 shrink-0" />
-				) : (
-					<ChevronDown size={18} className="text-t-muted ml-4 shrink-0" />
-				)}
-			</button>
-
-			{expanded && (
-				<div className="border-border bg-muted/20 border-t px-5 py-5">
-					<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-						{fields.map(({ key, label, icon: Icon }) => (
-							<div key={key} className="flex items-start gap-3">
-								<Icon size={15} className="text-t-muted mt-0.5 shrink-0" />
-
-								<div className="min-w-0">
-									<div className="text-t-muted text-[11px] tracking-wide uppercase">
-										{label}
-									</div>
-
-									<div className="text-sm font-medium break-all">
-										{entity[key] || "—"}
-									</div>
-								</div>
+						<div className="min-w-0">
+							<div className="text-t-muted text-[11px] tracking-wide uppercase">
+								{label}
 							</div>
-						))}
+
+							<div className="text-sm font-medium break-all">
+								{entity[key] || "—"}
+							</div>
+						</div>
 					</div>
-				</div>
-			)}
-		</div>
+				))}
+			</div>
+		</Collapsible>
 	);
 }
 
 function EntitiesCard({ entities }) {
-	const [showAll, setShowAll] = useState(false);
-
-	const visibleEntities = showAll ? entities : entities.slice(0, 5);
-
 	return (
 		<section className="bg-surface border-border overflow-hidden rounded-md border">
 			<div className="border-border flex items-center justify-between border-b px-5 py-4">
@@ -144,34 +118,11 @@ function EntitiesCard({ entities }) {
 					</p>
 				</div>
 			) : (
-				<>
-					<div>
-						{visibleEntities.map((entity) => (
-							<EntityRow key={entity.id} entity={entity} />
-						))}
-					</div>
-
-					{entities.length > 5 && (
-						<div className="border-border border-t px-5 py-3">
-							<button
-								onClick={() => setShowAll((prev) => !prev)}
-								className="text-primary hover:text-primary/80 flex items-center gap-2 text-sm font-medium"
-							>
-								{showAll ? (
-									<>
-										<ChevronUp size={16} />
-										Show Less
-									</>
-								) : (
-									<>
-										<ChevronDown size={16} />
-										Show All ({entities.length})
-									</>
-								)}
-							</button>
-						</div>
-					)}
-				</>
+				<ExpandableList
+					items={entities}
+					limit={5}
+					renderItem={(entity) => <EntityRow key={entity.id} entity={entity} />}
+				/>
 			)}
 		</section>
 	);
