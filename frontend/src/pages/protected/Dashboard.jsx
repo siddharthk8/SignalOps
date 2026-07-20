@@ -44,18 +44,16 @@ function DashboardPage() {
 	}
 
 	return (
-		<Container>
-			<div className="space-y-8">
-				<QueryPageHeader
-					title="Dashboard"
-					description="View application metrics, incident trends, and recent security events."
-					onRefresh={refetch}
-					isRefreshing={isFetching}
-				/>
-				<Metrics data={data} />
-				<IncidentChart incidents={data.daily_incidents_over_last_30_days} />
-				<RecentIncidents incidents={data.last_5_incidents} />
-			</div>
+		<Container className="space-y-8">
+			<QueryPageHeader
+				title="Dashboard"
+				description="View application metrics, incident trends, and recent security events."
+				onRefresh={refetch}
+				isRefreshing={isFetching}
+			/>
+			<Metrics data={data} />
+			<IncidentChart incidents={data.daily_incidents_over_last_30_days} />
+			<RecentIncidents incidents={data.last_5_incidents} />
 		</Container>
 	);
 }
