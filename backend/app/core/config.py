@@ -4,12 +4,10 @@ from typing import Literal
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-BASE_DIR = Path(__file__).resolve().parents[3]
-
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=BASE_DIR / "backend/.env",
+        env_file=Path.home() / ".config" / "SignalOps" / "backend" / ".env",
         env_file_encoding="utf-8",
     )
 
