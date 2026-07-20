@@ -142,8 +142,9 @@ const queryClient = new QueryClient({
 	}),
 	defaultOptions: {
 		queries: {
+			refetchOnWindowFocus: false,
 			staleTime: 5 * 60 * 1000, // 5 minutes
-			gcTime: 5 * 60 * 1000, // 5 minutes
+			gcTime: 15 * 60 * 1000, // 15 min
 			retry: (failureCount, error) => {
 				if (!axios.isAxiosError(error)) {
 					return false;

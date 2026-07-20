@@ -1,89 +1,43 @@
-import { ArrowRight, LoaderCircle } from "lucide-react";
-import { forwardRef } from "react";
+import { Loader2 } from "lucide-react";
 
-const Button = forwardRef(function Button(
-	{
-		children,
-		type = "button",
+const variants = {
+	primary: "bg-primary-200 text-t-primary hover:bg-primary-400/80",
+	success: "bg-success/15 text-success hover:bg-success/25",
+	danger: "bg-error/15 text-error hover:bg-error/25",
+	warning: "bg-warning/15 text-warning hover:bg-warning/25",
+	secondary: "bg-surface-secondary text-t-primary hover:bg-surface-tertiary",
+	ghost: "bg-transparent text-t-primary hover:bg-surface-secondary",
+};
 
-		// Appearance
-		buttonColor = "bg-primary",
-		textColor = "text-t-primary",
-		className = "",
-
-		// State
-		loading = false,
-		loadingText = "Loading...",
-		disabled = false,
-
-		// Icons
-		leftIcon = null,
-		rightIcon = <ArrowRight className="h-4 w-4" />,
-
-		...props
-	},
-	ref,
-) {
-	const isDisabled = disabled || loading;
-
+export default function Button({
+	children,
+	type = "button",
+	variant = "primary",
+	className = "",
+	loading = false,
+	loadingText = "Loading...",
+	disabled = false,
+	leftIcon = null,
+	...props
+}) {
 	return (
 		<button
-			ref={ref}
 			type={type}
-			disabled={isDisabled}
-			aria-disabled={isDisabled}
-			aria-busy={loading}
-			className={`group border-border bg-surface relative inline-flex items-center justify-center overflow-hidden rounded-lg border px-3 py-2 text-sm font-medium select-none ${textColor} focus:ring-primary/20 transition-all duration-300 focus:ring-2 focus:outline-none ${
-				loading
-					? "cursor-wait opacity-70"
-					: disabled
-						? "cursor-not-allowed opacity-60"
-						: "hover:border-primary hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[0.98]"
-			} ${className} `}
+			disabled={disabled || loading}
+			className={`group focus-visible:ring-primary/30 relative inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-lg border border-black/10 px-5 text-sm font-medium shadow-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:outline-none active:opacity-95 disabled:pointer-events-none disabled:opacity-60 dark:border-white/10 dark:hover:border-white/15 ${variants[variant]} ${className} `}
 			{...props}
 		>
-			{/* Left Accent */}
-			<div
-				className={`absolute top-0 left-0 h-full w-1 ${buttonColor} transition-all duration-300 ${!isDisabled ? "group-hover:w-1.5" : ""} `}
-			/>
-
-			{/* Shine */}
-			{!isDisabled && (
-				<div className="absolute inset-0 bg-linear-to-r from-white/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+			{loading ? (
+				<>
+					<Loader2 className="h-4 w-4 animate-spin" />
+					<span>{loadingText}</span>
+				</>
+			) : (
+				<>
+					{leftIcon && <span>{leftIcon}</span>}
+					<span>{children}</span>
+				</>
 			)}
-
-			<div className="relative z-10 flex items-center gap-2">
-				{/* Left Icon / Spinner / Status Dot */}
-				{loading ? (
-					<LoaderCircle className="h-[18px] w-[18px] shrink-0 animate-spin" />
-				) : leftIcon ? (
-					<span className="shrink-0">{leftIcon}</span>
-				) : (
-					<div
-						className={`h-2 w-2 shrink-0 rounded-full ${buttonColor} transition-transform duration-300 ${!isDisabled ? "group-hover:scale-125" : ""} `}
-					/>
-				)}
-
-				{/* Text */}
-				<span className="whitespace-nowrap">{loading ? loadingText : children}</span>
-
-				{/* Right Icon */}
-				{!loading && rightIcon && (
-					<span
-						className={`shrink-0 transition-all duration-300 ${
-							isDisabled
-								? "opacity-40"
-								: "translate-x-0 opacity-0 group-hover:translate-x-1 group-hover:opacity-100"
-						} `}
-					>
-						{rightIcon}
-					</span>
-				)}
-			</div>
 		</button>
 	);
-});
-
-Button.displayName = "Button";
-
-export default Button;
+}
