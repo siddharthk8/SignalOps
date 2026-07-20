@@ -18,6 +18,7 @@ export default function Button({
 	loadingText = "Loading...",
 	disabled = false,
 	leftIcon = null,
+	rightIcon = null,
 	...props
 }) {
 	return (
@@ -36,6 +37,7 @@ export default function Button({
 				<>
 					{leftIcon && <span>{leftIcon}</span>}
 					<span>{children}</span>
+					{rightIcon && <span>{rightIcon}</span>}
 				</>
 			)}
 		</button>
