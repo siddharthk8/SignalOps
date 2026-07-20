@@ -1,28 +1,42 @@
-import { WifiOff } from "lucide-react";
+import { AlertTriangle, RefreshCcw } from "lucide-react";
 
 import Button from "@/components/Button";
 import Container from "@/components/Container";
 
 function QueryError({
-	title = "Failed to load data",
-	message = "We couldn't retrieve the requested information. Please try again.",
+	title = "Unable to load data",
+	message = "Something went wrong while fetching the requested information.",
 	onRetry,
 }) {
 	return (
 		<Container>
-			<div className="border-border bg-surface rounded-2xl border p-8 shadow-sm">
-				<div className="flex flex-col items-center text-center">
-					<div className="bg-error/10 mb-5 flex size-14 items-center justify-center rounded-full">
-						<WifiOff className="text-error size-7" />
+			<div className="flex min-h-[60vh] items-center justify-center py-12">
+				<div className="w-full max-w-md">
+					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-red-500/15 bg-red-500/8">
+						<AlertTriangle size={26} className="text-red-500" strokeWidth={2} />
 					</div>
 
-					<h3 className="text-t-primary text-xl font-semibold">{title}</h3>
+					<div className="mt-7 text-center">
+						<h2 className="text-t-primary text-2xl font-semibold tracking-tight">
+							{title}
+						</h2>
 
-					<p className="text-t-muted mt-2 max-w-md">{message}</p>
+						<p className="text-t-muted mx-auto mt-3 max-w-sm leading-7">{message}</p>
+					</div>
 
-					<Button onClick={onRetry} className="mt-6">
-						Retry
-					</Button>
+					{onRetry && (
+						<div className="mt-8 flex justify-center">
+							<Button onClick={onRetry} leftIcon={<RefreshCcw size={16} />}>
+								Try Again
+							</Button>
+						</div>
+					)}
+
+					<div className="border-border mt-10 border-t pt-5 text-center">
+						<p className="text-t-muted text-xs">
+							If the problem persists, please refresh the page or try again later.
+						</p>
+					</div>
 				</div>
 			</div>
 		</Container>

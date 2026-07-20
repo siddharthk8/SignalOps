@@ -206,9 +206,12 @@ export default function IngestLogsPage() {
 								is automatically replaced with the current application ID.
 							</div>
 
-							<Button type="submit" disabled={isSubmitting} className="min-w-40">
-								<Send size={16} />
-
+							<Button
+								type="submit"
+								disabled={isSubmitting}
+								rightIcon={<Send size={16} />}
+								className="min-w-40"
+							>
 								{isSubmitting ? "Ingesting..." : "Ingest Logs"}
 							</Button>
 						</div>

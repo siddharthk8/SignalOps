@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, CalendarClock, CheckCircle2, ShieldAlert } from "lucide-react";
+import { AlertTriangle, CalendarClock, CheckCircle, CheckCircle2, ShieldAlert } from "lucide-react";
 
 import { markIncidentResolved } from "@/api";
 import Button from "@/components/Button";
@@ -100,6 +100,8 @@ function IncidentsCard({ incidents }) {
 											{incident.status === "open" ? (
 												<Button
 													size="sm"
+													variant="warning"
+													leftIcon={<CheckCircle className="h-4 w-4" />}
 													onClick={() => mutate(incident.id)}
 													disabled={isPending}
 												>

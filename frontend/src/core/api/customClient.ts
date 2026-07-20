@@ -1,11 +1,12 @@
 import { getNewAccessToken } from "@/api";
 import { createClient } from "@/api/client";
+import config from "@/core/config";
 import store from "@/store";
 import { clearUser, setAccessToken } from "@/store/features/authSlice";
 import { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 export const BASIC_API_CONFIG = {
-	baseURL: "http://127.0.0.1:8000",
+	baseURL: config.apiUrl,
 	throwOnError: true,
 };
 
