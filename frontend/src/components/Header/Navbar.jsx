@@ -164,22 +164,28 @@ export default function Navbar({ auth }) {
 
 						{/* Desktop nav */}
 						{navItems && (
-							<div className="hidden flex-1 items-center justify-center gap-6 md:flex lg:gap-8">
-								{navItems.map((item) => (
-									<NavLink
-										replace
-										to={item.link}
-										key={item.name}
-										className={`text-sm font-medium transition-colors lg:text-base ${
-											item.isActive
-												? "text-primary"
-												: "text-t-muted hover:text-primary"
-										}`}
-									>
-										{item.name}
-									</NavLink>
-								))}
-							</div>
+							<nav className="hidden flex-1 items-center justify-center md:flex">
+								<div className="bg-background flex items-center gap-1 rounded-lg p-1">
+									{navItems.map((item) => (
+										<NavLink
+											key={item.name}
+											replace
+											to={item.link}
+											className={`text-md relative rounded-md px-4 py-2 font-medium transition-all duration-200 ${
+												item.isActive
+													? "bg-surface text-primary shadow-sm"
+													: "text-t-muted hover:bg-surface hover:text-t-primary"
+											}`}
+										>
+											{item.name}
+
+											{item.isActive && (
+												<span className="bg-primary absolute inset-x-3 bottom-0 h-0.5 rounded-full" />
+											)}
+										</NavLink>
+									))}
+								</div>
+							</nav>
 						)}
 					</div>
 
