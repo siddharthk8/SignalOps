@@ -1,7 +1,8 @@
 import { Loader2 } from "lucide-react";
 
 const variants = {
-	primary: "bg-primary-200 text-t-primary hover:bg-primary-400/80",
+	accent: "bg-accent-300 text-t-accent hover:bg-accent-400/80",
+	primary: "bg-primary-300 text-t-primary hover:bg-primary-400/80",
 	success: "bg-success/15 text-success hover:bg-success/25",
 	danger: "bg-error/15 text-error hover:bg-error/25",
 	warning: "bg-warning/15 text-warning hover:bg-warning/25",

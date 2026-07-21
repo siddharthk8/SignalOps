@@ -140,7 +140,7 @@ function IncidentsCard({ incidents }) {
 								</div>
 							</div>
 
-							<div className="border-border mt-5 grid gap-5 border-t pt-5 sm:grid-cols-3">
+							<div className="mt-5 grid gap-5 pt-5 sm:grid-cols-3">
 								<div className="flex items-start gap-3">
 									<AlertTriangle size={15} className="text-t-muted mt-0.5" />
 

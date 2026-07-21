@@ -20,23 +20,42 @@ function BatchesPage() {
 		pageIndex: 0,
 		pageSize: 10,
 	});
+	const [fetchAction, setFetchAction] = useState(null);
 
 	const { data, isPending, isFetching, isError, refetch } = useQuery({
 		queryKey: ["batches", sourceAppId, pagination.pageIndex, pagination.pageSize],
 		placeholderData: keepPreviousData,
-		queryFn: () =>
-			getSourceAppBatches({
-				client: authenticatedClient,
-				path: {
-					source_app_id: Number(sourceAppId),
-				},
-				query: {
-					skip: pagination.pageIndex * pagination.pageSize,
-					limit: pagination.pageSize,
-				},
-			}),
+		queryFn: async () => {
+			try {
+				return await getSourceAppBatches({
+					client: authenticatedClient,
+					path: {
+						source_app_id: Number(sourceAppId),
+					},
+					query: {
+						skip: pagination.pageIndex * pagination.pageSize,
+						limit: pagination.pageSize,
+					},
+				});
+			} finally {
+				setFetchAction(null);
+			}
+		},
 		select: (response) => response.data,
 	});
+
+	const handleRefresh = () => {
+		setFetchAction("refresh");
+		refetch();
+	};
+
+	const handlePaginationChange = (updater) => {
+		setFetchAction("pagination");
+		setPagination(updater);
+	};
+
+	const isRefreshing = fetchAction === "refresh" && isFetching;
+	const isPaginationPageLoading = fetchAction === "pagination" && isFetching;
 
 	if (isPending) {
 		return <Loader />;
@@ -47,32 +66,31 @@ function BatchesPage() {
 	}
 
 	return (
-		<Container>
-			<div className="space-y-8">
-				<QueryPageHeader
-					title="Batch History"
-					description="Review historical log ingestion batches processed for this application."
-					onRefresh={refetch}
-					isRefreshing={isFetching}
-					actions={
-						<Button
-							variant="success"
-							onClick={() => navigate("ingest-logs")}
-							rightIcon={<Plus size={16} />}
-						>
-							Ingest Logs
-						</Button>
-					}
-				/>
+		<Container className="space-y-8">
+			<QueryPageHeader
+				title="Batch History"
+				description="Review historical log ingestion batches processed for this application."
+				onRefresh={handleRefresh}
+				isRefreshing={isRefreshing}
+				isPaginationPageLoading={isPaginationPageLoading}
+				actions={
+					<Button
+						variant="success"
+						onClick={() => navigate("ingest-logs")}
+						rightIcon={<Plus size={16} />}
+					>
+						Ingest Logs
+					</Button>
+				}
+			/>
 
-				<BatchesTable
-					batches={data.batches}
-					total={data.total}
-					pagination={pagination}
-					setPagination={setPagination}
-					onRowClick={(row) => navigate(`${row.original.id}`)}
-				/>
-			</div>
+			<BatchesTable
+				batches={data.batches}
+				total={data.total}
+				pagination={pagination}
+				setPagination={handlePaginationChange}
+				onRowClick={(row) => navigate(`${row.original.id}`)}
+			/>
 		</Container>
 	);
 }

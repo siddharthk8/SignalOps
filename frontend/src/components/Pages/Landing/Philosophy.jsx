@@ -51,7 +51,7 @@ function PhilosophySection() {
 				{/* Header */}
 
 				<div className="mx-auto max-w-3xl text-center">
-					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
+					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-600 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						Engineering Philosophy
 					</div>
@@ -80,17 +80,17 @@ function PhilosophySection() {
 						{stages.map((stage, index) => (
 							<div key={stage.title} className="relative z-10">
 								<div
-									className={`group h-full rounded-3xl border p-7 transition-all duration-300 ${
+									className={`group h-full rounded-xl border p-7 transition-all duration-300 ${
 										stage.highlight
 											? "border-primary/40 bg-primary-100 dark:bg-primary-100 shadow-md"
 											: "border-border bg-bg hover:border-primary/30 hover:-translate-y-2 hover:shadow-lg"
 									}`}
 								>
 									<div
-										className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl ${
+										className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-xl ${
 											stage.highlight
 												? "bg-primary text-white"
-												: "bg-elevated text-primary"
+												: "bg-surface-elevated text-primary"
 										}`}
 									>
 										{stage.icon}
@@ -128,7 +128,7 @@ function PhilosophySection() {
 
 				{/* Bottom Statement */}
 
-				<div className="border-primary/20 from-primary-100 via-bg to-accent-100 dark:from-primary-500/10 dark:via-bg dark:to-accent-500/10 mt-24 overflow-hidden rounded-[2rem] border bg-gradient-to-r">
+				<div className="border-primary/20 from-primary-100 via-bg to-accent-100 dark:from-primary-500/10 dark:via-bg dark:to-accent-500/10 mt-24 overflow-hidden rounded-2xl border bg-gradient-to-r">
 					<div className="grid items-center gap-10 px-10 py-12 lg:grid-cols-[1.3fr_0.7fr]">
 						<div>
 							<p className="text-primary text-sm font-semibold tracking-[0.3em] uppercase">
@@ -148,7 +148,7 @@ function PhilosophySection() {
 						</div>
 
 						<div className="flex justify-center">
-							<div className="border-border bg-surface rounded-3xl border px-10 py-8 shadow-lg">
+							<div className="border-border bg-surface rounded-xl border px-10 py-8 shadow-lg">
 								<div className="space-y-3 text-center font-['Space_Grotesk'] text-xl font-bold">
 									<div className="text-error">Raw Logs</div>
 

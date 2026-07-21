@@ -50,7 +50,7 @@ function TechStackSection() {
 				{/* Header */}
 
 				<div className="mx-auto max-w-3xl text-center">
-					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
+					<div className="border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-600 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						Technology Foundation
 					</div>
@@ -73,7 +73,7 @@ function TechStackSection() {
 					{technologies.map((tech, index) => (
 						<div
 							key={tech.name}
-							className="group border-border bg-bg hover:border-primary/40 relative overflow-hidden rounded-3xl border p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-lg"
+							className="group border-border bg-bg hover:border-primary/40 relative overflow-hidden rounded-2xl border p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-lg"
 						>
 							<div className="bg-primary/5 group-hover:bg-primary/10 absolute top-0 right-0 h-32 w-32 rounded-full blur-3xl transition-all duration-500" />
 
@@ -108,7 +108,7 @@ function TechStackSection() {
 
 				{/* Architecture Philosophy */}
 
-				<div className="border-border bg-bg mt-20 overflow-hidden rounded-[2rem] border">
+				<div className="border-border bg-bg mt-20 overflow-hidden rounded-2xl border">
 					<div className="grid lg:grid-cols-2">
 						<div className="p-10 lg:p-14">
 							<div className="flex items-center gap-3">

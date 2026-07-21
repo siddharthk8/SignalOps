@@ -17,7 +17,7 @@ export default function HeroSection() {
 			<div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col justify-center gap-20 px-6 py-28 lg:flex-row lg:items-center lg:justify-between">
 				{/* Left */}
 				<div className="max-w-3xl">
-					<div className="border-primary-300/70 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-300 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
+					<div className="border-primary-300/70 bg-primary-100 text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-600 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold">
 						<Sparkles size={15} />
 						Application Logs Intelligence System
 					</div>
@@ -59,7 +59,7 @@ export default function HeroSection() {
 
 				{/* Right */}
 				<div className="relative flex w-full max-w-xl justify-center">
-					<div className="border-border bg-surface/70 relative w-full rounded-3xl border p-8 shadow-lg backdrop-blur">
+					<div className="border-border bg-surface/70 relative w-full rounded-2xl border p-8 shadow-lg backdrop-blur">
 						<div className="mb-8 flex items-center justify-between">
 							<div>
 								<p className="text-t-muted text-sm">
@@ -111,7 +111,7 @@ export default function HeroSection() {
 					</div>
 
 					{/* Floating Raw Log */}
-					<div className="border-border bg-surface absolute top-15 -left-10 hidden w-52 rounded-2xl border p-4 shadow-md backdrop-blur lg:block">
+					<div className="border-border bg-surface absolute top-15 -left-10 hidden w-52 rounded-xl border p-4 shadow-md backdrop-blur lg:block">
 						<div className="text-t-muted text-xs font-semibold tracking-wider uppercase">
 							Incoming Log
 						</div>
@@ -124,7 +124,7 @@ export default function HeroSection() {
 					</div>
 
 					{/* Floating Incident */}
-					<div className="border-border bg-surface absolute -right-10 -bottom-6 hidden w-60 rounded-2xl border p-4 shadow-md backdrop-blur lg:block">
+					<div className="border-border bg-surface absolute -right-10 -bottom-6 hidden w-60 rounded-xl border p-4 shadow-md backdrop-blur lg:block">
 						<div className="text-t-muted text-xs font-semibold tracking-wider uppercase">
 							Generated Incident
 						</div>

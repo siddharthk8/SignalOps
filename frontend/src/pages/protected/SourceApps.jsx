@@ -17,20 +17,39 @@ function SourceAppsPage() {
 		pageIndex: 0,
 		pageSize: 10,
 	});
+	const [fetchAction, setFetchAction] = useState(null);
 
 	const { data, isPending, isFetching, isError, refetch } = useQuery({
 		queryKey: ["source-apps", pagination.pageIndex, pagination.pageSize],
 		placeholderData: keepPreviousData,
-		queryFn: () =>
-			getSourceApps({
-				client: authenticatedClient,
-				query: {
-					skip: pagination.pageIndex * pagination.pageSize,
-					limit: pagination.pageSize,
-				},
-			}),
+		queryFn: async () => {
+			try {
+				return await getSourceApps({
+					client: authenticatedClient,
+					query: {
+						skip: pagination.pageIndex * pagination.pageSize,
+						limit: pagination.pageSize,
+					},
+				});
+			} finally {
+				setFetchAction(null);
+			}
+		},
 		select: (response) => response.data,
 	});
+
+	const handleRefresh = () => {
+		setFetchAction("refresh");
+		refetch();
+	};
+
+	const handlePaginationChange = (updater) => {
+		setFetchAction("pagination");
+		setPagination(updater);
+	};
+
+	const isRefreshing = fetchAction === "refresh" && isFetching;
+	const isPaginationPageLoading = fetchAction === "pagination" && isFetching;
 
 	if (isPending) {
 		return <Loader />;
@@ -41,25 +60,22 @@ function SourceAppsPage() {
 	}
 
 	return (
-		<Container>
-			<div className="space-y-8">
-				<QueryPageHeader
-					title="Source Applications"
-					description="Manage applications connected to your SignalOps monitoring workspace."
-					onRefresh={refetch}
-					isRefreshing={isFetching}
-				/>
+		<Container className="space-y-8">
+			<QueryPageHeader
+				title="Source Applications"
+				description="Manage applications connected to your SignalOps monitoring workspace."
+				onRefresh={handleRefresh}
+				isRefreshing={isRefreshing}
+				isPaginationPageLoading={isPaginationPageLoading}
+			/>
 
-				<SourceAppsTable
-					sourceApps={data.source_apps}
-					total={data.total}
-					pagination={pagination}
-					setPagination={setPagination}
-					onRowClick={(row) =>
-						navigate(`/dashboard/source-apps/${row.original.id}/batches`)
-					}
-				/>
-			</div>
+			<SourceAppsTable
+				sourceApps={data.source_apps}
+				total={data.total}
+				pagination={pagination}
+				setPagination={handlePaginationChange}
+				onRowClick={(row) => navigate(`/dashboard/source-apps/${row.original.id}/batches`)}
+			/>
 		</Container>
 	);
 }

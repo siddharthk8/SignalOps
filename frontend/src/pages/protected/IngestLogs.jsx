@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { Code2, Info, Send, Terminal, Upload } from "lucide-react";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -10,7 +9,7 @@ import Button from "@/components/Button";
 import Container from "@/components/Container";
 import FormMessage from "@/components/Form/FormMessage";
 import authenticatedClient from "@/core/api/customClient";
-import { SERVER_ERROR_MSG } from "@/shared/constants/messages";
+import { handleServerErrorOnMutate } from "@/shared/utils/handleServerErrorOnMutate";
 
 const SAMPLE_PAYLOAD = (sourceAppId) => ({
 	source_app_id: Number(sourceAppId),
@@ -29,7 +28,7 @@ export default function IngestLogsPage() {
 	const { sourceAppId } = useParams();
 
 	const defaultJson = useMemo(
-		() => JSON.stringify(SAMPLE_PAYLOAD(sourceAppId), null, 2),
+		() => JSON.stringify(SAMPLE_PAYLOAD(sourceAppId), null, 4),
 		[sourceAppId],
 	);
 
@@ -38,7 +37,7 @@ export default function IngestLogsPage() {
 		handleSubmit,
 		setError,
 		clearErrors,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm({
 		mode: "onBlur",
 		defaultValues: {
@@ -48,33 +47,20 @@ export default function IngestLogsPage() {
 
 	const queryClient = useQueryClient();
 
-	const { mutate } = useMutation({
+	const { mutate, isPending } = useMutation({
 		mutationFn: (body) =>
 			ingestLogs({
 				client: authenticatedClient,
 				body,
 			}),
-
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ["batches", sourceAppId],
 			});
 			navigate(-1);
 		},
-
 		onError: (error) => {
-			if (!axios.isAxiosError(error)) {
-				setError("root", {
-					type: "server",
-					message: SERVER_ERROR_MSG,
-				});
-				return;
-			}
-
-			setError("root", {
-				type: "server",
-				message: error.response?.data?.message || error.message || SERVER_ERROR_MSG,
-			});
+			handleServerErrorOnMutate(error, setError);
 		},
 	});
 
@@ -108,12 +94,10 @@ export default function IngestLogsPage() {
 	return (
 		<Container>
 			<div className="mx-auto max-w-6xl space-y-6">
-				{/* Header */}
-
 				<div className="flex items-start justify-between">
 					<div>
 						<div className="mb-2 flex items-center gap-3">
-							<div className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-md">
+							<div className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-lg">
 								<Upload size={20} />
 							</div>
 
@@ -130,10 +114,9 @@ export default function IngestLogsPage() {
 					</div>
 				</div>
 
-				{/* Recommendation */}
-				<div className="border-primary/20 bg-primary/5 rounded-md border p-5">
+				<div className="border-primary/20 bg-primary/5 rounded-lg border p-5">
 					<div className="flex items-start gap-4">
-						<div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-md">
+						<div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
 							<Info size={18} />
 						</div>
 
@@ -145,7 +128,7 @@ export default function IngestLogsPage() {
 								JSON payloads.
 							</p>
 
-							<div className="bg-surface border-border rounded-md border p-3">
+							<div className="bg-surface border-border rounded-lg border p-3">
 								<div className="mb-1 flex items-center gap-2 text-sm font-medium">
 									<Terminal size={15} className="text-primary" />
 									Production Recommendation
@@ -167,7 +150,7 @@ export default function IngestLogsPage() {
 
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className="border-border bg-surface overflow-hidden rounded-md border"
+					className="border-border bg-surface overflow-hidden rounded-lg border"
 					noValidate
 				>
 					<div className="border-border flex items-center justify-between border-b px-6 py-4">
@@ -179,7 +162,7 @@ export default function IngestLogsPage() {
 							</p>
 						</div>
 
-						<div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-md">
+						<div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-lg">
 							<Code2 size={18} />
 						</div>
 					</div>
@@ -190,7 +173,7 @@ export default function IngestLogsPage() {
 								required: "Payload is required.",
 							})}
 							spellCheck={false}
-							className="border-border bg-muted/20 focus:border-primary focus:ring-primary/20 min-h-[520px] w-full rounded-md border p-5 font-mono text-[13px] leading-7 transition outline-none focus:ring-2"
+							className="border-border bg-muted/20 focus:border-primary focus:ring-primary/20 min-h-[520px] w-full rounded-lg border p-5 font-mono text-[13px] leading-7 transition outline-none focus:ring-2"
 						/>
 
 						{errors.payload && (
@@ -208,11 +191,12 @@ export default function IngestLogsPage() {
 
 							<Button
 								type="submit"
-								disabled={isSubmitting}
+								loading={isPending}
+								disabled={isPending}
 								rightIcon={<Send size={16} />}
-								className="min-w-40"
+								loadingText="Processing..."
 							>
-								{isSubmitting ? "Ingesting..." : "Ingest Logs"}
+								Ingest Logs
 							</Button>
 						</div>
 					</div>

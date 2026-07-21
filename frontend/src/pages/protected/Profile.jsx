@@ -11,20 +11,18 @@ function ProfilePage() {
 	const user = useSelector((state) => state.auth.user);
 
 	return (
-		<Container>
-			<div className="space-y-8">
-				<FormPageHeader
-					backLabel="Dashboard"
-					onBack={() => {
-						navigate("/dashboard");
-					}}
-					title="Profile Settings"
-					description="Manage your personal information, profile photo, and account settings."
-				/>
+		<Container className="space-y-8">
+			<FormPageHeader
+				backLabel="Dashboard"
+				onBack={() => {
+					navigate("/dashboard");
+				}}
+				title="Profile Settings"
+				description="Manage your personal information, profile photo, and account settings."
+			/>
 
-				<ProfileDetailsCard user={user} />
-				<DeleteAccountCard />
-			</div>
+			<ProfileDetailsCard user={user} />
+			<DeleteAccountCard />
 		</Container>
 	);
 }

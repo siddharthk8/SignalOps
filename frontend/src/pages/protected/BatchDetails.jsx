@@ -19,9 +19,8 @@ import authenticatedClient from "@/core/api/customClient";
 function BatchDetailsPage() {
 	const { batchId } = useParams();
 
-	const { data, isLoading, isError, refetch } = useQuery({
+	const { data, isPending, isError, refetch } = useQuery({
 		queryKey: ["batch", batchId],
-
 		queryFn: () =>
 			getBatch({
 				client: authenticatedClient,
@@ -29,40 +28,37 @@ function BatchDetailsPage() {
 					batch_id: Number(batchId),
 				},
 			}),
+		select: (response) => response.data,
 	});
 
-	if (isLoading) {
+	if (isPending) {
 		return <Loader />;
 	}
 
-	if (isError || !data) {
+	if (isError) {
 		return <QueryError onRetry={refetch} />;
 	}
 
-	const batch = data.data;
-
 	const overview = {
-		logs: batch.logs.length,
-		entities: batch.entities.length,
-		events: batch.events.length,
-		signals: batch.signals.length,
-		incidents: batch.incidents.length,
-		analyses: batch.ai_analyses.length,
+		logs: data.logs.length,
+		entities: data.entities.length,
+		events: data.events.length,
+		signals: data.signals.length,
+		incidents: data.incidents.length,
+		analyses: data.ai_analyses.length,
 	};
 
 	return (
-		<Container>
-			<div className="space-y-8">
-				<BatchHeader batchId={batch.id} createdAt={batch.created_at} />
-				<BatchOverviewCards overview={overview} />
-				<PipelineOverview />
-				<AIAnalysisCard analyses={batch.ai_analyses} />
-				<IncidentsCard incidents={batch.incidents} />
-				<SignalsCard signals={batch.signals} />
-				<EventsCard events={batch.events} />
-				<EntitiesCard entities={batch.entities} />
-				<LogsCard logs={batch.logs} />
-			</div>
+		<Container className="space-y-8">
+			<BatchHeader batchId={data.id} createdAt={data.created_at} />
+			<BatchOverviewCards overview={overview} />
+			<PipelineOverview />
+			<AIAnalysisCard analyses={data.ai_analyses} />
+			<IncidentsCard incidents={data.incidents} />
+			<SignalsCard signals={data.signals} />
+			<EventsCard events={data.events} />
+			<EntitiesCard entities={data.entities} />
+			<LogsCard logs={data.logs} />
 		</Container>
 	);
 }
