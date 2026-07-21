@@ -155,7 +155,7 @@ export default function Navbar({ auth }) {
 							}}
 							className="flex cursor-pointer items-center gap-2 text-base font-medium sm:text-lg"
 						>
-							<Logo className="h-5 w-5 sm:h-6 sm:w-6" />
+							<Logo className="h-5 w-8 overflow-hidden sm:h-6 sm:w-10" />
 							<span className="font-dancing text-2xl font-medium">
 								<span className="text-primary-500 font-bold">S</span>ignal
 								<span className="text-accent-500 ml-1 font-bold">O</span>ps
