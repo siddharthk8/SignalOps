@@ -1,4 +1,4 @@
-import { RefreshCw } from "lucide-react";
+import { LoaderCircle, RefreshCw } from "lucide-react";
 
 import Button from "@/components/Button";
 
@@ -8,6 +8,7 @@ function QueryPageHeader({
 	actions,
 	onRefresh,
 	isRefreshing = false,
+	isPaginationPageLoading = false,
 	className = "",
 }) {
 	return (
@@ -24,6 +25,12 @@ function QueryPageHeader({
 			</div>
 
 			<div className="flex items-center gap-3">
+				{isPaginationPageLoading && (
+					<div className="text-t-muted flex items-center gap-2 text-sm">
+						<LoaderCircle size={16} className="animate-spin" />
+					</div>
+				)}
+
 				{onRefresh && (
 					<Button
 						variant="secondary"

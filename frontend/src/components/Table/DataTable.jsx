@@ -1,13 +1,11 @@
 import { flexRender } from "@tanstack/react-table";
 
 function DataTable({ table, header, pagination, empty, rowActions, onRowClick }) {
-	const hasRows = table.getRowModel().rows.length > 0;
-
 	return (
 		<section className="border-border bg-surface overflow-hidden rounded-lg border">
 			{header}
 
-			{!hasRows ? (
+			{table.getRowModel().rows.length === 0 ? (
 				empty
 			) : (
 				<>
