@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
 		watch,
 		setError,
 		clearErrors,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm({ mode: "onBlur" });
 
 	const [searchParams] = useSearchParams();
@@ -31,7 +31,7 @@ export default function ResetPasswordPage() {
 	const [success, setSuccess] = useState(false);
 	const newPassword = watch("newPassword", "");
 
-	const { mutate: mutateOnSubmit } = useMutation({
+	const { mutate: mutateOnSubmit, isPending: isSubmitting } = useMutation({
 		mutationFn: ({ newPassword }) => {
 			return resetPassword({
 				body: {
@@ -107,8 +107,13 @@ export default function ResetPasswordPage() {
 						error={errors.confirmPassword?.message}
 					/>
 
-					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? "Resetting…" : "Reset Password"}
+					<Button
+						type="submit"
+						disabled={isSubmitting}
+						loading={isSubmitting}
+						loadingText="Resetting……"
+					>
+						Reset Password
 					</Button>
 				</form>
 			</>

@@ -22,13 +22,13 @@ export default function LoginPage() {
 		handleSubmit,
 		setError,
 		clearErrors,
-		formState: { errors, isSubmitting },
-	} = useForm({ mode: "onBlur" });
+		formState: { errors },
+	} = useForm({ mode: "onSubmit" });
 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
-	const { mutate } = useMutation({
+	const { mutate, isPending: isSubmitting } = useMutation({
 		mutationFn: ({ email, password }) => {
 			return createToken({
 				body: {
@@ -106,7 +106,7 @@ export default function LoginPage() {
 						label="Email address"
 						type="email"
 						autoComplete="email"
-						placeholder="you@company.com"
+						placeholder="you@example.com"
 						{...register("email", EMAIL_RULES)}
 						error={errors.email?.message}
 					/>
@@ -118,8 +118,13 @@ export default function LoginPage() {
 						error={errors.password?.message}
 					/>
 
-					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? "Logging in…" : "Log in"}
+					<Button
+						type="submit"
+						disabled={isSubmitting}
+						loading={isSubmitting}
+						loadingText="Logging in…"
+					>
+						Log in
 					</Button>
 				</form>
 
