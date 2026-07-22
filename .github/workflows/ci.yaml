@@ -62,6 +62,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: "testing"
       MAIL_FROM: "test.sender@example.com"
       CORS_ORIGINS: "http://localhost:5173"
+      IMAGE_TAG: "dev"
       TESTING: "true"
 
     steps:

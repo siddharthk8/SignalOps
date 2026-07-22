@@ -23,6 +23,7 @@ os.environ["AWS_ACCESS_KEY_ID"] = "testing"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
 os.environ["MAIL_FROM"] = "test.sender@example.com"
 os.environ["CORS_ORIGINS"] = "http://localhost:5173"
+os.environ["IMAGE_TAG"] = "dev"
 os.environ["TESTING"] = "true"
 
 from collections.abc import AsyncGenerator
