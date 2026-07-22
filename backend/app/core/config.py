@@ -1,8 +1,8 @@
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import SecretStr
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import SecretStr, field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -64,6 +64,13 @@ class Settings(BaseSettings):
 
     # SES configuration
     ses_region: str = "ap-south-1"
+
+    cors_origins: Annotated[list[str], NoDecode] = []
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def split_origins(cls, value: str) -> list[str]:
+        return value.split(",")
 
 
 settings = Settings()  # type: ignore[call-arg]

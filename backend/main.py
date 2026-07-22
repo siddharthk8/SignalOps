@@ -47,16 +47,9 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
 )
 
-if IS_PRODUCTION:
-    origins = []
-else:
-    origins = [
-        "http://localhost:5173",  # Vite (Development)
-    ]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
