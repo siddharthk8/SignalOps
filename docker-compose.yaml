@@ -1,0 +1,65 @@
+services:
+  migrate:
+    image: signalops:${IMAGE_TAG}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ${ENV_DIR}/SignalOps/backend/.env
+      - ${ENV_DIR}/SignalOps/backend/prod.env
+    command: alembic upgrade head
+    depends_on:
+      signalops_postgres:
+        condition: service_healthy
+
+  backend:
+    image: signalops:${IMAGE_TAG}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    env_file:
+      - ${ENV_DIR}/SignalOps/backend/.env
+      - ${ENV_DIR}/SignalOps/backend/prod.env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      signalops_redis:
+        condition: service_healthy
+
+  signalops_redis:
+    image: redis:alpine3.23
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  signalops_postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

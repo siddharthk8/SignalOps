@@ -1,0 +1,84 @@
+# =========================================================
+# Python / Backend
+# =========================================================
+**/__pycache__
+**/*.pyc
+*.py[cod]
+*.pyd
+*.so
+
+# Type checkers / linters / tooling
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.coverage
+.coverage.*
+htmlcov/
+
+# Build / packaging
+build/
+dist/
+site/
+.eggs/
+*.egg
+*.egg-info/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# =========================================================
+# Environment & Secrets
+# =========================================================
+.env
+.env.*
+!.env.development
+!.env.example
+!.env.sample
+
+# =========================================================
+# Database / Local storage
+# =========================================================
+*.db
+*.sqlite3
+*.sqlite
+*.log
+
+# =========================================================
+# IDEs / Editors
+# =========================================================
+.vscode/
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =========================================================
+# Temporary / Cache
+# =========================================================
+tmp/
+temp/
+.cache/
+.cache-loader/
+
+# =========================================================
+# Misc
+# =========================================================
+*.bak
+*.tmp
+
+# Others
+logs/
+.env.example
+README.md
