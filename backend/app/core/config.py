@@ -65,6 +65,9 @@ class Settings(BaseSettings):
     # SES configuration
     ses_region: str = "ap-south-1"
 
+    # docker image tag
+    image_tag: str
+
     cors_origins: Annotated[list[str], NoDecode] = []
 
     @field_validator("cors_origins", mode="before")
