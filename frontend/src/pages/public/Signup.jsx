@@ -9,7 +9,6 @@ import AuthBgImage from "@/assets/images/auth-bg.jpg";
 import Button from "@/components/Button";
 import FormBottomLink from "@/components/Container/BottomLink";
 import FormMessage from "@/components/Form/FormMessage";
-import Checkbox from "@/components/Input/CheckboxInput";
 import Input from "@/components/Input/Input";
 import PasswordInput from "@/components/Input/PasswordInput";
 import {
@@ -30,7 +29,7 @@ export default function SignupPage() {
 		handleSubmit,
 		setError,
 		clearErrors,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm({ mode: "onBlur" });
 
 	const [password, setPassword] = useState();
@@ -38,7 +37,7 @@ export default function SignupPage() {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
-	const { mutate } = useMutation({
+	const { mutate, isPending: isSubmitting } = useMutation({
 		mutationFn: ({ email, password, firstName, lastName }) => {
 			return createUser({
 				body: {
@@ -144,7 +143,7 @@ export default function SignupPage() {
 						label="Email address"
 						type="email"
 						autoComplete="email"
-						placeholder="you@company.com"
+						placeholder="you@example.com"
 						{...register("email", EMAIL_RULES)}
 						error={errors.email?.message}
 					/>
@@ -156,17 +155,22 @@ export default function SignupPage() {
 						error={errors.password?.message}
 					/>
 
-					<Checkbox
+					{/* <Checkbox
 						label="I agree to the"
 						link={{ href: "/terms", text: "Terms & Conditions" }}
 						error={errors.terms?.message}
 						{...register("terms", {
 							required: "You must accept the terms and conditions",
 						})}
-					/>
+					/> */}
 
-					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? "Creating account…" : "Create account"}
+					<Button
+						type="submit"
+						disabled={isSubmitting}
+						loading={isSubmitting}
+						loadingText="Creating account…"
+					>
+						Create account
 					</Button>
 				</form>
 

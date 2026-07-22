@@ -20,12 +20,12 @@ export default function ForgotPasswordPage() {
 		setError,
 		clearErrors,
 		reset,
-		formState: { errors, isSubmitting },
+		formState: { errors },
 	} = useForm({ mode: "onBlur" });
 
 	const [success, setSuccess] = useState(false);
 
-	const { mutate } = useMutation({
+	const { mutate, isPending: isSubmitting } = useMutation({
 		mutationFn: ({ email }) => {
 			return forgotPassword({
 				body: {
@@ -85,8 +85,13 @@ export default function ForgotPasswordPage() {
 						error={errors.email?.message}
 					/>
 
-					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? "Sending reset link…" : "Send reset link"}
+					<Button
+						type="submit"
+						disabled={isSubmitting}
+						loading={isSubmitting}
+						loadingText="Sending reset link…"
+					>
+						Send reset link
 					</Button>
 				</form>
 			</>

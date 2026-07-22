@@ -1,5 +1,7 @@
 import { createListenerMiddleware } from "@reduxjs/toolkit";
 
+import queryClient from "@/core/queryClient";
+
 import { removeUserFromLS, saveUserInLS, updateDataInLS } from "../shared/utils/userLocalStorage";
 import {
 	clearUser,
@@ -41,7 +43,13 @@ listenerMiddleware.startListening({
 
 listenerMiddleware.startListening({
 	actionCreator: clearUser,
-	effect: () => {
+	effect: async () => {
+		// Stop any in-flight requests before clearing the cache.
+		await queryClient.cancelQueries();
+
+		// Clear all cached data so the next signed-in user starts with a fresh cache.
+		queryClient.clear();
+
 		removeUserFromLS();
 	},
 });
