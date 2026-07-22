@@ -7,7 +7,7 @@ on:
     branches:
       - main
     paths:
-      - 'backend/**'
+      - "backend/**"
       - ".github/workflows/ci.yaml"
 
   pull_request:
@@ -47,8 +47,14 @@ jobs:
     # Environment variables for backend/tests
     env:
       # Required because Alembic migrations and Pydantic settings are loaded before pytest starts.
+      DB_DRIVER: "postgresql+psycopg"
+      DB_HOST: "localhost"
+      DB_PORT: 5432
+      DB_NAME: "testdb"
+      DB_USERNAME: "testuser"
+      DB_PASSWORD: "testpass85"
+
       SECRET_KEY: "dummy-secret-key-for-testing-only"
-      DATABASE_URL: "postgresql+psycopg://testuser:testpass85@localhost:5432/testdb"
       BEDROCK_MODEL_ID: "testing-model"
       S3_BUCKET_NAME: "test-bucket"
       S3_BUCKET_REGION: "ap-south-1"

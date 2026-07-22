@@ -8,8 +8,14 @@ if sys.platform == "win32":
 
 import os
 
+os.environ["DB_DRIVER"] = "postgresql+psycopg"
+os.environ["DB_HOST"] = "localhost"
+os.environ["DB_PORT"] = "5432"
+os.environ["DB_NAME"] = "testdb"
+os.environ["DB_USERNAME"] = "testuser"
+os.environ["DB_PASSWORD"] = "testpass85"
+
 os.environ["SECRET_KEY"] = "dummy-secret-key-for-testing-only"
-os.environ["DATABASE_URL"] = "postgresql+psycopg://testuser:testpass85@localhost/testdb"
 os.environ["BEDROCK_MODEL_ID"] = "testing-model"
 os.environ["S3_BUCKET_NAME"] = "test-bucket"
 os.environ["S3_BUCKET_REGION"] = "ap-south-1"
@@ -27,6 +33,7 @@ import boto3
 import pytest
 from httpx import ASGITransport, AsyncClient
 from moto import mock_aws
+from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
@@ -43,11 +50,19 @@ def anyio_backend():
 
 @pytest.fixture(scope="session")
 def test_engine():
-    engine = create_async_engine(
-        os.environ["DATABASE_URL"],
+    database_url = URL.create(
+        drivername=os.environ["DB_DRIVER"],
+        username=os.environ["DB_USERNAME"],
+        password=os.environ["DB_PASSWORD"],
+        host=os.environ["DB_HOST"],
+        port=int(os.environ["DB_PORT"]),
+        database=os.environ["DB_NAME"],
+    )
+
+    return create_async_engine(
+        database_url,
         poolclass=NullPool,
     )
-    return engine
 
 
 @pytest.fixture(scope="session")
