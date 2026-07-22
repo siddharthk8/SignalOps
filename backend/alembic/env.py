@@ -2,7 +2,7 @@ import asyncio
 import sys
 from logging.config import fileConfig
 
-from sqlalchemy import pool
+from sqlalchemy import URL, pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
@@ -19,7 +19,18 @@ if sys.platform == "win32":
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url.get_secret_value())
+
+database_url = URL.create(
+    drivername=settings.db_driver,
+    username=settings.db_username.get_secret_value(),
+    password=settings.db_password.get_secret_value(),
+    host=settings.db_host,
+    port=settings.db_port,
+    database=settings.db_name,
+)
+config.set_main_option(
+    "sqlalchemy.url", database_url.render_as_string(hide_password=False)
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
