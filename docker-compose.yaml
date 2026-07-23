@@ -1,6 +1,6 @@
 services:
   migrate:
-    image: signalops:${IMAGE_TAG}
+    image: siddharthk8/signalops:${IMAGE_TAG}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -9,11 +9,11 @@ services:
       - ${ENV_DIR}/SignalOps/backend/prod.env
     command: alembic upgrade head
     depends_on:
-      signalops_postgres:
+      so_postgres:
         condition: service_healthy
 
   backend:
-    image: signalops:${IMAGE_TAG}
+    image: siddharthk8/signalops:${IMAGE_TAG}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -26,11 +26,11 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-      signalops_redis:
+      so_redis:
         condition: service_healthy
 
-  signalops_redis:
-    image: redis:alpine3.23
+  so_redis:
+    image: redis:7.4.9-alpine3.21
     ports:
       - "6379:6379"
     restart: unless-stopped
@@ -43,8 +43,8 @@ services:
       timeout: 3s
       retries: 5
 
-  signalops_postgres:
-    image: postgres:16-alpine
+  so_postgres:
+    image: postgres:16.14-alpine3.23
     ports:
       - "5432:5432"
     restart: unless-stopped

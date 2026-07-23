@@ -1,5 +1,5 @@
 # Build stage: install dependencies separately so the final image stays clean
-FROM python:3.12-slim-bookworm AS builder
+FROM python:3.12.13-slim-bookworm AS builder
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ COPY . .
 
 
 # Runtime stage: this is the image that actually runs
-FROM python:3.12-slim-bookworm
+FROM python:3.12.13-slim-bookworm
 
 WORKDIR /app
 
