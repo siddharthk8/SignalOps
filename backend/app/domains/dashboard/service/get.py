@@ -27,7 +27,7 @@ async def dashboard_overview(current_user: CurrentUser, db: DBSessionDep):
         "unresolved_incidents_count": unresolved_incidents_count,
         "last_5_incidents": last_5_incidents,
         "daily_incidents_over_last_30_days": [
-            {"date": row.date, "count": row.count}
+            {"date": row.date.isoformat(), "count": row.count}
             for row in daily_incidents_over_last_30_days
         ],
     }

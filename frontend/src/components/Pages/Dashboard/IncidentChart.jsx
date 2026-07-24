@@ -38,16 +38,16 @@ function IncidentChart({ incidents }) {
 		[incidents],
 	);
 
-	const totalIncidents = useMemo(
-		() => chartData.reduce((sum, day) => sum + day.incidents, 0),
-		[chartData],
-	);
-
 	const averagePerDay = useMemo(() => {
-		if (!chartData.length) return 0;
+		if (!incidents.length) return 0;
 
-		return (totalIncidents / chartData.length).toFixed(1);
-	}, [chartData, totalIncidents]);
+		const total = incidents.reduce((sum, item) => sum + item.count, 0);
+		const start = new Date(incidents[0].date);
+		const end = new Date(incidents[incidents.length - 1].date);
+
+		const days = (end - start) / (1000 * 60 * 60 * 24) + 1;
+		return (total / days).toFixed(1);
+	}, [incidents]);
 
 	return (
 		<section className="border-border bg-surface overflow-hidden rounded-lg border">
