@@ -26,6 +26,11 @@ os.environ["CORS_ORIGINS"] = "http://localhost:5173"
 os.environ["IMAGE_TAG"] = "dev"
 os.environ["TESTING"] = "true"
 
+os.environ["FRONTEND_IMAGE_TAG"] = "dev"
+os.environ["FRONTEND_URL"] = "http://localhost:5173"
+os.environ["VITE_API_URL"] = "http://localhost:8000"
+os.environ["ENV_DIR"] = "..."
+
 from collections.abc import AsyncGenerator
 from dataclasses import dataclass
 from typing import Any

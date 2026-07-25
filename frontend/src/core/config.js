@@ -1,6 +1,6 @@
 const config = {
 	apiUrl: String(import.meta.env.VITE_API_URL),
-	isDev: String(import.meta.env.DEV) === "true",
+	isDev: String(import.meta.env.DEV) === "development",
 };
 
 export default config;

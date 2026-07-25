@@ -11,7 +11,7 @@ router = APIRouter()
 @router.post(
     "/{incident_id}/resolve",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.2))],
+    dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.1))],
 )
 async def mark_incident_resolved(
     incident_id: int,

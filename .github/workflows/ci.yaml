@@ -65,6 +65,11 @@ jobs:
       IMAGE_TAG: "dev"
       TESTING: "true"
 
+      FRONTEND_IMAGE_TAG: "dev"
+      FRONTEND_URL: "http://localhost:5173"
+      VITE_API_URL: "http://localhost:8000"
+      ENV_DIR: "..."
+
     steps:
       # Get code into this Github runner VM
       - name: Checkout repository

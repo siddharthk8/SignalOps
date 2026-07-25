@@ -21,7 +21,7 @@ router = APIRouter()
     "",
     response_model=PaginatedSourceAppResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(user_rate_limit(capacity=30, refill_rate=1))],
+    dependencies=[Depends(user_rate_limit(capacity=30, refill_rate=0.5))],
 )
 async def get_source_apps(
     current_user: CurrentUser,
@@ -36,7 +36,7 @@ async def get_source_apps(
     "",
     response_model=SourceAppModel,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.2))],
+    dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.1))],
 )
 async def create_source_app(
     data: SourceAppRequest,
@@ -49,7 +49,7 @@ async def create_source_app(
 @router.delete(
     "/{source_app_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(user_rate_limit(capacity=5, refill_rate=0.1))],
+    dependencies=[Depends(user_rate_limit(capacity=5, refill_rate=0.05))],
 )
 async def delete_source_app(
     source_app_id: int,
@@ -63,7 +63,7 @@ async def delete_source_app(
     "/{source_app_id}/batches",
     response_model=PaginatedBatchesResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(user_rate_limit(capacity=30, refill_rate=1))],
+    dependencies=[Depends(user_rate_limit(capacity=30, refill_rate=0.5))],
 )
 async def get_source_app_batches(
     current_user: CurrentUser,

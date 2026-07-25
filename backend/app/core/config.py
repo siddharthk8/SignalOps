@@ -1,13 +1,20 @@
+import os
 from pathlib import Path
 from typing import Annotated, Literal
 
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
+ENV = os.getenv("ENV", "development") == "development"
+if ENV:
+    FILE_NAME = ".env.local"
+else:
+    FILE_NAME = ".env.production"
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=Path.home() / ".config" / "SignalOps" / "backend" / ".env",
+        env_file=Path.home() / ".config" / "signalops" / "backend" / FILE_NAME,
         env_file_encoding="utf-8",
     )
 
@@ -43,8 +50,6 @@ class Settings(BaseSettings):
     password_reset_request_cooldown_seconds: int = 120
     reset_token_expire_minutes: int = 30
 
-    frontend_url: str = "http://localhost:8000"
-
     # Optional AWS credentials.
     # If not provided, boto3 falls back to its default credential chain:
     # environment variables, shared AWS config (~/.aws/credentials),
@@ -67,7 +72,12 @@ class Settings(BaseSettings):
 
     # docker image tag
     image_tag: str
+    frontend_image_tag: str
 
+    frontend_url: str
+    vite_api_url: str
+
+    env_dir: str
     cors_origins: Annotated[list[str], NoDecode] = []
 
     @field_validator("cors_origins", mode="before")
