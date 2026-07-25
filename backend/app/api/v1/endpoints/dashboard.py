@@ -13,7 +13,7 @@ router = APIRouter()
     "",
     response_model=DashboardOverviewSchema,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(user_rate_limit(capacity=20, refill_rate=2))],
+    dependencies=[Depends(user_rate_limit(capacity=20, refill_rate=1))],
 )
 async def dashboard_overview(current_user: CurrentUser, db: DBSessionDep):
     return await service.dashboard_overview(current_user, db)

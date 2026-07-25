@@ -22,7 +22,7 @@ router = APIRouter()
     "/login",
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(public_rate_limit(capacity=5, refill_rate=0.05))],
+    dependencies=[Depends(public_rate_limit(capacity=5, refill_rate=0.2))],
 )
 async def create_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
@@ -35,7 +35,7 @@ async def create_token(
     "/refresh",
     response_model=RefreshTokenResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(public_rate_limit(capacity=20, refill_rate=1))],
+    dependencies=[Depends(public_rate_limit(capacity=20, refill_rate=0.5))],
 )
 async def get_new_access_token(
     refresh_token_data: RefreshTokenRequest,
@@ -47,7 +47,7 @@ async def get_new_access_token(
 @router.post(
     "/logout",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(user_rate_limit(capacity=20, refill_rate=1))],
+    dependencies=[Depends(user_rate_limit(capacity=20, refill_rate=0.5))],
 )
 async def revoke_refresh_token(
     refresh_token_data: RefreshTokenRequest,
@@ -60,7 +60,7 @@ async def revoke_refresh_token(
 @router.post(
     "/logout-all",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(user_rate_limit(capacity=3, refill_rate=0.02))],
+    dependencies=[Depends(user_rate_limit(capacity=3, refill_rate=0.01))],
 )
 async def revoke_all_refresh_tokens(
     current_user: CurrentUser,
@@ -72,7 +72,7 @@ async def revoke_all_refresh_tokens(
 @router.post(
     "/forgot-password",
     status_code=status.HTTP_202_ACCEPTED,
-    dependencies=[Depends(public_rate_limit(capacity=3, refill_rate=0.01))],
+    dependencies=[Depends(public_rate_limit(capacity=3, refill_rate=0.005))],
 )
 async def forgot_password(
     data: ForgotPasswordRequest,
@@ -85,7 +85,7 @@ async def forgot_password(
 @router.post(
     "/reset-password",
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(public_rate_limit(capacity=5, refill_rate=0.02))],
+    dependencies=[Depends(public_rate_limit(capacity=5, refill_rate=0.01))],
 )
 async def reset_password(
     data: ResetPasswordRequest,

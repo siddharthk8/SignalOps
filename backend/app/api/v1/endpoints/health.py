@@ -10,7 +10,7 @@ router = APIRouter()
 @router.get(
     "",
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(public_rate_limit(capacity=60, refill_rate=2))],
+    dependencies=[Depends(public_rate_limit(capacity=60, refill_rate=1))],
 )
 async def health_check(db: DBSessionDep):
     try:

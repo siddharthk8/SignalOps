@@ -13,7 +13,7 @@ router = APIRouter()
     "/{batch_id}",
     response_model=GetBatch,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(user_rate_limit(capacity=30, refill_rate=1))],
+    dependencies=[Depends(user_rate_limit(capacity=30, refill_rate=0.5))],
 )
 async def get_batch(batch_id: int, current_user: CurrentUser, db: DBSessionDep):
     return await service.get_batch(batch_id, current_user, db)

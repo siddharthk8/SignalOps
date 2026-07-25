@@ -17,7 +17,7 @@ router = APIRouter()
     response_model=list[IncidentAnalysis],
     status_code=status.HTTP_200_OK,
     name="ingest_logs",
-    dependencies=[Depends(user_rate_limit(capacity=20, refill_rate=0.2))],
+    dependencies=[Depends(user_rate_limit(capacity=20, refill_rate=0.05))],
 )
 async def ingest_logs(
     data: LogBatchRequest,

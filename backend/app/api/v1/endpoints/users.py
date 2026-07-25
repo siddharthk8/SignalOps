@@ -18,7 +18,7 @@ router = APIRouter()
     "",
     response_model=UserPrivate,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(public_rate_limit(capacity=5, refill_rate=0.02))],
+    dependencies=[Depends(public_rate_limit(capacity=5, refill_rate=0.01))],
 )
 async def create_user(user: UserCreate, db: DBSessionDep):
     return await service.create_user(user, db)
@@ -27,7 +27,7 @@ async def create_user(user: UserCreate, db: DBSessionDep):
 @router.get(
     "/me",
     response_model=UserPrivate,
-    dependencies=[Depends(user_rate_limit(capacity=60, refill_rate=2))],
+    dependencies=[Depends(user_rate_limit(capacity=60, refill_rate=1))],
 )
 async def get_current_user(current_user: CurrentUser):
     return current_user
@@ -36,7 +36,7 @@ async def get_current_user(current_user: CurrentUser):
 @router.patch(
     "/me",
     response_model=UserPrivate,
-    dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.2))],
+    dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.1))],
 )
 async def update_current_user(
     data: UserUpdate, current_user: CurrentUser, db: DBSessionDep
@@ -47,7 +47,7 @@ async def update_current_user(
 @router.delete(
     "/me",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(user_rate_limit(capacity=2, refill_rate=0.01))],
+    dependencies=[Depends(user_rate_limit(capacity=2, refill_rate=0.005))],
 )
 async def delete_current_user(current_user: CurrentUser, db: DBSessionDep):
     return await service.delete_current_user(current_user, db)
@@ -56,7 +56,7 @@ async def delete_current_user(current_user: CurrentUser, db: DBSessionDep):
 @router.post(
     "/me/change-password",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(user_rate_limit(capacity=3, refill_rate=0.02))],
+    dependencies=[Depends(user_rate_limit(capacity=3, refill_rate=0.01))],
 )
 async def change_password(
     data: UserPasswordChange,
@@ -70,7 +70,7 @@ async def change_password(
     "/me/profile-image",
     response_model=UserPrivate,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.05))],
+    dependencies=[Depends(user_rate_limit(capacity=2, refill_rate=0.05))],
 )
 async def upload_profile_image(
     file: UploadFile,
