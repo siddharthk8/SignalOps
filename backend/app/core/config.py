@@ -1,13 +1,20 @@
+import os
 from pathlib import Path
 from typing import Annotated, Literal
 
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
+ENV = os.getenv("ENV", "development") == "development"
+if ENV:
+    FILE_NAME = ".env.local"
+else:
+    FILE_NAME = ".env.production"
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=Path.home() / ".config" / "SignalOps" / "backend" / ".env.local",
+        env_file=Path.home() / ".config" / "signalops" / "backend" / FILE_NAME,
         env_file_encoding="utf-8",
     )
 
