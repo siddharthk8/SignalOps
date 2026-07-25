@@ -15,8 +15,20 @@ services:
       backend:
         condition: service_healthy
 
+  frontend:
+    image: siddharthk8/signalops-frontend:${FRONTEND_IMAGE_TAG}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+        - ENV=${ENV}
+    expose:
+      - "5173"
+    restart: unless-stopped
+
   migrate:
-    image: siddharthk8/signalops:${IMAGE_TAG}
+    image: siddharthk8/signalops-backend:${IMAGE_TAG}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -29,7 +41,7 @@ services:
         condition: service_healthy
 
   backend:
-    image: siddharthk8/signalops:${IMAGE_TAG}
+    image: siddharthk8/signalops-backend:${IMAGE_TAG}
     build:
       context: ./backend
       dockerfile: Dockerfile

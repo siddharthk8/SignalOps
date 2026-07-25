@@ -43,8 +43,6 @@ class Settings(BaseSettings):
     password_reset_request_cooldown_seconds: int = 120
     reset_token_expire_minutes: int = 30
 
-    frontend_url: str = "http://localhost:8000"
-
     # Optional AWS credentials.
     # If not provided, boto3 falls back to its default credential chain:
     # environment variables, shared AWS config (~/.aws/credentials),
@@ -67,6 +65,10 @@ class Settings(BaseSettings):
 
     # docker image tag
     image_tag: str
+    frontend_image_tag: str
+
+    frontend_url: str
+    vite_api_url: str
 
     env_dir: str
     cors_origins: Annotated[list[str], NoDecode] = []
