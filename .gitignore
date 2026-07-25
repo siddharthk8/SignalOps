@@ -100,3 +100,6 @@ temp/
 
 # Others
 backend/logs/
+certbot/
+scripts/
+nginx/default.conf

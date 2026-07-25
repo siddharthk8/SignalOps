@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=Path.home() / ".config" / "SignalOps" / "backend" / ".env",
+        env_file=Path.home() / ".config" / "SignalOps" / "backend" / ".env.local",
         env_file_encoding="utf-8",
     )
 
@@ -68,6 +68,7 @@ class Settings(BaseSettings):
     # docker image tag
     image_tag: str
 
+    env_dir: str
     cors_origins: Annotated[list[str], NoDecode] = []
 
     @field_validator("cors_origins", mode="before")
