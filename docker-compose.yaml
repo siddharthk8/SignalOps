@@ -34,7 +34,7 @@ services:
       dockerfile: Dockerfile
     restart: "no" # YAML treats no as a boolean, so it's better to quote it
     env_file:
-      - ${ENV_DIR}/SignalOps/backend/.env.production
+      - ${ENV_DIR}/signalops/backend/.env.production
     command: alembic upgrade head
     depends_on:
       so_postgres:
@@ -49,7 +49,7 @@ services:
       - "8000"
     restart: unless-stopped
     env_file:
-      - ${ENV_DIR}/SignalOps/backend/.env.production
+      - ${ENV_DIR}/signalops/backend/.env.production
     depends_on:
       migrate:
         condition: service_completed_successfully
