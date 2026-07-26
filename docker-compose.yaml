@@ -18,8 +18,6 @@ services:
   frontend:
     image: siddharthk8/signalops-frontend:${FRONTEND_IMAGE_TAG}
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
       args:
         - VITE_API_URL=${VITE_API_URL}
         - ENV=${ENV}
@@ -29,9 +27,6 @@ services:
 
   migrate:
     image: siddharthk8/signalops-backend:${IMAGE_TAG}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     restart: "no" # YAML treats no as a boolean, so it's better to quote it
     env_file:
       - ${ENV_DIR}/signalops/backend/.env.production
@@ -42,9 +37,6 @@ services:
 
   backend:
     image: siddharthk8/signalops-backend:${IMAGE_TAG}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     expose:
       - "8000"
     restart: unless-stopped
