@@ -69,7 +69,7 @@ function RecentIncidents({ incidents }) {
 			</div>
 
 			{incidents.length === 0 ? (
-				<div className="text-t-muted flex flex-1 items-center justify-center text-sm">
+				<div className="text-t-muted flex flex-1 items-center justify-center py-12 text-sm">
 					No recent incidents.
 				</div>
 			) : (

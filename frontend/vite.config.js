@@ -7,19 +7,30 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [react(), tailwindcss(), babel({ presets: [reactCompilerPreset()] })],
+	plugins: [
+		react(),
+		tailwindcss(),
+		babel({
+			presets: [reactCompilerPreset()],
+		}),
+	],
+
 	resolve: {
 		alias: {
 			"@": fileURLToPath(new URL("./src", import.meta.url)),
 		},
 	},
+
+	// Used only by `vite dev`
 	server: {
-		host: "0.0.0.0",
+		host: "localhost",
 		port: 5173,
 		strictPort: true,
 	},
+
+	// Used only by `vite preview`
 	preview: {
-		host: "0.0.0.0",
+		host: "localhost",
 		port: 4173,
 		strictPort: true,
 	},
