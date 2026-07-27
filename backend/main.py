@@ -37,7 +37,7 @@ IS_PRODUCTION = settings.env == "production"
 app = FastAPI(
     title="SignalOps",
     description="SignalOps is a log intelligence and incident analysis platform that converts raw system logs into meaningful insights.",
-    version=settings.image_tag,
+    version=settings.backend_image_tag,
     lifespan=lifespan,
     docs_url=None if IS_PRODUCTION else "/docs",
     redoc_url=None if IS_PRODUCTION else "/redoc",

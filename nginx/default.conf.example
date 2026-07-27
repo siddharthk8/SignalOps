@@ -3,6 +3,10 @@
 # This is a simplified example for demonstration purposes.
 # The production configuration is intentionally different for security reasons.
 
+upstream frontend {
+    server frontend:80;
+}
+
 upstream backend {
     server backend:8000;
 }
@@ -21,14 +25,23 @@ server {
 }
 
 server {
-    listen 443 ssl;
+    listen 443 ssl http2;
     server_name <domain>;
 
     ssl_certificate /etc/letsencrypt/live/<domain>/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/<domain>/privkey.pem;
 
-    location / {
+    location /api/ {
         proxy_pass http://backend;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location / {
+        proxy_pass http://frontend;
 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;

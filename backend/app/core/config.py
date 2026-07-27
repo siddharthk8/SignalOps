@@ -71,7 +71,7 @@ class Settings(BaseSettings):
     ses_region: str = "ap-south-1"
 
     # docker image tag
-    image_tag: str
+    backend_image_tag: str
     frontend_image_tag: str
 
     frontend_url: str

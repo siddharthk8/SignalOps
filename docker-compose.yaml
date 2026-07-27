@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
 
   migrate:
-    image: siddharthk8/signalops-backend:${IMAGE_TAG}
+    image: siddharthk8/signalops-backend:${BACKEND_IMAGE_TAG}
     restart: "no" # YAML treats no as a boolean, so it's better to quote it
     env_file:
       - ${ENV_DIR}/signalops/backend/.env.production
@@ -32,7 +32,7 @@ services:
         condition: service_healthy
 
   backend:
-    image: siddharthk8/signalops-backend:${IMAGE_TAG}
+    image: siddharthk8/signalops-backend:${BACKEND_IMAGE_TAG}
     expose:
       - "8000"
     restart: unless-stopped
