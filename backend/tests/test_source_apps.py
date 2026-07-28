@@ -53,6 +53,20 @@ async def test_delete_source_app_success(client: AsyncClient):
 
 
 @pytest.mark.anyio
+async def test_delete_source_app_fail(client: AsyncClient):
+    user = await create_test_user(client)
+    access_token, _ = await login_user(client, user["email"])
+    header = auth_header(access_token)
+
+    response = await client.delete(
+        "/api/v1/source-apps/545623",  # random id
+        headers=header,
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.anyio
 async def test_get_source_apps_with_pagination(client: AsyncClient):
     user = await create_test_user(client)
     access_token, _ = await login_user(client, user["email"])
