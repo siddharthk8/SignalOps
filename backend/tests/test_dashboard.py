@@ -22,3 +22,12 @@ async def test_dashboard_success(client: AsyncClient):
     assert "unresolved_incidents_count" in data
     assert "last_5_incidents" in data
     assert "daily_incidents_over_last_30_days" in data
+
+
+@pytest.mark.anyio
+async def test_dashboard_requires_authentication(client: AsyncClient):
+    response = await client.get(
+        "/api/v1/dashboard",
+    )
+
+    assert response.status_code == 401
