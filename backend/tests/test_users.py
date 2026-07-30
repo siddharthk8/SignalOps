@@ -116,6 +116,27 @@ async def test_delete_me_success(client: AsyncClient):
 
 
 @pytest.mark.anyio
+async def test_delete_me_user_removed(client: AsyncClient):
+    user = await create_test_user(client)
+    access_token, _ = await login_user(client, user["email"])
+    header = auth_header(access_token)
+
+    response = await client.delete(
+        "/api/v1/users/me",
+        headers=header,
+    )
+
+    assert response.status_code == 204
+
+    response = await client.get(
+        "/api/v1/users/me",
+        headers=header,
+    )
+
+    assert response.status_code == 401
+
+
+@pytest.mark.anyio
 async def test_change_password_success(client: AsyncClient):
     user = await create_test_user(client)
     access_token, _ = await login_user(client, user["email"])
