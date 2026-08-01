@@ -13,10 +13,9 @@ from app.schemas.signal import Signal
 
 
 class PaymentRule(BaseRule):
-    FAILURE_SPIKE_THRESHOLD = 10
-    DECLINE_THRESHOLD = 5
-    REFUND_THRESHOLD = 5
-    RETRY_THRESHOLD = 8
+    FAILURE_SPIKE_THRESHOLD = 5
+    REFUND_THRESHOLD = 3
+    RETRY_THRESHOLD = 5
 
     def evaluate(
         self,
@@ -38,7 +37,7 @@ class PaymentRule(BaseRule):
         failed_events = threshold_window(
             events=events,
             threshold=self.FAILURE_SPIKE_THRESHOLD,
-            minutes=5,
+            minutes=30,
             functional_check=lambda e: e.event_type == PaymentEventType.PAYMENT_FAILED,
         )
 
@@ -106,7 +105,7 @@ class PaymentRule(BaseRule):
 
         # Apply rolling window per user
         for user_events in retries_by_user.values():
-            window = events_in_last_minutes(user_events, minutes=2)
+            window = events_in_last_minutes(user_events, minutes=20)
 
             if len(window) < self.RETRY_THRESHOLD:
                 continue

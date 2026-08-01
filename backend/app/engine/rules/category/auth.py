@@ -23,8 +23,8 @@ class AuthRule(BaseRule):
     Auth Signals
     """
 
-    FAILED_LOGIN_THRESHOLD = 5
-    TOKEN_ABUSE_THRESHOLD = 10
+    FAILED_LOGIN_THRESHOLD = 3
+    TOKEN_ABUSE_THRESHOLD = 4
     SESSION_IP_THRESHOLD = 3
 
     def evaluate(
@@ -70,7 +70,7 @@ class AuthRule(BaseRule):
         for user_events in failures_by_user.values():
             window_events = threshold_window(
                 events=user_events,
-                minutes=5,
+                minutes=30,
                 threshold=self.FAILED_LOGIN_THRESHOLD,
             )
 

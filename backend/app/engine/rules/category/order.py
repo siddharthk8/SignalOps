@@ -14,10 +14,9 @@ from app.schemas.signal import Signal
 
 
 class OrderRule(BaseRule):
-    ORDER_FAILURE_THRESHOLD = 5
-    CANCELLATION_THRESHOLD = 10
-    CHECKOUT_ABANDON_THRESHOLD = 10
-    RAPID_ORDER_THRESHOLD = 5
+    CANCELLATION_THRESHOLD = 3
+    CHECKOUT_ABANDON_THRESHOLD = 4
+    RAPID_ORDER_THRESHOLD = 3
 
     def evaluate(self, events: list[SemanticEvent]) -> list[Signal]:
         signals: list[Signal] = []
@@ -76,7 +75,7 @@ class OrderRule(BaseRule):
         for user_events in events_by_user.values():
             window = threshold_window(
                 events=user_events,
-                minutes=10,
+                minutes=30,
                 threshold=self.CANCELLATION_THRESHOLD,
                 functional_check=lambda e: e.event_type in CANCEL_EVENTS,
             )
@@ -111,7 +110,7 @@ class OrderRule(BaseRule):
         for user_events in events_by_user.values():
             window_events = threshold_window(
                 events=user_events,
-                minutes=2,
+                minutes=20,
                 threshold=self.RAPID_ORDER_THRESHOLD,
                 functional_check=lambda e: e.event_type == OrderEventType.ORDER_CREATED,
             )

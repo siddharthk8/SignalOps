@@ -9,10 +9,10 @@ from app.schemas.signal import Signal
 
 
 class GenericRule(BaseRule):
-    BRUTE_FORCE_THRESHOLD = 8
-    ERROR_RATE_THRESHOLD = 15
-    SERVICE_FAILURE_THRESHOLD = 5
-    DEGRADATION_THRESHOLD = 10
+    BRUTE_FORCE_THRESHOLD = 3
+    ERROR_RATE_THRESHOLD = 5
+    SERVICE_FAILURE_THRESHOLD = 3
+    DEGRADATION_THRESHOLD = 5
 
     def evaluate(self, events: list[SemanticEvent]) -> list[Signal]:
 
@@ -31,7 +31,7 @@ class GenericRule(BaseRule):
 
         window = threshold_window(
             events=events,
-            minutes=2,
+            minutes=20,
             threshold=self.BRUTE_FORCE_THRESHOLD,
             functional_check=lambda e: (
                 e.event_type
@@ -64,7 +64,7 @@ class GenericRule(BaseRule):
         ]
 
     def _detect_high_error_rate(self, events: list[SemanticEvent]) -> list[Signal]:
-        recent = events_in_last_minutes(events, minutes=5)
+        recent = events_in_last_minutes(events, minutes=30)
 
         errors = [
             e
@@ -119,7 +119,7 @@ class GenericRule(BaseRule):
 
         window_events = threshold_window(
             events=failures_events,
-            minutes=3,
+            minutes=30,
             threshold=self.SERVICE_FAILURE_THRESHOLD,
         )
 
