@@ -253,27 +253,44 @@ ANALYZE_INCIDENTS_RESPONSE = {
                         "input": {
                             "analyses": [
                                 {
-                                    "summary": "An excessive number of authentication failures originating from IP address 192.168.1.10 within a 5-minute window between 09:00 UTC and 09:01 UTC on June 28, 2026, triggered a high-severity security alert.",
+                                    "summary": "An incident involving excessive authentication failures was detected from IP address 192.168.1.10. The event occurred within a 3-minute window between June 28, 2026, 09:00 UTC and June 28, 2026, 09:00 UTC, with 3 failed attempts.",
                                     "severity": "high",
                                     "incident_type": "account_security",
                                     "incident_index": 0,
                                     "confidence": 0.9,
                                     "business_impact": [
-                                        "Potential account compromise if the failed attempts were malicious.",
-                                        "Possible unauthorized access attempts.",
+                                        "Potential account compromise if not addressed.",
+                                        "Reputational damage due to security incidents.",
                                     ],
                                     "recommendations": [
-                                        "Investigate the source IP address 192.168.1.10 to determine the nature of the failed login attempts.",
-                                        "Review authentication logs for further details on the failed attempts (e.g., attempted passwords).",
-                                        "Consider implementing rate limiting or account lockout policies for suspicious IP addresses.",
+                                        "Investigate the source IP address 192.168.1.10 to determine the user attempting the attacks.",
+                                        "Implement rate limiting on authentication attempts for the affected user or IP address.",
+                                        "Review logs for any associated user activity.",
                                     ],
-                                    "root_cause": "Excessive authentication failures from a single IP address likely indicate a brute-force attack or other malicious activity attempting to gain unauthorized access to user accounts.",
-                                }
+                                    "root_cause": "Excessive authentication failures from a single IP address likely indicate a brute-force or credential stuffing attack. The specific user attempting the attacks is unknown based on the available data. The window of 3 minutes suggests a sustained attack attempt. The lack of entity data (user, email, etc.) makes it difficult to determine the scope of the issue.",
+                                },
+                                {
+                                    "summary": "A brute-force attempt was detected from IP address 192.168.1.10. The event occurred within a 3-minute window between June 28, 2026, 09:00 UTC and June 28, 2026, 09:00 UTC, with 3 attempts.",
+                                    "severity": "high",
+                                    "incident_type": "account_security",
+                                    "incident_index": 1,
+                                    "confidence": 0.95,
+                                    "business_impact": [
+                                        "Potential account compromise if not addressed.",
+                                        "Reputational damage due to security incidents.",
+                                    ],
+                                    "recommendations": [
+                                        "Investigate the source IP address 192.168.1.10 to determine the user attempting the brute-force attack.",
+                                        "Implement rate limiting on login attempts for the affected user or IP address.",
+                                        "Review logs for any associated user activity.",
+                                    ],
+                                    "root_cause": "Multiple brute-force attempts detected from a single IP address. The event occurred within a 3-minute window. The lack of entity data (user, email, etc.) makes it difficult to determine the scope of the issue.",
+                                },
                             ]
-                        },
+                        }
                     }
                 }
-            ],
+            ]
         }
     }
 }

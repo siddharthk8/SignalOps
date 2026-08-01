@@ -155,6 +155,8 @@ INPUT INCIDENTS:
                                             "properties": {
                                                 "analyses": {
                                                     "type": "array",
+                                                    "minItems": len(incidents),
+                                                    "maxItems": len(incidents),
                                                     "items": {
                                                         "type": "object",
                                                         "properties": {
