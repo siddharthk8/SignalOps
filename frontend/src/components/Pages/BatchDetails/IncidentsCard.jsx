@@ -20,7 +20,11 @@ const statusClasses = {
 function IncidentsCard({ incidents }) {
 	const queryClient = useQueryClient();
 
-	const { mutate, isPending } = useMutation({
+	const {
+		mutate,
+		isPending,
+		variables: resolvingIncidentId,
+	} = useMutation({
 		mutationFn: (incidentId) =>
 			markIncidentResolved({
 				client: authenticatedClient,
@@ -64,125 +68,135 @@ function IncidentsCard({ incidents }) {
 				</div>
 			) : (
 				<div className="divide-border divide-y">
-					{incidents.map((incident) => (
-						<div
-							key={incident.id}
-							className="hover:bg-muted/20 px-5 py-5 transition-colors"
-						>
-							<div className="flex flex-col gap-5 lg:flex-row lg:justify-between">
-								<div className="min-w-0 flex-1">
-									<div className="mb-3 flex flex-wrap items-center gap-2">
-										<h3 className="text-lg font-semibold">{incident.title}</h3>
+					{incidents.map((incident) => {
+						const isResolving = isPending && resolvingIncidentId === incident.id;
 
-										<span
-											className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
-												severityClasses[incident.severity]
-											}`}
-										>
-											{incident.severity.toUpperCase()}
-										</span>
+						return (
+							<div
+								key={incident.id}
+								className="hover:bg-muted/20 px-5 py-5 transition-colors"
+							>
+								<div className="flex flex-col gap-5 lg:flex-row lg:justify-between">
+									<div className="min-w-0 flex-1">
+										<div className="mb-3 flex flex-wrap items-center gap-2">
+											<h3 className="text-lg font-semibold">
+												{incident.title}
+											</h3>
 
-										<span
-											className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
-												statusClasses[incident.status]
-											}`}
-										>
-											{incident.status.toUpperCase()}
-										</span>
+											<span
+												className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
+													severityClasses[incident.severity]
+												}`}
+											>
+												{incident.severity.toUpperCase()}
+											</span>
 
-										<span className="bg-primary/10 text-primary rounded-md px-2 py-0.5 text-[11px] font-medium">
-											{incident.incident_type
-												.replaceAll("_", " ")
-												.replace(/\b\w/g, (c) => c.toUpperCase())}
-										</span>
+											<span
+												className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
+													statusClasses[incident.status]
+												}`}
+											>
+												{incident.status.toUpperCase()}
+											</span>
 
-										<div className="ml-auto">
-											{incident.status === "open" ? (
-												<Button
-													size="sm"
-													variant="warning"
-													leftIcon={<CheckCircle className="h-4 w-4" />}
-													onClick={() => mutate(incident.id)}
-													disabled={isPending}
-												>
-													{isPending ? "Resolving..." : "Mark Resolved"}
-												</Button>
-											) : (
-												<span className="bg-success/10 text-success rounded-md px-3 py-1 text-xs font-medium">
-													Resolved
-												</span>
-											)}
+											<span className="bg-primary/10 text-primary rounded-md px-2 py-0.5 text-[11px] font-medium">
+												{incident.incident_type
+													.replaceAll("_", " ")
+													.replace(/\b\w/g, (c) => c.toUpperCase())}
+											</span>
+
+											<div className="ml-auto">
+												{incident.status === "open" ? (
+													<Button
+														size="sm"
+														variant="warning"
+														leftIcon={
+															<CheckCircle className="h-4 w-4" />
+														}
+														onClick={() => mutate(incident.id)}
+														disabled={isResolving}
+													>
+														{isResolving
+															? "Resolving..."
+															: "Mark Resolved"}
+													</Button>
+												) : (
+													<span className="bg-success/10 text-success rounded-md px-3 py-1 text-xs font-medium">
+														Resolved
+													</span>
+												)}
+											</div>
+										</div>
+
+										<p className="text-t-muted text-sm leading-6">
+											{incident.summary}
+										</p>
+									</div>
+
+									<div className="border-border min-w-[170px] rounded-md border p-4">
+										<div className="text-t-muted text-[11px] tracking-wide uppercase">
+											Confidence
+										</div>
+
+										<div className="mt-1 text-2xl font-semibold">
+											{Math.round(incident.confidence * 100)}%
+										</div>
+
+										<div className="bg-muted mt-3 h-2 overflow-hidden rounded-full">
+											<div
+												className="bg-primary h-full rounded-full"
+												style={{
+													width: `${incident.confidence * 100}%`,
+												}}
+											/>
+										</div>
+									</div>
+								</div>
+
+								<div className="mt-5 grid gap-5 pt-5 sm:grid-cols-3">
+									<div className="flex items-start gap-3">
+										<AlertTriangle size={15} className="text-t-muted mt-0.5" />
+
+										<div>
+											<p className="text-t-muted text-[11px] tracking-wide uppercase">
+												Incident ID
+											</p>
+
+											<p className="text-sm font-medium">#{incident.id}</p>
 										</div>
 									</div>
 
-									<p className="text-t-muted text-sm leading-6">
-										{incident.summary}
-									</p>
-								</div>
+									<div className="flex items-start gap-3">
+										<CalendarClock size={15} className="text-t-muted mt-0.5" />
 
-								<div className="border-border min-w-[170px] rounded-md border p-4">
-									<div className="text-t-muted text-[11px] tracking-wide uppercase">
-										Confidence
+										<div>
+											<p className="text-t-muted text-[11px] tracking-wide uppercase">
+												Detected
+											</p>
+
+											<p className="text-sm font-medium">
+												{new Date(incident.detected_at).toLocaleString()}
+											</p>
+										</div>
 									</div>
 
-									<div className="mt-1 text-2xl font-semibold">
-										{Math.round(incident.confidence * 100)}%
-									</div>
+									<div className="flex items-start gap-3">
+										<CheckCircle2 size={15} className="text-t-muted mt-0.5" />
 
-									<div className="bg-muted mt-3 h-2 overflow-hidden rounded-full">
-										<div
-											className="bg-primary h-full rounded-full"
-											style={{
-												width: `${incident.confidence * 100}%`,
-											}}
-										/>
-									</div>
-								</div>
-							</div>
+										<div>
+											<p className="text-t-muted text-[11px] tracking-wide uppercase">
+												Last Updated
+											</p>
 
-							<div className="mt-5 grid gap-5 pt-5 sm:grid-cols-3">
-								<div className="flex items-start gap-3">
-									<AlertTriangle size={15} className="text-t-muted mt-0.5" />
-
-									<div>
-										<p className="text-t-muted text-[11px] tracking-wide uppercase">
-											Incident ID
-										</p>
-
-										<p className="text-sm font-medium">#{incident.id}</p>
-									</div>
-								</div>
-
-								<div className="flex items-start gap-3">
-									<CalendarClock size={15} className="text-t-muted mt-0.5" />
-
-									<div>
-										<p className="text-t-muted text-[11px] tracking-wide uppercase">
-											Detected
-										</p>
-
-										<p className="text-sm font-medium">
-											{new Date(incident.detected_at).toLocaleString()}
-										</p>
-									</div>
-								</div>
-
-								<div className="flex items-start gap-3">
-									<CheckCircle2 size={15} className="text-t-muted mt-0.5" />
-
-									<div>
-										<p className="text-t-muted text-[11px] tracking-wide uppercase">
-											Last Updated
-										</p>
-
-										<p className="text-sm font-medium">
-											{new Date(incident.updated_at).toLocaleString()}
-										</p>
+											<p className="text-sm font-medium">
+												{new Date(incident.updated_at).toLocaleString()}
+											</p>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					))}
+						);
+					})}
 				</div>
 			)}
 		</section>

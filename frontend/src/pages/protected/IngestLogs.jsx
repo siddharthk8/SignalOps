@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Code2, Info, Send, Terminal, Upload } from "lucide-react";
+import { Code2, Send, Upload } from "lucide-react";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
@@ -14,11 +14,17 @@ import { handleServerErrorOnMutate } from "@/shared/utils/handleServerErrorOnMut
 const SAMPLE_PAYLOAD = (sourceAppId) => ({
 	source_app_id: Number(sourceAppId),
 	logs: [
-		"[2026-07-19T18:45:06Z] INFO: User john.doe logged in from 192.168.1.20",
+		"FORMAT-1: log message...",
 		{
-			level: "error",
-			message: "Payment failed for order ORD-10231. user=john.doe amount=249.99",
-			timestamp: "2026-07-19T18:45:06.444865+00:00",
+			message: "FORMAT-2: log message...",
+			level: "info",
+			timestamp: null,
+			user: null,
+			email: null,
+			ip_address: null,
+			session_id: null,
+			token_id: null,
+			request_id: null,
 		},
 	],
 });
@@ -108,38 +114,6 @@ export default function IngestLogsPage() {
 
 								<p className="text-t-muted mt-1 text-sm">
 									Developer playground for testing log ingestion.
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div className="border-primary/20 bg-primary/5 rounded-lg border p-5">
-					<div className="flex items-start gap-4">
-						<div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-							<Info size={18} />
-						</div>
-
-						<div className="space-y-2">
-							<h2 className="font-semibold">Recommended for development only</h2>
-
-							<p className="text-t-muted text-sm leading-6">
-								This playground exists for quickly testing log ingestion using raw
-								JSON payloads.
-							</p>
-
-							<div className="bg-surface border-border rounded-lg border p-3">
-								<div className="mb-1 flex items-center gap-2 text-sm font-medium">
-									<Terminal size={15} className="text-primary" />
-									Production Recommendation
-								</div>
-
-								<p className="text-t-muted text-sm">
-									Applications should send logs directly to
-									<span className="bg-muted mx-1 rounded px-2 py-1 font-mono text-xs">
-										POST /api/v1/logs
-									</span>
-									using the ingestion API instead of this UI.
 								</p>
 							</div>
 						</div>
