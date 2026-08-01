@@ -1,4 +1,4 @@
-import { GitBranch, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 function BottomSection() {
 	return (
@@ -50,15 +50,6 @@ function BottomSection() {
 							detection, incident correlation, and operational reasoning.
 						</p>
 					</div>
-
-					<a
-						href="https://github.com/siddharthk8/SignalOps"
-						target="_blank"
-						className="border-border bg-bg text-t-primary hover:border-primary flex items-center gap-3 rounded-xl border px-5 py-3 text-sm font-semibold transition"
-					>
-						<GitBranch size={18} />
-						View Source
-					</a>
 				</div>
 			</div>
 		</div>
