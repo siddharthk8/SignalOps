@@ -44,10 +44,12 @@ function EventRow({ event }) {
 					</div>
 
 					<div className="text-t-muted flex flex-wrap items-center gap-4 text-sm">
-						<div className="flex items-center gap-1.5">
-							<CalendarClock size={14} />
-							{new Date(event.timestamp).toLocaleString()}
-						</div>
+						{event.timestamp && (
+							<div className="flex items-center gap-1.5">
+								<CalendarClock size={14} />
+								{new Date(event.timestamp).toLocaleString()}
+							</div>
+						)}
 
 						{event.entity_id && <div>Entity #{event.entity_id}</div>}
 					</div>
@@ -109,13 +111,17 @@ function EventRow({ event }) {
 					</p>
 				</div>
 
-				<div className="sm:col-span-2 lg:col-span-3">
-					<p className="text-t-muted text-[11px] tracking-wide uppercase">Timestamp</p>
+				{event.timestamp && (
+					<div className="sm:col-span-2 lg:col-span-3">
+						<p className="text-t-muted text-[11px] tracking-wide uppercase">
+							Timestamp
+						</p>
 
-					<p className="mt-1 text-sm font-medium">
-						{new Date(event.timestamp).toLocaleString()}
-					</p>
-				</div>
+						<p className="mt-1 text-sm font-medium">
+							{new Date(event.timestamp).toLocaleString()}
+						</p>
+					</div>
+				)}
 			</div>
 		</Collapsible>
 	);

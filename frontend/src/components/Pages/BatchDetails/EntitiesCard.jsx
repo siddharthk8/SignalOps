@@ -45,7 +45,7 @@ function EntityRow({ entity }) {
 			header={
 				<div className="min-w-0 flex-1">
 					<div className="mb-2 flex items-center gap-3">
-						<div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-md">
+						<div className="bg-accent/10 text-accent flex h-8 w-8 items-center justify-center rounded-md">
 							<User size={15} />
 						</div>
 

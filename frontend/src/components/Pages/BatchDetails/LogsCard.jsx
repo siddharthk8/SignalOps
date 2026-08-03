@@ -21,7 +21,7 @@ function LogRow({ log }) {
 			header={
 				<div className="min-w-0">
 					<div className="mb-2 flex flex-wrap items-center gap-2">
-						<span className="font-medium">#{log.id}</span>
+						<span className="text-info/70 font-medium">#{log.id}</span>
 
 						{metadata.slice(0, 4).map(([label, value]) => (
 							<span
