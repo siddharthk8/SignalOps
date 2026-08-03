@@ -69,8 +69,8 @@ services:
 
   so_postgres:
     image: postgres:16.14-alpine3.23
-    expose:
-      - "5432"
+    ports:
+      - "127.0.0.1:5433:5432"
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USERNAME}
