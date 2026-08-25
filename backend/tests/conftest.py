@@ -8,28 +8,7 @@ if sys.platform == "win32":
 
 import os
 
-os.environ["DB_DRIVER"] = "postgresql+psycopg"
-os.environ["DB_HOST"] = "localhost"
-os.environ["DB_PORT"] = "5432"
-os.environ["DB_NAME"] = "testdb"
-os.environ["DB_USERNAME"] = "testuser"
-os.environ["DB_PASSWORD"] = "testpass85"
-
-os.environ["SECRET_KEY"] = "dummy-secret-key-for-testing-only"
-os.environ["BEDROCK_MODEL_ID"] = "testing-model"
-os.environ["S3_BUCKET_NAME"] = "test-bucket"
-os.environ["S3_BUCKET_REGION"] = "ap-south-1"
-os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-os.environ["MAIL_FROM"] = "test.sender@example.com"
-os.environ["CORS_ORIGINS"] = "http://localhost:5173"
-os.environ["BACKEND_IMAGE_TAG"] = "dev"
 os.environ["TESTING"] = "true"
-
-os.environ["FRONTEND_IMAGE_TAG"] = "dev"
-os.environ["FRONTEND_URL"] = "http://localhost:5173"
-os.environ["VITE_API_URL"] = "http://localhost:8000"
-os.environ["ENV_DIR"] = "..."
 
 from collections.abc import AsyncGenerator
 from dataclasses import dataclass
@@ -44,6 +23,7 @@ from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
+from app.core.config import settings
 from app.db.core import Base, get_db
 from main import app
 
@@ -56,14 +36,19 @@ def anyio_backend():
 
 
 @pytest.fixture(scope="session")
+def env_values():
+    return settings
+
+
+@pytest.fixture(scope="session")
 def test_engine():
     database_url = URL.create(
-        drivername=os.environ["DB_DRIVER"],
-        username=os.environ["DB_USERNAME"],
-        password=os.environ["DB_PASSWORD"],
-        host=os.environ["DB_HOST"],
-        port=int(os.environ["DB_PORT"]),
-        database=os.environ["DB_NAME"],
+        drivername=settings.db_driver,
+        username=settings.db_username.get_secret_value(),
+        password=settings.db_password.get_secret_value(),
+        host=settings.db_host,
+        port=settings.db_port,
+        database=settings.db_name,
     )
 
     return create_async_engine(
@@ -120,12 +105,10 @@ async def db_session(
 @pytest.fixture
 def mocked_aws():
     with mock_aws():
-        s3 = boto3.client("s3", region_name=os.environ["S3_BUCKET_REGION"])
+        s3 = boto3.client("s3", region_name=settings.s3_region)
         s3.create_bucket(
-            Bucket=os.environ["S3_BUCKET_NAME"],
-            CreateBucketConfiguration={
-                "LocationConstraint": os.environ["S3_BUCKET_REGION"]
-            },
+            Bucket=settings.s3_bucket_name,
+            CreateBucketConfiguration={"LocationConstraint": settings.s3_region},
         )
         yield s3
 

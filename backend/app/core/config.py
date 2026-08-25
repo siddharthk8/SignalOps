@@ -6,15 +6,22 @@ from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 ENV = os.getenv("ENV", "development") == "development"
-if ENV:
-    FILE_NAME = ".env.local"
+TESTING = os.getenv("TESTING", "false") == "true"
+
+if TESTING:
+    BASE_DIR = Path(__file__).resolve().parents[2]
+    FILE_NAME = ".env.test"
 else:
-    FILE_NAME = ".env.production"
+    BASE_DIR = Path.home() / ".config" / "signalops" / "backend"
+    if ENV:
+        FILE_NAME = ".env.local"
+    else:
+        FILE_NAME = ".env.production"
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=Path.home() / ".config" / "signalops" / "backend" / FILE_NAME,
+        env_file=BASE_DIR / FILE_NAME,
         env_file_encoding="utf-8",
     )
 

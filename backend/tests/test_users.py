@@ -1,4 +1,3 @@
-import os
 from io import BytesIO
 from pathlib import Path
 
@@ -191,7 +190,7 @@ async def test_change_password_same_password(client: AsyncClient):
 
 
 @pytest.mark.anyio
-async def test_upload_profile_image(client: AsyncClient, mocked_aws):
+async def test_upload_profile_image(client: AsyncClient, mocked_aws, env_values):
     user = await create_test_user(client)
     access_token, _ = await login_user(client, user["email"])
     header = auth_header(access_token)
@@ -211,7 +210,7 @@ async def test_upload_profile_image(client: AsyncClient, mocked_aws):
     assert data["profile_image_path"].endswith(".jpg")
     assert "s3" in data["profile_image_path"]
 
-    s3_objects = mocked_aws.list_objects_v2(Bucket=os.environ["S3_BUCKET_NAME"])
+    s3_objects = mocked_aws.list_objects_v2(Bucket=env_values.s3_bucket_name)
     assert "Contents" in s3_objects
     assert len(s3_objects["Contents"]) == 1
     assert data["profile_image_path"].endswith(s3_objects["Contents"][0]["Key"])

@@ -63,6 +63,7 @@ coverage/
 !.env.development
 !.env.example
 !.env.sample
+!.env.test
 
 # =========================================================
 # Database / Local storage

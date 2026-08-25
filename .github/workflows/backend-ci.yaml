@@ -51,34 +51,13 @@ jobs:
 
     # Backend/test environment
     env:
+      ENV_FILE: .env.test
+      TESTING: "true"
+
       # Database
-      DB_DRIVER: ${{ vars.DB_DRIVER }}
-      DB_HOST: ${{ vars.DB_HOST }}
-      DB_PORT: ${{ vars.DB_PORT }}
       DB_NAME: ${{ vars.DB_NAME }}
       DB_USERNAME: ${{ vars.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      BEDROCK_MODEL_ID: ${{ vars.BEDROCK_MODEL_ID }}
-      S3_BUCKET_NAME: ${{ vars.S3_BUCKET_NAME }}
-      S3_BUCKET_REGION: ${{ vars.S3_BUCKET_REGION }}
-
-      # AWS
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      MAIL_FROM: ${{ vars.MAIL_FROM }}
-      CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
-
-      # Application / frontend configuration
-      BACKEND_IMAGE_TAG: ${{ vars.BACKEND_IMAGE_TAG }}
-      FRONTEND_IMAGE_TAG: ${{ vars.FRONTEND_IMAGE_TAG }}
-      FRONTEND_URL: ${{ vars.FRONTEND_URL }}
-      VITE_API_URL: ${{ vars.VITE_API_URL }}
-      ENV_DIR: ${{ vars.ENV_DIR }}
-
-      # Testing
-      TESTING: ${{ vars.TESTING }}
 
     steps:
       # Get code into this GitHub runner VM
