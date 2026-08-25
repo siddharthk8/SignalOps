@@ -2,6 +2,7 @@ name: Backend CI
 
 on:
   workflow_dispatch: # Enables the manual "Run workflow" button
+  workflow_call: # That means another workflow can call this workflow.
 
   push:
     branches:
@@ -62,11 +63,11 @@ jobs:
     steps:
       # Get code into this GitHub runner VM
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Setup Python
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12.10"
           cache: pip

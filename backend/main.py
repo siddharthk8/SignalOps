@@ -1,3 +1,5 @@
+import tomllib
+from pathlib import Path
 from typing import cast
 
 from fastapi import FastAPI, Request
@@ -32,12 +34,17 @@ def custom_generate_unique_id(route: APIRoute) -> str:
     return route.name
 
 
+PYPROJECT = Path(__file__).resolve().parent / "pyproject.toml"
+with PYPROJECT.open("rb") as f:
+    __version__ = tomllib.load(f)["project"]["version"]
+
+
 IS_PRODUCTION = settings.env == "production"
 
 app = FastAPI(
     title="SignalOps",
     description="SignalOps is a log intelligence and incident analysis platform that converts raw system logs into meaningful insights.",
-    version=settings.backend_image_tag,
+    version=__version__,
     lifespan=lifespan,
     docs_url=None if IS_PRODUCTION else "/docs",
     redoc_url=None if IS_PRODUCTION else "/redoc",

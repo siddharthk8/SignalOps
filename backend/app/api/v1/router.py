@@ -4,17 +4,16 @@ from app.api.v1.endpoints import (
     auth,
     batches,
     dashboard,
-    health,
     incidents,
     logs,
+    root,
     source_apps,
     users,
 )
 
 v1_router = APIRouter()
 
-# health
-v1_router.include_router(health.router, prefix="/health", tags=["health"])
+v1_router.include_router(root.router, prefix="", tags=["root"])
 
 # others
 v1_router.include_router(

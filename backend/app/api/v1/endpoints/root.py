@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import text
 
 from app.core.rate_limiter.dependencies import public_rate_limit
@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.get(
-    "",
+    "/health",
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(public_rate_limit(capacity=60, refill_rate=1))],
 )
@@ -22,3 +22,12 @@ async def health_check(db: DBSessionDep):
         ) from exc
 
     return {"status": "healthy"}
+
+
+@router.get(
+    "/version",
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(public_rate_limit(capacity=80, refill_rate=2))],
+)
+async def version_check(request: Request):
+    return {"version": request.app.version}

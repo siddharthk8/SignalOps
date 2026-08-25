@@ -5,6 +5,8 @@ import tailwindcss from "@tailwindcss/vite";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+import packageJson from "./package.json";
+
 // https://vite.dev/config/
 export default defineConfig({
 	plugins: [
@@ -19,6 +21,10 @@ export default defineConfig({
 		alias: {
 			"@": fileURLToPath(new URL("./src", import.meta.url)),
 		},
+	},
+
+	define: {
+		__APP_VERSION__: JSON.stringify(packageJson.version),
 	},
 
 	// Used only by `vite dev`
