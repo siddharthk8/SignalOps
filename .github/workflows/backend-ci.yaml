@@ -28,7 +28,7 @@ jobs:
     # GitHub Environment.
     # Variables are accessed through vars.*
     # Secrets are accessed through secrets.*
-    environment: test
+    environment: Test
 
     defaults:
       run:
