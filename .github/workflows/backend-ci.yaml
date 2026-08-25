@@ -3,6 +3,9 @@ name: Backend CI
 on:
   workflow_dispatch: # Enables the manual "Run workflow" button
   workflow_call: # That means another workflow can call this workflow.
+    secrets:
+      DB_PASSWORD:
+        required: true
 
   push:
     branches:

@@ -11,6 +11,8 @@ permissions:
 jobs:
   ci:
     uses: ./.github/workflows/backend-ci.yaml
+    secrets:
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
   release:
     needs: ci
