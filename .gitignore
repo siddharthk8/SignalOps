@@ -106,7 +106,6 @@ scripts/
 nginx/default.conf
 
 # Dev Specific
-frontend/nginx/
 nginx/default.dev.conf
 docker-compose.build.yaml
 docker-compose.dev.yaml
