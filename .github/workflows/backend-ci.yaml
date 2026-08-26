@@ -28,11 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    # GitHub Environment.
-    # Variables are accessed through vars.*
-    # Secrets are accessed through secrets.*
-    environment: Test
-
     defaults:
       run:
         working-directory: backend # This setting applies only to `run:` steps, not `uses:` actions.
