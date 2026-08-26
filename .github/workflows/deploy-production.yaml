@@ -16,6 +16,8 @@ on:
     secrets:
       AWS_DEPLOY_ROLE_ARN:
         required: true
+      PRODUCTION_EC2_INSTANCE_ID:
+        required: true
 
 permissions:
   contents: read
@@ -106,8 +108,6 @@ jobs:
           FRONTEND_IMAGE="$DOCKERHUB_USERNAME/signalops-frontend:$FRONTEND_VERSION"
 
           echo "Production Deployment..."
-          echo "Backend : $BACKEND_IMAGE"
-          echo "Frontend: $FRONTEND_IMAGE"
 
           COMMANDS=$(cat <<EOF
           set -euo pipefail
