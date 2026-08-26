@@ -150,6 +150,9 @@ jobs:
             -f docker-compose.yaml \
             ps
 
+          echo "Cleaning unused Docker images..."
+          docker image prune -af
+
           echo "Deployment completed successfully."
           EOF
           )

@@ -77,14 +77,9 @@ class Settings(BaseSettings):
     # SES configuration
     ses_region: str = "ap-south-1"
 
-    # docker image tag
-    backend_image_tag: str
-    frontend_image_tag: str
-
     frontend_url: str
     vite_api_url: str
 
-    env_dir: str
     cors_origins: Annotated[list[str], NoDecode] = []
 
     @field_validator("cors_origins", mode="before")
