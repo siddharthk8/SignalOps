@@ -117,6 +117,7 @@ jobs:
           export DOCKERHUB_USERNAME="$DOCKERHUB_USERNAME"
           export BACKEND_IMAGE_TAG="$BACKEND_VERSION"
           export FRONTEND_IMAGE_TAG="$FRONTEND_VERSION"
+          export ENV_DIR="$ENV_DIR"
 
           ENV_FILE="$ENV_DIR/signalops/backend/.env.production"
 
