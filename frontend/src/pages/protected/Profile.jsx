@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 
 import Container from "@/components/Container";
 import FormPageHeader from "@/components/FormPageHeader";
-import DeleteAccountCard from "@/components/Pages/Profile/DeleteAccountCard";
 import ProfileDetailsCard from "@/components/Pages/Profile/ProfileDetailsCard";
 
 function ProfilePage() {
@@ -22,7 +21,7 @@ function ProfilePage() {
 			/>
 
 			<ProfileDetailsCard user={user} />
-			<DeleteAccountCard />
+			{/* <DeleteAccountCard /> */}
 		</Container>
 	);
 }

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 
 from app.core.rate_limiter.dependencies import public_rate_limit, user_rate_limit
 from app.db.core import DBSessionDep
@@ -50,7 +50,11 @@ async def update_current_user(
     dependencies=[Depends(user_rate_limit(capacity=2, refill_rate=0.005))],
 )
 async def delete_current_user(current_user: CurrentUser, db: DBSessionDep):
-    return await service.delete_current_user(current_user, db)
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Account deletion is not currently available.",
+    )
+    # return await service.delete_current_user(current_user, db)
 
 
 @router.post(
