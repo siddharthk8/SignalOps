@@ -1,0 +1,72 @@
+name: Toggle Production Maintenance
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  toggle-maintenance:
+    name: Toggle production maintenance mode
+    runs-on: ubuntu-latest
+
+    environment: Production
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      # Toggle maintenance mode
+      - name: Toggle maintenance mode
+        env:
+          INSTANCE_ID: ${{ secrets.PRODUCTION_EC2_INSTANCE_ID }}
+        run: |
+          set -euo pipefail
+
+          COMMAND_ID=$(
+            aws ssm send-command \
+              --instance-ids "$INSTANCE_ID" \
+              --document-name "AWS-RunShellScript" \
+              --parameters 'commands=[
+                "set -e",
+                "MAINTENANCE_FILE=/home/ubuntu/signalops/nginx/maintenance/maintenance.enable",
+                "",
+                "if [ -f \"$MAINTENANCE_FILE\" ]; then",
+                "  echo \"Maintenance mode is ON. Disabling maintenance mode...\"",
+                "  rm -f \"$MAINTENANCE_FILE\"",
+                "  MAINTENANCE_STATUS=OFF",
+                "else",
+                "  echo \"Maintenance mode is OFF. Enabling maintenance mode...\"",
+                "  touch \"$MAINTENANCE_FILE\"",
+                "  MAINTENANCE_STATUS=ON",
+                "fi",
+                "",
+                "echo \"Maintenance status: $MAINTENANCE_STATUS\"",
+                "",
+                "echo \"Restarting Nginx...\"",
+                "docker restart so_nginx",
+                "",
+                "echo \"Nginx restarted successfully.\"",
+                "echo \"Final maintenance status:\"",
+                "if [ -f \"$MAINTENANCE_FILE\" ]; then",
+                "  echo \"ON\"",
+                "else",
+                "  echo \"OFF\"",
+                "fi"
+              ]' \
+              --query 'Command.CommandId' \
+              --output text
+          )
+
+          echo "Waiting for command to complete..."
+
+          aws ssm wait command-executed \
+            --command-id "$COMMAND_ID" \
+            --instance-id "$INSTANCE_ID"
+
+          echo "Maintenance toggle completed."
