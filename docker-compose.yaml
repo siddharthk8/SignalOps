@@ -11,6 +11,8 @@ services:
       - ./certbot/www:/var/www/certbot
       # Certificates
       - ./certbot/letsencrypt:/etc/letsencrypt
+      # Maintenance files
+      - ./nginx/maintenance:/etc/nginx/maintenance
     depends_on:
       backend:
         condition: service_healthy
