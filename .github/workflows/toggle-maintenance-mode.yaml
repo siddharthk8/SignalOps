@@ -46,8 +46,7 @@ jobs:
                 "  MAINTENANCE_STATUS=ON",
                 "fi",
                 "",
-                "echo \"Maintenance status: $MAINTENANCE_STATUS\"",
-                "fi"
+                "echo \"Maintenance status: $MAINTENANCE_STATUS\""
               ]' \
               --query 'Command.CommandId' \
               --output text
