@@ -47,16 +47,6 @@ jobs:
                 "fi",
                 "",
                 "echo \"Maintenance status: $MAINTENANCE_STATUS\"",
-                "",
-                "echo \"Restarting Nginx...\"",
-                "docker restart so_nginx",
-                "",
-                "echo \"Nginx restarted successfully.\"",
-                "echo \"Final maintenance status:\"",
-                "if [ -f \"$MAINTENANCE_FILE\" ]; then",
-                "  echo \"ON\"",
-                "else",
-                "  echo \"OFF\"",
                 "fi"
               ]' \
               --query 'Command.CommandId' \
