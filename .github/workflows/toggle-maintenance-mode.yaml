@@ -70,6 +70,6 @@ jobs:
 
           aws ssm wait command-executed \
             --command-id "$COMMAND_ID" \
-            --instance-id "$INSTANCE_ID"
+            --instance-id "$EC2_INSTANCE_ID"
 
           echo "Maintenance toggle completed."
