@@ -24,13 +24,27 @@ jobs:
       # Toggle maintenance mode
       - name: Toggle maintenance mode
         env:
-          INSTANCE_ID: ${{ secrets.PRODUCTION_EC2_INSTANCE_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
         run: |
           set -euo pipefail
 
+          echo "Finding EC2 instance..."
+
+          EC2_INSTANCE_ID=$(aws ec2 describe-instances \
+            --region "$AWS_REGION" \
+            --filters "Name=tag:Project,Values=signalops" \
+            --filters "Name=instance-state-name,Values=running" \
+            --query 'Reservations[0].Instances[0].InstanceId' \
+            --output text)
+
+          if [ -z "$EC2_INSTANCE_ID" ] || [ "$EC2_INSTANCE_ID" = "None" ]; then
+            echo "ERROR: No running EC2 instance found."
+            exit 1
+          fi
+
           COMMAND_ID=$(
             aws ssm send-command \
-              --instance-ids "$INSTANCE_ID" \
+              --instance-ids "$EC2_INSTANCE_ID" \
               --document-name "AWS-RunShellScript" \
               --parameters 'commands=[
                 "set -e",

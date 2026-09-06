@@ -16,8 +16,6 @@ on:
     secrets:
       AWS_DEPLOY_ROLE_ARN:
         required: true
-      PRODUCTION_EC2_INSTANCE_ID:
-        required: true
 
 permissions:
   contents: read
@@ -94,7 +92,6 @@ jobs:
       - name: Deploy to EC2
         env:
           AWS_REGION: ${{ vars.AWS_REGION }}
-          EC2_INSTANCE_ID: ${{ secrets.PRODUCTION_EC2_INSTANCE_ID }}
           DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
           BACKEND_VERSION: ${{ steps.versions.outputs.backend_version }}
@@ -156,6 +153,20 @@ jobs:
           echo "Deployment completed successfully."
           EOF
           )
+
+          echo "Finding EC2 instance..."
+
+          EC2_INSTANCE_ID=$(aws ec2 describe-instances \
+            --region "$AWS_REGION" \
+            --filters "Name=tag:Project,Values=signalops" \
+            --filters "Name=instance-state-name,Values=running" \
+            --query 'Reservations[0].Instances[0].InstanceId' \
+            --output text)
+
+          if [ -z "$EC2_INSTANCE_ID" ] || [ "$EC2_INSTANCE_ID" = "None" ]; then
+            echo "ERROR: No running EC2 instance found."
+            exit 1
+          fi
 
           echo "Sending deployment command to EC2..."
 
