@@ -112,6 +112,13 @@ jobs:
           COMMANDS=$(cat <<EOF
           set -euo pipefail
 
+          LOG_DIR="/var/log/signalops"
+          LOG_FILE="\$LOG_DIR/deploy-\$(date +%Y-%m-%d_%H-%M-%S).log"
+
+          mkdir -p "\$LOG_DIR"
+
+          exec > >(tee -a "\$LOG_FILE") 2>&1
+
           cd /home/ubuntu/signalops
 
           export DOCKERHUB_USERNAME="$DOCKERHUB_USERNAME"
