@@ -5,23 +5,22 @@ from typing import Annotated, Literal
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-ENV = os.getenv("ENV", "development") == "development"
-TESTING = os.getenv("TESTING", "false") == "true"
+ENV = os.getenv("ENV", "development")
+TESTING = os.getenv("TESTING", "false").lower() == "true"
 
 if TESTING:
     BASE_DIR = Path(__file__).resolve().parents[2]
-    FILE_NAME = ".env.test"
+    ENV_FILE = BASE_DIR / ".env.test"
+elif ENV == "production":
+    ENV_FILE = Path("/etc/signalops/backend.env")
 else:
     BASE_DIR = Path.home() / ".config" / "signalops" / "backend"
-    if ENV:
-        FILE_NAME = ".env.local"
-    else:
-        FILE_NAME = ".env.production"
+    ENV_FILE = BASE_DIR / ".env.local"
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=BASE_DIR / FILE_NAME,
+        env_file=ENV_FILE,
         env_file_encoding="utf-8",
     )
 
