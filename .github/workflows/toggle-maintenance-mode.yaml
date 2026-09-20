@@ -48,7 +48,7 @@ jobs:
               --document-name "AWS-RunShellScript" \
               --parameters 'commands=[
                 "set -e",
-                "MAINTENANCE_FILE=/home/ubuntu/signalops/nginx/maintenance/maintenance.enable",
+                "MAINTENANCE_FILE=/opt/signalops/nginx/maintenance/maintenance.enable",
                 "",
                 "if [ -f \"$MAINTENANCE_FILE\" ]; then",
                 "  echo \"Maintenance mode is ON. Disabling maintenance mode...\"",
