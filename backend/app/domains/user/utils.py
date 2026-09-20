@@ -86,7 +86,7 @@ def _remove_profile_image(path: str):
 
 
 async def save_profile_image(image_bytes: bytes, image_name: str):
-    path = f"profile_images/{image_name}"
+    path = f"profile-images/{image_name}"
     await run_in_threadpool(
         _save_profile_image,
         image_bytes,
@@ -98,7 +98,7 @@ async def remove_profile_image(image_name: str):
     if image_name is None:
         return
 
-    path = f"profile_images/{image_name}"
+    path = f"profile-images/{image_name}"
     await run_in_threadpool(
         _remove_profile_image,
         path,

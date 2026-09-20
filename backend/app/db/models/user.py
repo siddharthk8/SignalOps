@@ -87,5 +87,5 @@ class User(Base):
     @property
     def profile_image_path(self):
         if self.profile_image:
-            return f"https://{settings.s3_bucket_name}.s3.{settings.s3_region}.amazonaws.com/profile_images/{self.profile_image}"
+            return f"https://{settings.s3_bucket_name}.s3.{settings.s3_region}.amazonaws.com/profile-images/{self.profile_image}"
         return None
