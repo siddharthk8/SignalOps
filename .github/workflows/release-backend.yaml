@@ -18,6 +18,7 @@ jobs:
 
     permissions:
       contents: read
+      id-token: write
 
     environment: Production
 
@@ -76,22 +77,29 @@ jobs:
         with:
           python-version: "3.12.10"
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v4
+      # AWS authentication
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
         with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ap-south-1
+
+      # ECR authentication
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v4
 
+      # Build and push
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: ./backend
           push: true
           tags: |
-            ${{ vars.DOCKERHUB_USERNAME }}/signalops-backend:${{ steps.version.outputs.version }}
+            ${{ steps.login-ecr.outputs.registry }}/signalops/backend:${{ steps.version.outputs.version }}
 
   deploy:
     name: Deploy Backend
