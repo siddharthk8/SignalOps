@@ -57,6 +57,7 @@ jobs:
       - name: Deploy to EC2
         env:
           AWS_REGION: ${{ vars.AWS_REGION }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           COMPONENT: ${{ inputs.component }}
           VERSION: ${{ inputs.version }}
         run: |
