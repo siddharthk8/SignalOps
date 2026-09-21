@@ -81,7 +81,12 @@ jobs:
 
           # Build remote deployment script
 
-          COMMANDS=$(cat <<EOF
+          COMMANDS=$(cat <<EOF_DEPLOYMENT
+          #!/bin/bash
+
+          echo "Shell: \$SHELL"
+          echo "Bash version: \$BASH_VERSION"
+
           set -euo pipefail
 
           cd /opt/signalops
@@ -219,7 +224,7 @@ jobs:
 
           echo "Deployment completed successfully."
 
-          EOF
+          EOF_DEPLOYMENT
           )
 
           # Find EC2 instance
