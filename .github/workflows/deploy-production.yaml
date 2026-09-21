@@ -156,6 +156,19 @@ jobs:
           grep -E '^(BACKEND_IMAGE_TAG|FRONTEND_IMAGE_TAG)=' \
             "\$VARIABLES_FILE"
 
+          # ECR Authentication
+
+          echo "Authenticating Docker with Amazon ECR..."
+
+          aws ecr get-login-password \
+            --region "$AWS_REGION" |
+            sudo docker login \
+              --username AWS \
+              --password-stdin \
+              "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+          echo "ECR authentication successful."
+
           # Backend deployment
 
           if [ "$COMPONENT" = "backend" ]; then
