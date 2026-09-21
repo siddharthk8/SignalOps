@@ -88,6 +88,26 @@ jobs:
 
           source "/opt/infra/scripts/init-context.sh" signalops
 
+          # ---------------- Configure deployment logging ---------------------
+
+          LOG_FILE="\$A_GITHUB_ACTIONS_LOG_FILE"
+
+          if [ -z "\$LOG_FILE" ]; then
+            echo "::error::A_GITHUB_ACTIONS_LOG_FILE is not configured."
+            exit 1
+          fi
+
+          LOG_DIRECTORY=\$(dirname "\$LOG_FILE")
+
+          mkdir -p "\$LOG_DIRECTORY"
+
+          # Save all stdout and stderr to the log file
+          # while also displaying it in the SSM output.
+          exec > >(tee -a "\$LOG_FILE") 2>&1
+
+          echo "Deployment log file: \$LOG_FILE"
+          echo "Deployment started at: \$(date -Is)"
+
           VARIABLES_FILE="\$A_DOCKER_VARIABLES_FILE"
           SECRETS_FILE="\$A_DOCKER_SECRETS_FILE"
           COMPOSE_FILE="\$A_DOCKER_COMPOSE_FILE"
