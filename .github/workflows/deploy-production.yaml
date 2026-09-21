@@ -212,16 +212,6 @@ jobs:
 
           fi
 
-          # Show deployment status
-
-          echo "Production containers:"
-
-          docker compose \
-            --env-file "\$VARIABLES_FILE" \
-            --env-file "\$SECRETS_FILE" \
-            -f "\$COMPOSE_FILE" \
-            ps "\$COMPOSE_SERVICE"
-
           echo "Deployment completed successfully."
 
           EOF_DEPLOYMENT
