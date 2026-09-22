@@ -102,5 +102,4 @@ jobs:
       component: frontend
       version: ${{ needs.release.outputs.version }}
 
-    secrets:
-      AWS_DEPLOY_ROLE_ARN: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+    secrets: inherit
