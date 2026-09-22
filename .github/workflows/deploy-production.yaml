@@ -53,11 +53,15 @@ jobs:
       - name: Deploy to EC2
         env:
           AWS_REGION: ${{ vars.AWS_REGION }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           COMPONENT: ${{ inputs.component }}
           VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
+
+          # Get the AWS account ID from the authenticated GitHub Actions role.
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity \
+            --query Account \
+            --output text)
 
           echo "Production deployment"
           echo "Component: $COMPONENT"
