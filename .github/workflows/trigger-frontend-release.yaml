@@ -1,0 +1,31 @@
+name: Trigger Frontend release
+
+on:
+  push:
+    tags:
+      - "frontend-v*"
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-frontend-release:
+    name: Trigger Frontend release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger frontend release in SignalOps Infra
+        env:
+          GH_TOKEN: ${{ secrets.SIGNALOPS_INFRA_DISPATCH_PAT }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          echo "Release tag: $RELEASE_TAG"
+          echo "Release SHA: $RELEASE_SHA"
+
+          gh api \
+            --method POST \
+            repos/siddharthk8/SignalOps-Infra/dispatches \
+            -f event_type=frontend-release \
+            -f "client_payload[tag]=$RELEASE_TAG" \
+            -f "client_payload[sha]=$RELEASE_SHA"

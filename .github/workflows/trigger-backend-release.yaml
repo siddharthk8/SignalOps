@@ -1,0 +1,31 @@
+name: Trigger Backend release
+
+on:
+  push:
+    tags:
+      - "backend-v*"
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-backend-release:
+    name: Trigger Backend release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger backend release in SignalOps Infra
+        env:
+          GH_TOKEN: ${{ secrets.SIGNALOPS_INFRA_DISPATCH_PAT }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          echo "Release tag: $RELEASE_TAG"
+          echo "Release SHA: $RELEASE_SHA"
+
+          gh api \
+            --method POST \
+            repos/siddharthk8/SignalOps-Infra/dispatches \
+            -f event_type=backend-release \
+            -f "client_payload[tag]=$RELEASE_TAG" \
+            -f "client_payload[sha]=$RELEASE_SHA"
