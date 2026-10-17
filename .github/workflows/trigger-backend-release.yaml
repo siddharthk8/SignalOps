@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Trigger backend release in SignalOps Infra
         env:
-          GH_TOKEN: ${{ secrets.SIGNALOPS_INFRA_DISPATCH_PAT }}
+          GH_TOKEN: ${{ secrets.SIGNALOPS_WORKFLOWS_DISPATCH_PAT }}
           RELEASE_TAG: ${{ github.ref_name }}
           RELEASE_SHA: ${{ github.sha }}
         run: |
