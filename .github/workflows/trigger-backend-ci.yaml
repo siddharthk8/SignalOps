@@ -22,13 +22,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Trigger CI in SignalOps Infra
+      - name: Trigger CI in signalops-workflows
         env:
           GH_TOKEN: ${{ secrets.SIGNALOPS_WORKFLOWS_DISPATCH_PAT }}
           COMMIT_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         run: |
           gh api \
             --method POST \
-            repos/siddharthk8/SignalOps-Infra/dispatches \
+            repos/siddharthk8/signalops-workflows/dispatches \
             -f event_type=backend-ci \
             -f "client_payload[sha]=$COMMIT_SHA"

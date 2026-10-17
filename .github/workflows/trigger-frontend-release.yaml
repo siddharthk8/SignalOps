@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Trigger frontend release in SignalOps Infra
+      - name: Trigger frontend release in signalops-workflows
         env:
           GH_TOKEN: ${{ secrets.SIGNALOPS_WORKFLOWS_DISPATCH_PAT }}
           RELEASE_TAG: ${{ github.ref_name }}
@@ -25,7 +25,7 @@ jobs:
 
           gh api \
             --method POST \
-            repos/siddharthk8/SignalOps-Infra/dispatches \
+            repos/siddharthk8/signalops-workflows/dispatches \
             -f event_type=frontend-release \
             -f "client_payload[tag]=$RELEASE_TAG" \
             -f "client_payload[sha]=$RELEASE_SHA"
