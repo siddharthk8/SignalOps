@@ -177,7 +177,7 @@ async def create_test_user(
     with patch(
         "app.domains.user.service.create.send_registration_otp_email",
         new_callable=AsyncMock,
-    ) as mock_send:
+    ) as _mock_send:
         response = await client.post(
             "/api/v1/users",
             json={
