@@ -71,8 +71,28 @@ class PasswordValidationMixin(BaseUserSchema):
         return password
 
 
+class UserCreationOTPStep(BaseUserSchema):
+    first_name: str
+    email: EmailStr
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def normalize_email(cls, email: str) -> str:
+        return email.strip().lower()
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "first_name": "sid",
+                "email": "",
+            }
+        }
+    )
+
+
 class UserCreate(PasswordValidationMixin):
     id: uuid.UUID | None = None
+    otp: str
     first_name: str
     last_name: str
     email: EmailStr
@@ -88,6 +108,7 @@ class UserCreate(PasswordValidationMixin):
             "example": {
                 "first_name": "sid",
                 "last_name": "k",
+                "otp": "123456",
                 "email": "sid@example.com",
                 "password": "String@123",
             }

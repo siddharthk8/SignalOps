@@ -56,6 +56,9 @@ class Settings(BaseSettings):
     password_reset_request_cooldown_seconds: int = 120
     reset_token_expire_minutes: int = 30
 
+    # registration otp
+    otp_expire_minutes: int = 10
+
     # Optional AWS credentials.
     # If not provided, boto3 falls back to its default credential chain:
     # environment variables, shared AWS config (~/.aws/credentials),

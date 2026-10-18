@@ -89,7 +89,7 @@ def create_refresh_token_obj(user: User, refresh_token: str) -> RefreshToken:
 templates = Jinja2Templates(directory="templates")
 
 
-def _get_boto3_ses_client():
+def get_boto3_ses_client():
     return boto3.client(
         "ses",
         region_name=settings.ses_region,
@@ -131,7 +131,7 @@ The SignalOps Team
         minutes=settings.reset_token_expire_minutes,
     )
 
-    ses_client = _get_boto3_ses_client()
+    ses_client = get_boto3_ses_client()
     ses_client.send_email(
         Source=settings.mail_from,
         Destination={

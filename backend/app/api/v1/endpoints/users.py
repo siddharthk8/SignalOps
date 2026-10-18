@@ -1,4 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    HTTPException,
+    UploadFile,
+    status,
+)
 
 from app.core.rate_limiter.dependencies import public_rate_limit, user_rate_limit
 from app.db.core import DBSessionDep
@@ -6,6 +13,7 @@ from app.domains.user import service
 from app.domains.user.dependencies import CurrentUser
 from app.domains.user.schemas import (
     UserCreate,
+    UserCreationOTPStep,
     UserPasswordChange,
     UserPrivate,
     UserUpdate,
@@ -16,12 +24,23 @@ router = APIRouter()
 
 @router.post(
     "",
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(public_rate_limit(capacity=5, refill_rate=0.01))],
+)
+async def create_user(
+    otp_data: UserCreationOTPStep, background_tasks: BackgroundTasks, db: DBSessionDep
+):
+    return await service.create_user_otp(otp_data, background_tasks, db)
+
+
+@router.post(
+    "/email-verification",
     response_model=UserPrivate,
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(public_rate_limit(capacity=5, refill_rate=0.01))],
 )
-async def create_user(user: UserCreate, db: DBSessionDep):
-    return await service.create_user(user, db)
+async def verify_create_user_email(user: UserCreate, db: DBSessionDep):
+    return await service.verify_create_user_otp(user, db)
 
 
 @router.get(

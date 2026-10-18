@@ -6,6 +6,7 @@ from .event import Event
 from .event_signal import EventSignal
 from .incident import Incident
 from .log import Log
+from .otp import Otp
 from .password_reset_token import PasswordResetToken
 from .refresh_token import RefreshToken
 from .signal import Signal

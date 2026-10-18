@@ -3,13 +3,26 @@ from io import BytesIO
 
 import boto3
 from fastapi.concurrency import run_in_threadpool
+from fastapi.templating import Jinja2Templates
 from PIL import Image, ImageOps
+from pwdlib import PasswordHash
+from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.db.models.user import User
 from app.db.repositories.user import UserRepository
-from app.domains.auth.utils import DUMMY_HASH, verify_password
+from app.domains.auth.utils import DUMMY_HASH, get_boto3_ses_client, verify_password
+
+password_hash = PasswordHash.recommended()
+
+
+def verify_otp(plain_otp: str, hashed_otp: str) -> bool:
+    return password_hash.verify(plain_otp, hashed_otp)
+
+
+def get_otp_hash(plain_otp: str) -> str:
+    return password_hash.hash(plain_otp)
 
 
 async def get_user(db: AsyncSession, id: uuid.UUID) -> User | None:
@@ -114,3 +127,88 @@ def mask_email_for_log(email: str) -> str:
         masked_local = local[:2] + "*" * (len(local) - 2)
 
     return f"{masked_local}@{domain}"
+
+
+# email
+ALLOWED_EMAIL_DOMAINS = {
+    "gmail.com",
+    "googlemail.com",
+    "outlook.com",
+    "hotmail.com",
+    "live.com",
+    "yahoo.com",
+    "yahoo.co.in",
+    "icloud.com",
+    "me.com",
+    "proton.me",
+    "protonmail.com",
+}
+
+
+def is_registration_email_valid(email: EmailStr) -> bool:
+    normalized_email = str(email).strip().lower()
+    domain = normalized_email.rsplit("@", 1)[-1]
+
+    if domain in ALLOWED_EMAIL_DOMAINS:
+        return True
+
+    return False
+
+
+templates = Jinja2Templates(directory="templates")
+
+
+async def send_registration_otp_email(
+    *,
+    to_email: str,
+    first_name: str,
+    otp: str,
+):
+    text_body = f"""Hi {first_name},
+
+Welcome to SignalOps!
+
+To complete your registration, please use the verification code below to verify your email address.
+
+Your verification code is: {otp}
+
+Enter this code on the registration page to verify your email and activate your account.
+
+For your security, this code will expire in {settings.otp_expire_minutes} minutes. Do not share this code with anyone.
+
+If you did not attempt to register with SignalOps, you can safely ignore this email.
+
+Best regards,
+The SignalOps Team
+"""
+
+    html_template = templates.env.get_template("email/registration_otp.html")
+    html_body = html_template.render(
+        first_name=first_name,
+        otp=otp,
+        minutes=settings.otp_expire_minutes,
+    )
+
+    ses_client = get_boto3_ses_client()
+    ses_client.send_email(
+        Source=settings.mail_from,
+        Destination={
+            "ToAddresses": [to_email],
+        },
+        Message={
+            "Subject": {
+                "Data": "Verify Your Email - SignalOps",
+                "Charset": "UTF-8",
+            },
+            "Body": {
+                "Text": {
+                    "Data": text_body,
+                    "Charset": "UTF-8",
+                },
+                "Html": {
+                    "Data": html_body,
+                    "Charset": "UTF-8",
+                },
+            },
+        },
+    )

@@ -31,7 +31,7 @@ class UserRepository:
         return result is not None
 
     async def save_user(self, user: UserCreate, password_hash: str):
-        db_user = User(**user.model_dump(exclude={"id", "password"}))
+        db_user = User(**user.model_dump(exclude={"id", "password", "otp"}))
         db_user.password_hash = password_hash
         self.db.add(db_user)
         await self.db.flush()
