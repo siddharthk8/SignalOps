@@ -1,5 +1,6 @@
 from .ai_analysis import AIAnalysis
 from .batch import Batch
+from .email_suppression import EmailSuppression
 from .entity import Entity
 from .entity_incident import EntityIncident
 from .event import Event

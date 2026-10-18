@@ -30,3 +30,4 @@ def get_logger(name: str):
 
 # Domain-specific logger for authentication & user/account related events
 auth_logger = get_logger("auth")
+worker_logger = get_logger("worker")

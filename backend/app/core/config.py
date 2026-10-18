@@ -79,6 +79,10 @@ class Settings(BaseSettings):
     # SES configuration
     ses_region: str = "ap-south-1"
 
+    # SES worker
+    sqs_region: str = "ap-south-1"
+    ses_feedback_queue_url: str
+
     frontend_url: str
     vite_api_url: str
 
