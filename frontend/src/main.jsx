@@ -22,6 +22,7 @@ import DashboardPage from "@/pages/protected/Dashboard";
 import IngestLogsPage from "@/pages/protected/IngestLogs";
 import ProfilePage from "@/pages/protected/Profile";
 import SourceAppsPage from "@/pages/protected/SourceApps";
+import EmailVerificationPage from "@/pages/public/EmailVerification";
 import ForgotPasswordPage from "@/pages/public/ForgotPassword";
 import LoginPage from "@/pages/public/Login";
 import ResetPasswordPage from "@/pages/public/ResetPassword";
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
 					{
 						path: "reset-password",
 						element: <ResetPasswordPage />,
+					},
+					{
+						path: "email-verification",
+						element: <EmailVerificationPage />,
 					},
 				],
 			},

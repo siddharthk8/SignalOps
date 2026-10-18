@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 
-import { createToken, createUser } from "@/api";
+import { createUser } from "@/api";
 import AuthBgImage from "@/assets/images/auth-bg.jpg";
 import Button from "@/components/Button";
 import FormBottomLink from "@/components/Container/BottomLink";
@@ -17,9 +17,8 @@ import {
 	LAST_NAME_RULES,
 	PASSWORD_RULES,
 } from "@/shared/constants/HookFormValidatonRules";
-import { COMMON_ERROR_MSG, SERVER_ERROR_MSG } from "@/shared/constants/messages";
+import { SERVER_ERROR_MSG } from "@/shared/constants/messages";
 import { FormStyle } from "@/shared/constants/Styles";
-import { setUser } from "@/store/features/authSlice";
 
 import AuthMainLayout from "../../layouts/Form/AuthMainLayout";
 
@@ -32,56 +31,27 @@ export default function SignupPage() {
 		formState: { errors },
 	} = useForm({ mode: "onBlur" });
 
+	const navigate = useNavigate();
 	const [password, setPassword] = useState();
 
-	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
-
 	const { mutate, isPending: isSubmitting } = useMutation({
-		mutationFn: ({ email, password, firstName, lastName }) => {
+		mutationFn: ({ email, firstName }) => {
 			return createUser({
 				body: {
 					first_name: firstName,
-					last_name: lastName,
-					password: password,
 					email: email,
 				},
 			});
 		},
-		onSuccess: async (signupResponse) => {
-			const userData = signupResponse.data;
-
-			if (!userData) {
-				throw new Error(COMMON_ERROR_MSG);
-			}
-
-			const tokenResponse = await queryClient.fetchQuery({
-				queryKey: ["createToken"],
-				queryFn: () =>
-					createToken({
-						body: {
-							username: userData.email,
-							password,
-						},
-					}),
+		onSuccess: async (signupResponse, variables) => {
+			navigate("/email-verification", {
+				state: {
+					email: variables.email,
+					lastName: variables.lastName,
+					password: password,
+					firstName: variables.firstName,
+				},
 			});
-
-			const tokenData = tokenResponse.data;
-			if (!tokenData) {
-				throw new Error(COMMON_ERROR_MSG);
-			}
-
-			dispatch(
-				setUser({
-					accessToken: tokenData.access_token,
-					refreshToken: tokenData.refresh_token,
-					id: userData.id,
-					email: userData.email,
-					firstName: userData.first_name,
-					lastName: userData.last_name,
-					profileImage: userData.profile_image_path,
-				}),
-			);
 		},
 		onError: (error) => {
 			if (!axios.isAxiosError(error)) {

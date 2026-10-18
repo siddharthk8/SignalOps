@@ -218,10 +218,16 @@ export type TokenResponse = {
 
 export type UserCreate = {
     id?: string | null;
+    otp: string;
     first_name: string;
     last_name: string;
     email: string;
     password: string;
+};
+
+export type UserCreationOtpStep = {
+    first_name: string;
+    email: string;
 };
 
 export type UserPasswordChange = {
@@ -261,6 +267,17 @@ export type HealthCheckData = {
 };
 
 export type HealthCheckResponses = {
+    200: unknown;
+};
+
+export type VersionCheckData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/version';
+};
+
+export type VersionCheckResponses = {
     200: unknown;
 };
 
@@ -372,7 +389,7 @@ export type GetBatchResponses = {
 export type GetBatchResponse = GetBatchResponses[keyof GetBatchResponses];
 
 export type CreateUserData = {
-    body: UserCreate;
+    body: UserCreationOtpStep;
     path?: never;
     query?: never;
     url: '/api/v1/users';
@@ -385,10 +402,27 @@ export type CreateUserErrors = {
 export type CreateUserError = CreateUserErrors[keyof CreateUserErrors];
 
 export type CreateUserResponses = {
+    200: unknown;
+};
+
+export type VerifyCreateUserEmailData = {
+    body: UserCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/users/email-verification';
+};
+
+export type VerifyCreateUserEmailErrors = {
+    422: HttpValidationError;
+};
+
+export type VerifyCreateUserEmailError = VerifyCreateUserEmailErrors[keyof VerifyCreateUserEmailErrors];
+
+export type VerifyCreateUserEmailResponses = {
     201: UserPrivate;
 };
 
-export type CreateUserResponse = CreateUserResponses[keyof CreateUserResponses];
+export type VerifyCreateUserEmailResponse = VerifyCreateUserEmailResponses[keyof VerifyCreateUserEmailResponses];
 
 export type DeleteCurrentUserData = {
     body?: never;

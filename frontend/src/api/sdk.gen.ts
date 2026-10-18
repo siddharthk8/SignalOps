@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape, urlSearchParamsBodySerializer } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSourceAppData, CreateSourceAppErrors, CreateSourceAppResponses, CreateTokenData, CreateTokenErrors, CreateTokenResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DashboardOverviewData, DashboardOverviewResponses, DeleteCurrentUserData, DeleteCurrentUserResponses, DeleteProfileImageData, DeleteProfileImageResponses, DeleteSourceAppData, DeleteSourceAppErrors, DeleteSourceAppResponses, ForgotPasswordData, ForgotPasswordErrors, ForgotPasswordResponses, GetBatchData, GetBatchErrors, GetBatchResponses, GetCurrentUserData, GetCurrentUserResponses, GetNewAccessTokenData, GetNewAccessTokenErrors, GetNewAccessTokenResponses, GetSourceAppBatchesData, GetSourceAppBatchesErrors, GetSourceAppBatchesResponses, GetSourceAppsData, GetSourceAppsErrors, GetSourceAppsResponses, HealthCheckData, HealthCheckResponses, IngestLogsData, IngestLogsErrors, IngestLogsResponses, MarkIncidentResolvedData, MarkIncidentResolvedErrors, MarkIncidentResolvedResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllRefreshTokensData, RevokeAllRefreshTokensResponses, RevokeRefreshTokenData, RevokeRefreshTokenErrors, RevokeRefreshTokenResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UploadProfileImageData, UploadProfileImageErrors, UploadProfileImageResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSourceAppData, CreateSourceAppErrors, CreateSourceAppResponses, CreateTokenData, CreateTokenErrors, CreateTokenResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DashboardOverviewData, DashboardOverviewResponses, DeleteCurrentUserData, DeleteCurrentUserResponses, DeleteProfileImageData, DeleteProfileImageResponses, DeleteSourceAppData, DeleteSourceAppErrors, DeleteSourceAppResponses, ForgotPasswordData, ForgotPasswordErrors, ForgotPasswordResponses, GetBatchData, GetBatchErrors, GetBatchResponses, GetCurrentUserData, GetCurrentUserResponses, GetNewAccessTokenData, GetNewAccessTokenErrors, GetNewAccessTokenResponses, GetSourceAppBatchesData, GetSourceAppBatchesErrors, GetSourceAppBatchesResponses, GetSourceAppsData, GetSourceAppsErrors, GetSourceAppsResponses, HealthCheckData, HealthCheckResponses, IngestLogsData, IngestLogsErrors, IngestLogsResponses, MarkIncidentResolvedData, MarkIncidentResolvedErrors, MarkIncidentResolvedResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllRefreshTokensData, RevokeAllRefreshTokensResponses, RevokeRefreshTokenData, RevokeRefreshTokenErrors, RevokeRefreshTokenResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UploadProfileImageData, UploadProfileImageErrors, UploadProfileImageResponses, VerifyCreateUserEmailData, VerifyCreateUserEmailErrors, VerifyCreateUserEmailResponses, VersionCheckData, VersionCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -24,6 +24,15 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export const healthCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckData, ThrowOnError>): RequestResult<HealthCheckResponses, unknown, ThrowOnError> => (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({
     responseType: 'json',
     url: '/api/v1/health',
+    ...options
+});
+
+/**
+ * Version Check
+ */
+export const versionCheck = <ThrowOnError extends boolean = false>(options?: Options<VersionCheckData, ThrowOnError>): RequestResult<VersionCheckResponses, unknown, ThrowOnError> => (options?.client ?? client).get<VersionCheckResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/v1/version',
     ...options
 });
 
@@ -86,6 +95,19 @@ export const getBatch = <ThrowOnError extends boolean = false>(options: Options<
 export const createUser = <ThrowOnError extends boolean = false>(options: Options<CreateUserData, ThrowOnError>): RequestResult<CreateUserResponses, CreateUserErrors, ThrowOnError> => (options.client ?? client).post<CreateUserResponses, CreateUserErrors, ThrowOnError>({
     responseType: 'json',
     url: '/api/v1/users',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Verify Create User Email
+ */
+export const verifyCreateUserEmail = <ThrowOnError extends boolean = false>(options: Options<VerifyCreateUserEmailData, ThrowOnError>): RequestResult<VerifyCreateUserEmailResponses, VerifyCreateUserEmailErrors, ThrowOnError> => (options.client ?? client).post<VerifyCreateUserEmailResponses, VerifyCreateUserEmailErrors, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/v1/users/email-verification',
     ...options,
     headers: {
         'Content-Type': 'application/json',
