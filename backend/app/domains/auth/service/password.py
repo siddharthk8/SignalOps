@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.logger import auth_logger
+from app.db.repositories.email_suppression import EmailSuppressionRepository
 from app.db.repositories.password_reset_token import PasswordResetTokenRepository
 from app.db.repositories.refresh_token import RefreshTokenRepository
 from app.db.repositories.user import UserRepository
@@ -22,6 +23,13 @@ async def forgot_password(
 ):
     user_repo = UserRepository(db)
     password_reset_token_repo = PasswordResetTokenRepository(db)
+    email_suppression_repo = EmailSuppressionRepository(db)
+
+    if await email_suppression_repo.get_with_email(data.email) is not None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Password reset is not allowed for this email address.",
+        )
 
     user = await user_repo.get_by_email(data.email)
     if user:

@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.logger import auth_logger
+from app.db.repositories.email_suppression import EmailSuppressionRepository
 from app.db.repositories.otp import OtpRepository
 from app.db.repositories.user import UserRepository
 from app.domains.auth.utils import (
@@ -25,6 +26,13 @@ async def create_user_otp(
     data: UserCreationOTPStep, background_tasks: BackgroundTasks, db: AsyncSession
 ):
     user_repo = UserRepository(db)
+    email_suppression_repo = EmailSuppressionRepository(db)
+
+    if await email_suppression_repo.get_with_email(data.email) is not None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User registration is not allowed for this email address.",
+        )
 
     if not is_registration_email_valid(data.email):
         raise HTTPException(
