@@ -13,7 +13,7 @@ os.environ["TESTING"] = "true"
 from collections.abc import AsyncGenerator
 from dataclasses import dataclass
 from typing import Any
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import boto3
 import pytest
@@ -143,11 +143,23 @@ async def mocked_bedrock_client():
         yield client
 
 
+OTP_VALUE = "123456"
+
+
+@pytest.fixture(autouse=True)
+def mock_otp(monkeypatch):
+    # Every test automatically gets the static OTP "123456" (for create_test_user)
+    monkeypatch.setattr(
+        "app.domains.user.service.create.random.randint",
+        lambda a, b: OTP_VALUE,
+    )
+
+
 @dataclass
 class TestUser:
     first_name: str = "First"
     last_name: str = "Last"
-    email: str = "test@example.com"
+    email: str = "test@gmail.com"
     password: str = "String@123"
 
 
@@ -161,17 +173,33 @@ async def create_test_user(
     email: str = DEFAULT_USER.email,
     password: str = DEFAULT_USER.password,
 ) -> dict[str, Any]:
-    response = await client.post(
-        "/api/v1/users",
-        json={
-            "first_name": first_name,
-            "last_name": last_name,
-            "email": email,
-            "password": password,
-        },
-    )
-    assert response.status_code == 201, f"Failed to create user: {response.text}"
-    return response.json()
+
+    with patch(
+        "app.domains.user.service.create.send_registration_otp_email",
+        new_callable=AsyncMock,
+    ) as mock_send:
+        response = await client.post(
+            "/api/v1/users",
+            json={
+                "first_name": first_name,
+                "email": email,
+            },
+        )
+        assert response.status_code == 200
+
+        response = await client.post(
+            "/api/v1/users/email-verification",
+            json={
+                "otp": OTP_VALUE,
+                "first_name": first_name,
+                "last_name": last_name,
+                "email": email,
+                "password": password,
+            },
+        )
+
+        assert response.status_code == 201, f"Failed to create user: {response.text}"
+        return response.json()
 
 
 async def login_user(
