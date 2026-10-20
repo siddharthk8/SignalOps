@@ -73,11 +73,13 @@ The app is organized around public and protected route groups.
 ### Protected Routes
 
 - `/dashboard`
-- `/dashboard/source-apps`
-- `/dashboard/source-apps/:sourceAppId/batches`
-- `/dashboard/source-apps/:sourceAppId/batches/:batchId`
-- `/dashboard/source-apps/:sourceAppId/batches/ingest-logs`
-- `/dashboard/create-source-app`
+- `/source-apps`
+- `/source-apps/:sourceAppId/batches`
+- `/source-apps/:sourceAppId/batches/:batchId`
+- `/source-apps/:sourceAppId/ingestion`
+- `/source-apps/:sourceAppId/ingestion/playground`
+- `/source-apps/:sourceAppId/ingestion/api-access`
+- `/create-source-app`
 - `/profile`
 - `/change-password`
 

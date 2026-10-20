@@ -1,8 +1,9 @@
 from collections.abc import Sequence
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.db.models.source_app import SourceApp
 from app.enums.common import SourceAppType
@@ -25,7 +26,18 @@ class SourceAppRepository:
         return source_app_orm
 
     async def get_by_id(self, source_app_id: int) -> SourceApp | None:
-        return await self.db.get(SourceApp, source_app_id)
+        result = await self.db.execute(
+            select(SourceApp).where(SourceApp.id == source_app_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def get_by_access_key(self, access_key: str) -> SourceApp | None:
+        result = await self.db.execute(
+            select(SourceApp)
+            .options(selectinload(SourceApp.user))
+            .where(SourceApp.access_key == access_key)
+        )
+        return result.scalar_one_or_none()
 
     async def get_total_source_apps(self, user_id: UUID) -> int:
         query = await self.db.execute(
@@ -60,3 +72,18 @@ class SourceAppRepository:
         )
         count = query.scalar()
         return count or 0
+
+    async def update_source_app_access_token(
+        self,
+        access_key: str | None,
+        secret_access_key_hash: str | None,
+        source_app_id: int,
+        user_id: UUID,
+    ):
+        await self.db.execute(
+            update(SourceApp)
+            .where(SourceApp.user_id == user_id, SourceApp.id == source_app_id)
+            .values(
+                access_key=access_key, secret_access_key_hash=secret_access_key_hash
+            )
+        )

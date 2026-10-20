@@ -6,7 +6,15 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, func
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
@@ -34,6 +42,13 @@ class SourceApp(Base):
         nullable=False,
     )
 
+    access_key: Mapped[str | None] = mapped_column(
+        String(255), nullable=True, default=None, index=True
+    )
+    secret_access_key_hash: Mapped[str | None] = mapped_column(
+        String(255), nullable=True, default=None
+    )
+
     # FK
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -54,4 +69,15 @@ class SourceApp(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            """
+            (access_token IS NULL AND secret_access_key IS NULL)
+            OR
+            (access_token IS NOT NULL AND secret_access_key IS NOT NULL)
+            """,
+            name="ck_source_apps_tokens_both_present_or_absent",
+        ),
     )

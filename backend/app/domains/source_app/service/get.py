@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.batch import BatchRepository
@@ -68,3 +69,23 @@ async def get_source_apps(
         skip=skip,
         has_more=has_more,
     )
+
+
+async def get_source_app(
+    source_app_id: int, current_user: CurrentUser, db: AsyncSession
+):
+    source_app_repo = SourceAppRepository(db)
+    source_app = await source_app_repo.get_by_id(source_app_id)
+
+    if source_app is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Source app does not exists."
+        )
+
+    if source_app.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this source app.",
+        )
+
+    return SourceAppModel.model_validate(source_app)

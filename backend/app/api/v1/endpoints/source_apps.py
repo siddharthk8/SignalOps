@@ -9,12 +9,41 @@ from app.domains.source_app import service
 from app.domains.source_app.schemas import (
     PaginatedBatchesResponse,
     PaginatedSourceAppResponse,
+    SourceAppAccessTokenGenerationResponse,
+    SourceAppAccessTokenRequest,
     SourceAppModel,
     SourceAppRequest,
 )
 from app.domains.user.dependencies import CurrentUser
 
 router = APIRouter()
+
+
+@router.post(
+    "/access-token",
+    response_model=SourceAppAccessTokenGenerationResponse,
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(user_rate_limit(capacity=4, refill_rate=0.01))],
+)
+async def generate_source_app_access_token(
+    data: SourceAppAccessTokenRequest,
+    current_user: CurrentUser,
+    db: DBSessionDep,
+):
+    return await service.generate_source_app_access_token(data, current_user, db)
+
+
+@router.delete(
+    "/access-token",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(user_rate_limit(capacity=4, refill_rate=0.01))],
+)
+async def delete_source_app_access_token(
+    data: SourceAppAccessTokenRequest,
+    current_user: CurrentUser,
+    db: DBSessionDep,
+):
+    return await service.delete_source_app_access_token(data, current_user, db)
 
 
 @router.get(
@@ -35,7 +64,7 @@ async def get_source_apps(
 @router.post(
     "",
     response_model=SourceAppModel,
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.1))],
 )
 async def create_source_app(
@@ -44,6 +73,20 @@ async def create_source_app(
     db: DBSessionDep,
 ):
     return await service.create_source_app(data, current_user, db)
+
+
+@router.get(
+    "/{source_app_id}",
+    response_model=SourceAppModel,
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(user_rate_limit(capacity=10, refill_rate=0.1))],
+)
+async def get_source_app(
+    source_app_id: int,
+    current_user: CurrentUser,
+    db: DBSessionDep,
+):
+    return await service.get_source_app(source_app_id, current_user, db)
 
 
 @router.delete(

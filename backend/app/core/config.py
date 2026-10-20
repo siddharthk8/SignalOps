@@ -86,6 +86,8 @@ class Settings(BaseSettings):
     frontend_url: str
     vite_api_url: str
 
+    source_app_access_token_prefix: str = "sat_"
+
     cors_origins: Annotated[list[str], NoDecode] = []
 
     @field_validator("cors_origins", mode="before")

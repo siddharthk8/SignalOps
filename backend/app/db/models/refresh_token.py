@@ -17,7 +17,7 @@ class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    token_hash: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     is_revoked: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=false(), nullable=False
     )

@@ -1,6 +1,7 @@
 from datetime import datetime
+from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 from app.domains.batch.schemas import Batch
 from app.enums.common import SourceAppType
@@ -15,6 +16,17 @@ class SourceAppModel(_BaseModel):
     name: str
     app_type: str
     created_at: datetime
+
+    access_key: str | None = None
+    secret_access_key_hash: Annotated[
+        str | None,
+        Field(exclude=True),
+    ] = None
+
+    @computed_field
+    @property
+    def has_access_token(self) -> bool:
+        return self.secret_access_key_hash is not None
 
 
 class SourceAppRequest(_BaseModel):
@@ -36,3 +48,12 @@ class PaginatedBatchesResponse(_BaseModel):
     skip: int
     limit: int
     has_more: bool
+
+
+# Tokens
+class SourceAppAccessTokenRequest(_BaseModel):
+    source_app_id: int
+
+
+class SourceAppAccessTokenGenerationResponse(_BaseModel):
+    access_token: str

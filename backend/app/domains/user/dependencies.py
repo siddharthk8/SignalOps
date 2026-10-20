@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Annotated
 from uuid import UUID
 
@@ -6,11 +7,17 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.logger import auth_logger
 from app.db.core import get_db
+from app.db.models.source_app import SourceApp
 from app.db.models.user import User
+from app.db.repositories.source_app import SourceAppRepository
 from app.domains.auth.utils import (
     get_access_token_data,
+)
+from app.domains.source_app.utils import (
+    verify_source_app_secret_access_key,
 )
 from app.domains.user.utils import get_user
 
@@ -84,3 +91,59 @@ async def get_current_active_user(
 
 
 CurrentUser = Annotated[User, Depends(get_current_active_user)]
+
+
+@dataclass
+class CurrentUserOrSourceApp:
+    user: User
+    source_app: SourceApp | None = None
+
+
+async def get_current_user_or_access_token(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    token: Annotated[str, Depends(oauth2_scheme)],
+) -> CurrentUserOrSourceApp:
+    access_key, secret_access_key = token.split(".", 1)
+
+    if secret_access_key.startswith(settings.source_app_access_token_prefix):
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+        source_app_repo = SourceAppRepository(db)
+        source_app = await source_app_repo.get_by_access_key(access_key)
+
+        if source_app is None or source_app.secret_access_key_hash is None:
+            raise credentials_exception
+
+        if not verify_source_app_secret_access_key(
+            secret_access_key,
+            source_app.secret_access_key_hash,
+        ):
+            raise credentials_exception
+
+        user = source_app.user
+
+        if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Inactive user",
+            )
+
+        return CurrentUserOrSourceApp(
+            user=user,
+            source_app=source_app,
+        )
+
+    # Preserve existing JWT validation.
+    user = await get_current_active_user(db, token)
+
+    return CurrentUserOrSourceApp(user=user)
+
+
+CurrentUserOrAccessToken = Annotated[
+    CurrentUserOrSourceApp,
+    Depends(get_current_user_or_access_token),
+]
