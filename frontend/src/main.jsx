@@ -19,6 +19,8 @@ import BatchesPage from "@/pages/protected/Batches.jsx";
 import ChangePasswordPage from "@/pages/protected/ChangePassword";
 import CreateSourceAppPage from "@/pages/protected/CreateSourceApp";
 import DashboardPage from "@/pages/protected/Dashboard";
+import IngestionAPIAccess from "@/pages/protected/IngestionAPIAccess";
+import IngestionPlayground from "@/pages/protected/IngestionPlayground";
 import IngestLogsPage from "@/pages/protected/IngestLogs";
 import ProfilePage from "@/pages/protected/Profile";
 import SourceAppsPage from "@/pages/protected/SourceApps";
@@ -75,6 +77,7 @@ const router = createBrowserRouter([
 			{
 				element: <ProtectedRoute />,
 				children: [
+					// Dashboard routes
 					{
 						path: "dashboard",
 						element: <DashboardLayout />,
@@ -83,29 +86,53 @@ const router = createBrowserRouter([
 								index: true,
 								element: <DashboardPage />,
 							},
+						],
+					},
+					// Source Apps routes
+					{
+						path: "source-apps",
+						children: [
 							{
-								path: "source-apps",
+								index: true,
 								element: <SourceAppsPage />,
 							},
 							{
-								path: "source-apps/:sourceAppId/batches",
-								element: <BatchesPage />,
-							},
-							{
-								path: "source-apps/:sourceAppId/batches/:batchId",
-								element: <BatchDetailsPage />,
-							},
-							{
-								path: "source-apps/:sourceAppId/batches/ingest-logs",
-								element: <IngestLogsPage />,
-							},
-							{
-								path: "create-source-app",
-								element: <CreateSourceAppPage />,
+								path: ":sourceAppId",
+								children: [
+									// Batches
+									{
+										path: "batches",
+										element: <BatchesPage />,
+									},
+									{
+										path: "batches/:batchId",
+										element: <BatchDetailsPage />,
+									},
+
+									// Ingestion
+									{
+										path: "ingestion",
+										element: <IngestLogsPage />,
+									},
+									{
+										path: "ingestion/playground",
+										element: <IngestionPlayground />,
+									},
+									{
+										path: "ingestion/api-access",
+										element: <IngestionAPIAccess />,
+									},
+								],
 							},
 						],
 					},
+					// Create Source App
+					{
+						path: "create-source-app",
+						element: <CreateSourceAppPage />,
+					},
 
+					// Other protected routes
 					{
 						path: "profile",
 						element: <ProfilePage />,
@@ -116,6 +143,7 @@ const router = createBrowserRouter([
 					},
 				],
 			},
+
 			// 404
 			{
 				path: "*",

@@ -74,7 +74,7 @@ function SourceAppsPage() {
 				total={data.total}
 				pagination={pagination}
 				setPagination={handlePaginationChange}
-				onRowClick={(row) => navigate(`/dashboard/source-apps/${row.original.id}/batches`)}
+				onRowClick={(row) => navigate(`/source-apps/${row.original.id}/batches`)}
 			/>
 		</Container>
 	);

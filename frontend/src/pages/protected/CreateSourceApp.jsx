@@ -30,7 +30,7 @@ export default function CreateSourceAppPage() {
 			queryClient.invalidateQueries({
 				queryKey: ["source-apps"],
 			});
-			navigate(`/dashboard/source-apps/${data.id}/batches`);
+			navigate(`/source-apps/${data.id}/batches`);
 		},
 	});
 

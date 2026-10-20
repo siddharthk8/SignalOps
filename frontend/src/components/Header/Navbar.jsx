@@ -70,13 +70,13 @@ export default function Navbar({ auth }) {
 						},
 						{
 							name: "Source Apps",
-							link: "/dashboard/source-apps",
-							isActive: location.pathname === "/dashboard/source-apps",
+							link: "/source-apps",
+							isActive: location.pathname === "/source-apps",
 						},
 						{
 							name: "Create Source App",
-							link: "/dashboard/create-source-app",
-							isActive: location.pathname === "/dashboard/create-source-app",
+							link: "/create-source-app",
+							isActive: location.pathname === "/create-source-app",
 						},
 					]
 				: null;

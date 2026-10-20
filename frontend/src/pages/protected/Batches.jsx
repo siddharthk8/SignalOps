@@ -76,7 +76,7 @@ function BatchesPage() {
 				actions={
 					<Button
 						variant="success"
-						onClick={() => navigate("ingest-logs")}
+						onClick={() => navigate(`/source-apps/${sourceAppId}/ingestion`)}
 						rightIcon={<Plus size={16} />}
 					>
 						Ingest Logs

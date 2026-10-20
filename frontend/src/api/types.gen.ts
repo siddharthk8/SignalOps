@@ -196,11 +196,20 @@ export type SignalResponse = {
     entity_id: number | null;
 };
 
+export type SourceAppAccessTokenGenerationResponse = {
+    access_token: string;
+};
+
+export type SourceAppAccessTokenRequest = {
+    source_app_id: number;
+};
+
 export type SourceAppModel = {
     id: number;
     name: string;
     app_type: string;
     created_at: string;
+    readonly has_access_token: boolean;
 };
 
 export type SourceAppRequest = {
@@ -259,6 +268,21 @@ export type ValidationError = {
     };
 };
 
+export type PaginatedSourceAppResponseWritable = {
+    source_apps: Array<SourceAppModelWritable>;
+    total: number;
+    skip: number;
+    limit: number;
+    has_more: boolean;
+};
+
+export type SourceAppModelWritable = {
+    id: number;
+    name: string;
+    app_type: string;
+    created_at: string;
+};
+
 export type HealthCheckData = {
     body?: never;
     path?: never;
@@ -280,6 +304,44 @@ export type VersionCheckData = {
 export type VersionCheckResponses = {
     200: unknown;
 };
+
+export type DeleteSourceAppAccessTokenData = {
+    body: SourceAppAccessTokenRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/source-apps/access-token';
+};
+
+export type DeleteSourceAppAccessTokenErrors = {
+    422: HttpValidationError;
+};
+
+export type DeleteSourceAppAccessTokenError = DeleteSourceAppAccessTokenErrors[keyof DeleteSourceAppAccessTokenErrors];
+
+export type DeleteSourceAppAccessTokenResponses = {
+    204: void;
+};
+
+export type DeleteSourceAppAccessTokenResponse = DeleteSourceAppAccessTokenResponses[keyof DeleteSourceAppAccessTokenResponses];
+
+export type GenerateSourceAppAccessTokenData = {
+    body: SourceAppAccessTokenRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/source-apps/access-token';
+};
+
+export type GenerateSourceAppAccessTokenErrors = {
+    422: HttpValidationError;
+};
+
+export type GenerateSourceAppAccessTokenError = GenerateSourceAppAccessTokenErrors[keyof GenerateSourceAppAccessTokenErrors];
+
+export type GenerateSourceAppAccessTokenResponses = {
+    200: SourceAppAccessTokenGenerationResponse;
+};
+
+export type GenerateSourceAppAccessTokenResponse = GenerateSourceAppAccessTokenResponses[keyof GenerateSourceAppAccessTokenResponses];
 
 export type GetSourceAppsData = {
     body?: never;
@@ -317,7 +379,7 @@ export type CreateSourceAppErrors = {
 export type CreateSourceAppError = CreateSourceAppErrors[keyof CreateSourceAppErrors];
 
 export type CreateSourceAppResponses = {
-    200: SourceAppModel;
+    201: SourceAppModel;
 };
 
 export type CreateSourceAppResponse = CreateSourceAppResponses[keyof CreateSourceAppResponses];
@@ -342,6 +404,27 @@ export type DeleteSourceAppResponses = {
 };
 
 export type DeleteSourceAppResponse = DeleteSourceAppResponses[keyof DeleteSourceAppResponses];
+
+export type GetSourceAppData = {
+    body?: never;
+    path: {
+        source_app_id: number;
+    };
+    query?: never;
+    url: '/api/v1/source-apps/{source_app_id}';
+};
+
+export type GetSourceAppErrors = {
+    422: HttpValidationError;
+};
+
+export type GetSourceAppError = GetSourceAppErrors[keyof GetSourceAppErrors];
+
+export type GetSourceAppResponses = {
+    200: SourceAppModel;
+};
+
+export type GetSourceAppResponse = GetSourceAppResponses[keyof GetSourceAppResponses];
 
 export type GetSourceAppBatchesData = {
     body?: never;

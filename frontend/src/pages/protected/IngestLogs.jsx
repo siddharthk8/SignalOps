@@ -1,180 +1,146 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Code2, Send, Upload } from "lucide-react";
-import { useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { ArrowRight, Code2, FlaskConical, KeyRound, Terminal } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 
-import { ingestLogs } from "@/api";
 import Button from "@/components/Button";
 import Container from "@/components/Container";
-import FormMessage from "@/components/Form/FormMessage";
-import authenticatedClient from "@/core/api/customClient";
-import { handleServerErrorOnMutate } from "@/shared/utils/handleServerErrorOnMutate";
 
-const SAMPLE_PAYLOAD = (sourceAppId) => ({
-	source_app_id: Number(sourceAppId),
-	logs: [
-		"FORMAT-1: log message...",
-		{
-			message: "FORMAT-2: log message...",
-			level: "info",
-			timestamp: null,
-			user: null,
-			email: null,
-			ip_address: null,
-			session_id: null,
-			token_id: null,
-			request_id: null,
-		},
-	],
-});
-
-export default function IngestLogsPage() {
+export default function LogIngestionOptionsPage() {
 	const navigate = useNavigate();
 	const { sourceAppId } = useParams();
 
-	const defaultJson = useMemo(
-		() => JSON.stringify(SAMPLE_PAYLOAD(sourceAppId), null, 4),
-		[sourceAppId],
-	);
-
-	const {
-		register,
-		handleSubmit,
-		setError,
-		clearErrors,
-		formState: { errors },
-	} = useForm({
-		mode: "onBlur",
-		defaultValues: {
-			payload: defaultJson,
+	const options = [
+		{
+			title: "Playground",
+			subtitle: "Test log ingestion interactively",
+			description:
+				"Build a JSON payload, submit logs directly from your dashboard, and validate your ingestion workflow without writing client-side integration code.",
+			icon: FlaskConical,
+			iconStyle: "bg-accent/10 text-accent",
+			tag: "Interactive testing",
+			features: [
+				"Editable JSON request payload",
+				"Immediate API submission",
+				"Validate log formats and fields",
+			],
+			buttonLabel: "Open Playground",
+			onClick: () => navigate(`playground`),
 		},
-	});
-
-	const queryClient = useQueryClient();
-
-	const { mutate, isPending } = useMutation({
-		mutationFn: (body) =>
-			ingestLogs({
-				client: authenticatedClient,
-				body,
-			}),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["batches", sourceAppId],
-			});
-			navigate(-1);
+		{
+			title: "API Integration",
+			subtitle: "Send logs from your application",
+			description:
+				"Generate and manage an access token, integrate the ingestion endpoint into your application, and use ready-to-copy API examples.",
+			icon: KeyRound,
+			iconStyle: "bg-primary/10 text-primary",
+			tag: "Production",
+			features: [
+				"Generate, rotate, or revoke access tokens",
+				"Axios and cURL integration examples",
+				"Authentication and request documentation",
+			],
+			buttonLabel: "Configure API Access",
+			onClick: () => navigate(`api-access`),
 		},
-		onError: (error) => {
-			handleServerErrorOnMutate(error, setError);
-		},
-	});
-
-	const onSubmit = ({ payload }) => {
-		clearErrors();
-
-		let parsed;
-
-		try {
-			parsed = JSON.parse(payload);
-		} catch {
-			setError("payload", {
-				type: "manual",
-				message: "Invalid JSON payload.",
-			});
-			return;
-		}
-
-		if (!Array.isArray(parsed.logs)) {
-			setError("payload", {
-				type: "manual",
-				message: '"logs" must be an array.',
-			});
-			return;
-		}
-
-		parsed.source_app_id = Number(sourceAppId);
-		mutate(parsed);
-	};
+	];
 
 	return (
 		<Container>
-			<div className="mx-auto max-w-6xl space-y-6">
-				<div className="flex items-start justify-between">
+			<div className="mx-auto max-w-5xl space-y-8 py-4">
+				<div className="space-y-3">
+					<div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl">
+						<Terminal size={24} />
+					</div>
+
 					<div>
-						<div className="mb-2 flex items-center gap-3">
-							<div className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-lg">
-								<Upload size={20} />
-							</div>
+						<p className="text-t-muted mb-2 text-sm font-medium">Developer tools</p>
 
-							<div>
-								<h1 className="font-['Space_Grotesk'] text-3xl font-bold">
-									Ingest Logs
-								</h1>
+						<h1 className="font-['Space_Grotesk'] text-3xl font-bold tracking-tight">
+							Log Ingestion
+						</h1>
 
-								<p className="text-t-muted mt-1 text-sm">
-									Developer playground for testing log ingestion.
-								</p>
-							</div>
-						</div>
+						<p className="text-t-muted mt-2 max-w-2xl text-sm leading-6">
+							Choose how you want to send logs to this application. Test requests in
+							the playground or integrate the API into your own application.
+						</p>
 					</div>
 				</div>
 
-				<FormMessage message={errors.root?.message} />
+				<div className="grid gap-5 md:grid-cols-2">
+					{options.map((option) => {
+						const Icon = option.icon;
 
-				<form
-					onSubmit={handleSubmit(onSubmit)}
-					className="border-border bg-surface overflow-hidden rounded-lg border"
-					noValidate
-				>
-					<div className="border-border flex items-center justify-between border-b px-6 py-4">
-						<div>
-							<h2 className="text-lg font-semibold">JSON Payload</h2>
-
-							<p className="text-t-muted mt-1 text-sm">
-								Paste a payload matching the ingestion schema.
-							</p>
-						</div>
-
-						<div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-lg">
-							<Code2 size={18} />
-						</div>
-					</div>
-
-					<div className="p-6">
-						<textarea
-							{...register("payload", {
-								required: "Payload is required.",
-							})}
-							spellCheck={false}
-							className="border-border bg-muted/20 focus:border-primary focus:ring-primary/20 min-h-[520px] w-full rounded-lg border p-5 font-mono text-[13px] leading-7 transition outline-none focus:ring-2"
-						/>
-
-						{errors.payload && (
-							<p className="text-error mt-2 text-sm">{errors.payload.message}</p>
-						)}
-
-						<div className="border-border mt-6 flex items-center justify-between border-t pt-6">
-							<div className="text-t-muted text-sm">
-								The
-								<span className="bg-muted mx-1 rounded px-1.5 py-0.5 font-mono">
-									source_app_id
-								</span>
-								is automatically replaced with the current application ID.
-							</div>
-
-							<Button
-								type="submit"
-								loading={isPending}
-								disabled={isPending}
-								rightIcon={<Send size={16} />}
-								loadingText="Processing..."
+						return (
+							<section
+								key={option.title}
+								className="border-border bg-surface flex flex-col rounded-xl border p-6 shadow-sm transition hover:shadow-md"
 							>
-								Ingest Logs
-							</Button>
-						</div>
+								<div className="flex items-start justify-between gap-3">
+									<div
+										className={`flex h-12 w-12 items-center justify-center rounded-xl ${option.iconStyle}`}
+									>
+										<Icon size={23} />
+									</div>
+
+									<span className="bg-muted text-t-muted rounded-full px-3 py-1 text-xs font-medium">
+										{option.tag}
+									</span>
+								</div>
+
+								<div className="mt-5">
+									<h2 className="font-['Space_Grotesk'] text-xl font-semibold">
+										{option.title}
+									</h2>
+
+									<p className="text-t-secondary mt-1 text-sm font-medium">
+										{option.subtitle}
+									</p>
+
+									<p className="text-t-muted mt-3 text-sm leading-6">
+										{option.description}
+									</p>
+								</div>
+
+								<ul className="mt-6 flex-1 space-y-3">
+									{option.features.map((feature) => (
+										<li
+											key={feature}
+											className="text-t-secondary flex items-start gap-2 text-sm"
+										>
+											<Code2
+												size={16}
+												className="text-primary mt-0.5 shrink-0"
+											/>
+											<span>{feature}</span>
+										</li>
+									))}
+								</ul>
+
+								<div className="border-border mt-7 border-t pt-5">
+									<Button
+										type="button"
+										className="w-full"
+										rightIcon={<ArrowRight size={16} />}
+										onClick={option.onClick}
+									>
+										{option.buttonLabel}
+									</Button>
+								</div>
+							</section>
+						);
+					})}
+				</div>
+
+				<div className="border-border bg-muted/20 flex items-start gap-3 rounded-lg border p-4">
+					<Code2 className="text-t-muted mt-0.5 shrink-0" size={19} />
+
+					<div>
+						<p className="text-sm font-medium">Not sure where to start?</p>
+						<p className="text-t-muted mt-1 text-sm leading-6">
+							Use the Playground to try your first request. When you're ready to
+							integrate log ingestion into your application, configure API access.
+						</p>
 					</div>
-				</form>
+				</div>
 			</div>
 		</Container>
 	);

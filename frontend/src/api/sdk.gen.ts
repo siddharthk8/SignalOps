@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape, urlSearchParamsBodySerializer } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSourceAppData, CreateSourceAppErrors, CreateSourceAppResponses, CreateTokenData, CreateTokenErrors, CreateTokenResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DashboardOverviewData, DashboardOverviewResponses, DeleteCurrentUserData, DeleteCurrentUserResponses, DeleteProfileImageData, DeleteProfileImageResponses, DeleteSourceAppData, DeleteSourceAppErrors, DeleteSourceAppResponses, ForgotPasswordData, ForgotPasswordErrors, ForgotPasswordResponses, GetBatchData, GetBatchErrors, GetBatchResponses, GetCurrentUserData, GetCurrentUserResponses, GetNewAccessTokenData, GetNewAccessTokenErrors, GetNewAccessTokenResponses, GetSourceAppBatchesData, GetSourceAppBatchesErrors, GetSourceAppBatchesResponses, GetSourceAppsData, GetSourceAppsErrors, GetSourceAppsResponses, HealthCheckData, HealthCheckResponses, IngestLogsData, IngestLogsErrors, IngestLogsResponses, MarkIncidentResolvedData, MarkIncidentResolvedErrors, MarkIncidentResolvedResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllRefreshTokensData, RevokeAllRefreshTokensResponses, RevokeRefreshTokenData, RevokeRefreshTokenErrors, RevokeRefreshTokenResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UploadProfileImageData, UploadProfileImageErrors, UploadProfileImageResponses, VerifyCreateUserEmailData, VerifyCreateUserEmailErrors, VerifyCreateUserEmailResponses, VersionCheckData, VersionCheckResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSourceAppData, CreateSourceAppErrors, CreateSourceAppResponses, CreateTokenData, CreateTokenErrors, CreateTokenResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DashboardOverviewData, DashboardOverviewResponses, DeleteCurrentUserData, DeleteCurrentUserResponses, DeleteProfileImageData, DeleteProfileImageResponses, DeleteSourceAppAccessTokenData, DeleteSourceAppAccessTokenErrors, DeleteSourceAppAccessTokenResponses, DeleteSourceAppData, DeleteSourceAppErrors, DeleteSourceAppResponses, ForgotPasswordData, ForgotPasswordErrors, ForgotPasswordResponses, GenerateSourceAppAccessTokenData, GenerateSourceAppAccessTokenErrors, GenerateSourceAppAccessTokenResponses, GetBatchData, GetBatchErrors, GetBatchResponses, GetCurrentUserData, GetCurrentUserResponses, GetNewAccessTokenData, GetNewAccessTokenErrors, GetNewAccessTokenResponses, GetSourceAppBatchesData, GetSourceAppBatchesErrors, GetSourceAppBatchesResponses, GetSourceAppData, GetSourceAppErrors, GetSourceAppResponses, GetSourceAppsData, GetSourceAppsErrors, GetSourceAppsResponses, HealthCheckData, HealthCheckResponses, IngestLogsData, IngestLogsErrors, IngestLogsResponses, MarkIncidentResolvedData, MarkIncidentResolvedErrors, MarkIncidentResolvedResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllRefreshTokensData, RevokeAllRefreshTokensResponses, RevokeRefreshTokenData, RevokeRefreshTokenErrors, RevokeRefreshTokenResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UploadProfileImageData, UploadProfileImageErrors, UploadProfileImageResponses, VerifyCreateUserEmailData, VerifyCreateUserEmailErrors, VerifyCreateUserEmailResponses, VersionCheckData, VersionCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -37,6 +37,33 @@ export const versionCheck = <ThrowOnError extends boolean = false>(options?: Opt
 });
 
 /**
+ * Delete Source App Access Token
+ */
+export const deleteSourceAppAccessToken = <ThrowOnError extends boolean = false>(options: Options<DeleteSourceAppAccessTokenData, ThrowOnError>): RequestResult<DeleteSourceAppAccessTokenResponses, DeleteSourceAppAccessTokenErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSourceAppAccessTokenResponses, DeleteSourceAppAccessTokenErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/source-apps/access-token',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Generate Source App Access Token
+ */
+export const generateSourceAppAccessToken = <ThrowOnError extends boolean = false>(options: Options<GenerateSourceAppAccessTokenData, ThrowOnError>): RequestResult<GenerateSourceAppAccessTokenResponses, GenerateSourceAppAccessTokenErrors, ThrowOnError> => (options.client ?? client).post<GenerateSourceAppAccessTokenResponses, GenerateSourceAppAccessTokenErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/source-apps/access-token',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * Get Source Apps
  */
 export const getSourceApps = <ThrowOnError extends boolean = false>(options?: Options<GetSourceAppsData, ThrowOnError>): RequestResult<GetSourceAppsResponses, GetSourceAppsErrors, ThrowOnError> => (options?.client ?? client).get<GetSourceAppsResponses, GetSourceAppsErrors, ThrowOnError>({
@@ -64,6 +91,16 @@ export const createSourceApp = <ThrowOnError extends boolean = false>(options: O
  * Delete Source App
  */
 export const deleteSourceApp = <ThrowOnError extends boolean = false>(options: Options<DeleteSourceAppData, ThrowOnError>): RequestResult<DeleteSourceAppResponses, DeleteSourceAppErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSourceAppResponses, DeleteSourceAppErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/source-apps/{source_app_id}',
+    ...options
+});
+
+/**
+ * Get Source App
+ */
+export const getSourceApp = <ThrowOnError extends boolean = false>(options: Options<GetSourceAppData, ThrowOnError>): RequestResult<GetSourceAppResponses, GetSourceAppErrors, ThrowOnError> => (options.client ?? client).get<GetSourceAppResponses, GetSourceAppErrors, ThrowOnError>({
+    responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/source-apps/{source_app_id}',
     ...options
