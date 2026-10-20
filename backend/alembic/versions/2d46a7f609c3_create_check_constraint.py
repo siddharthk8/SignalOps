@@ -19,12 +19,6 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade():
-    op.drop_constraint(
-        "ck_source_apps_tokens_both_present_or_absent",
-        "source_apps",
-        type_="check",
-    )
-
     op.create_check_constraint(
         "ck_source_apps_tokens_both_present_or_absent",
         "source_apps",
@@ -36,6 +30,9 @@ def upgrade():
     )
 
 
-def downgrade() -> None:
-    """Downgrade schema."""
-    pass
+def downgrade():
+    op.drop_constraint(
+        "ck_source_apps_tokens_both_present_or_absent",
+        "source_apps",
+        type_="check",
+    )
