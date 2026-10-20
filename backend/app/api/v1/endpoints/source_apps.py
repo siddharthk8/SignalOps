@@ -22,7 +22,7 @@ router = APIRouter()
 @router.post(
     "/access-token",
     response_model=SourceAppAccessTokenGenerationResponse,
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(user_rate_limit(capacity=4, refill_rate=0.01))],
 )
 async def generate_source_app_access_token(

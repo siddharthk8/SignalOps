@@ -19,7 +19,7 @@ async def test_create_source_app_success(client: AsyncClient):
         headers=header,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["name"] == DEFAULT_SOURCE_APP.name
     assert data["app_type"] == DEFAULT_SOURCE_APP.app_type
@@ -42,7 +42,7 @@ async def test_delete_source_app_success(client: AsyncClient):
         headers=header,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
 
     response = await client.delete(
         f"/api/v1/source-apps/{response.json()['id']}",
@@ -86,7 +86,7 @@ async def test_get_source_apps_with_pagination(client: AsyncClient):
             headers=header,
         )
 
-        assert response.status_code == 200
+        assert response.status_code == 201
 
     response = await client.get(
         "/api/v1/source-apps?skip=2&limit=2",

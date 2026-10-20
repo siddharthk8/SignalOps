@@ -74,9 +74,9 @@ class SourceApp(Base):
     __table_args__ = (
         CheckConstraint(
             """
-            (access_token IS NULL AND secret_access_key IS NULL)
+            (access_key IS NULL AND secret_access_key_hash IS NULL)
             OR
-            (access_token IS NOT NULL AND secret_access_key IS NOT NULL)
+            (access_key IS NOT NULL AND secret_access_key_hash IS NOT NULL)
             """,
             name="ck_source_apps_tokens_both_present_or_absent",
         ),
