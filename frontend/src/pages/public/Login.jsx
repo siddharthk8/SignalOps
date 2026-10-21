@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router";
@@ -16,6 +17,7 @@ import AuthMainLayout from "@/layouts/Form/AuthMainLayout";
 import { EMAIL_RULES, PASSWORD_RULES } from "@/shared/constants/HookFormValidatonRules";
 import { COMMON_ERROR_MSG, SERVER_ERROR_MSG } from "@/shared/constants/messages";
 import { FormStyle } from "@/shared/constants/Styles";
+import { promptGoogleOneTap } from "@/shared/services/googleIdentity";
 import { setUser } from "@/store/features/authSlice";
 
 export default function LoginPage() {
@@ -30,6 +32,12 @@ export default function LoginPage() {
 
 	// Check if the current pathname matches the screen
 	const screenIsActive = location.pathname === "/login";
+
+	useEffect(() => {
+		if (screenIsActive) {
+			promptGoogleOneTap();
+		}
+	}, [screenIsActive]);
 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();

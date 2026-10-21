@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, CircleAlert, Link2, LoaderCircle, ShieldCheck } from "lucide-react";
+import { useEffect } from "react";
+import { useLocation } from "react-router";
 
 import { getOauthConnections } from "@/api";
 import GoogleProfileSignIn from "@/components/Google/GoogleProfileSignIn";
 import authenticatedClient from "@/core/api/customClient";
+import { promptGoogleOneTap } from "@/shared/services/googleIdentity";
 
 function OAuthConnectionsCard() {
 	const { data, isPending, isError, error, isFetching, refetch } = useQuery({
@@ -14,10 +17,21 @@ function OAuthConnectionsCard() {
 			}),
 	});
 
+	const location = useLocation();
+
 	const googleEnabled =
 		data?.data?.connections?.some(
 			(connection) => connection.provider.toLowerCase() === "google",
 		) ?? false;
+
+	// Check if the current pathname matches the screen
+	const screenIsActive = location.pathname === "/profile";
+
+	useEffect(() => {
+		if (screenIsActive && !isPending && !googleEnabled) {
+			promptGoogleOneTap();
+		}
+	}, [screenIsActive, googleEnabled, isPending]);
 
 	return (
 		<section className="bg-surface border-border w-full min-w-0 overflow-hidden rounded-2xl border shadow-sm">

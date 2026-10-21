@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
@@ -21,6 +21,7 @@ import {
 } from "@/shared/constants/HookFormValidatonRules";
 import { COMMON_ERROR_MSG, SERVER_ERROR_MSG } from "@/shared/constants/messages";
 import { FormStyle } from "@/shared/constants/Styles";
+import { promptGoogleOneTap } from "@/shared/services/googleIdentity";
 import { setUser } from "@/store/features/authSlice";
 
 import AuthMainLayout from "../../layouts/Form/AuthMainLayout";
@@ -38,6 +39,12 @@ export default function SignupPage() {
 
 	// Check if the current pathname matches the screen
 	const screenIsActive = location.pathname === "/signup";
+
+	useEffect(() => {
+		if (screenIsActive) {
+			promptGoogleOneTap();
+		}
+	}, [screenIsActive]);
 
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();

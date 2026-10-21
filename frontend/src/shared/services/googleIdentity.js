@@ -4,10 +4,7 @@ let initialized = false;
 let activeCallback = null;
 
 function dispatchCredential(response) {
-	if (!response?.credential) {
-		// console.error("[Google Identity] No credential received");
-		return;
-	}
+	if (!response?.credential) return;
 
 	activeCallback?.(response);
 }
@@ -15,23 +12,32 @@ function dispatchCredential(response) {
 export function initializeGoogle(callback) {
 	if (typeof window === "undefined") return false;
 
-	if (!window.google?.accounts?.id) {
-		return false;
-	}
+	const googleId = window.google?.accounts?.id;
+	if (!googleId) return false;
 
 	activeCallback = callback;
-	if (initialized) {
-		return true;
+
+	if (!initialized) {
+		googleId.initialize({
+			client_id: config.googleClientId,
+			callback: dispatchCredential,
+			use_fedcm_for_button: true,
+			auto_select: false,
+		});
+
+		initialized = true;
 	}
 
-	window.google.accounts.id.initialize({
-		client_id: config.googleClientId,
-		callback: dispatchCredential,
-		use_fedcm_for_button: true,
-	});
+	return true;
+}
 
-	initialized = true;
-	// console.log("[Google Identity] Initialized once");
+export function promptGoogleOneTap() {
+	if (typeof window === "undefined") return false;
+
+	const googleId = window.google?.accounts?.id;
+	if (!googleId || !initialized) return false;
+
+	googleId.prompt();
 	return true;
 }
 

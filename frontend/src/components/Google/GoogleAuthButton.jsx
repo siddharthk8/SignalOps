@@ -3,89 +3,134 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import useTheme from "@/shared/hooks/useTheme";
 import { initializeGoogle, setGoogleCallback } from "@/shared/services/googleIdentity";
 
+const GOOGLE_SCRIPT_SRC = "https://accounts.google.com/gsi/client";
+
 export default function GoogleAuthButton({ onCredential, disabled = false }) {
 	const buttonRef = useRef(null);
 	const callbackRef = useRef(onCredential);
-	const { theme, systemTheme } = useTheme();
-	const [scriptReady, setScriptReady] = useState(false);
+	const renderedRef = useRef(false);
 
-	// Keep the latest parent callback.
+	const { theme, systemTheme } = useTheme();
+
+	const [scriptReady, setScriptReady] = useState(
+		() => typeof window !== "undefined" && Boolean(window.google?.accounts?.id),
+	);
+	const [buttonReady, setButtonReady] = useState(false);
+
 	useEffect(() => {
 		callbackRef.current = onCredential;
 	}, [onCredential]);
 
-	// Google supports "outline" and "filled_black" button themes.
-	const googleButtonTheme =
-		(theme === "system" ? systemTheme : theme) === "dark" ? "filled_black" : "outline";
+	const resolvedTheme = theme === "system" ? systemTheme : theme;
 
-	// Receive the credential from Google.
+	const googleButtonTheme = resolvedTheme === "dark" ? "filled_black" : "outline";
+
 	const handleGoogleResponse = useCallback((response) => {
-		if (!response?.credential) {
-			console.error("[GoogleAuthButton] Google did not return a credential");
-			return;
+		if (response?.credential) {
+			callbackRef.current?.(response.credential);
 		}
-
-		callbackRef.current?.(response.credential);
 	}, []);
 
-	// Initialize Google after its script is available.
+	// Load the GIS script if necessary.
 	useEffect(() => {
 		let cancelled = false;
-		let script = null;
-		let unregisterCallback = null;
 
-		const initialize = () => {
-			if (cancelled) return;
-
-			if (!initializeGoogle(handleGoogleResponse)) {
-				return;
+		const handleLoad = () => {
+			if (!cancelled && window.google?.accounts?.id) {
+				setScriptReady(true);
 			}
-
-			unregisterCallback = setGoogleCallback(handleGoogleResponse);
-			setScriptReady(true);
 		};
 
 		if (window.google?.accounts?.id) {
-			initialize();
+			return () => {
+				cancelled = true;
+			};
+		}
+
+		let script = document.querySelector(`script[src="${GOOGLE_SCRIPT_SRC}"]`);
+
+		if (!script) {
+			script = document.createElement("script");
+			script.src = GOOGLE_SCRIPT_SRC;
+			script.async = true;
+			script.defer = true;
+			script.addEventListener("load", handleLoad);
+			document.head.appendChild(script);
 		} else {
-			script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-			script?.addEventListener("load", initialize);
+			script.addEventListener("load", handleLoad);
+			handleLoad();
 		}
 
 		return () => {
 			cancelled = true;
-			script?.removeEventListener("load", initialize);
-			unregisterCallback?.();
+			script?.removeEventListener("load", handleLoad);
 		};
-	}, [handleGoogleResponse]);
+	}, []);
 
-	// Render or update the button when the theme changes.
+	// Initialize GIS and register the callback.
 	useEffect(() => {
-		if (!scriptReady || !buttonRef.current || !window.google?.accounts?.id) {
+		if (!scriptReady) return;
+		if (!initializeGoogle(handleGoogleResponse)) return;
+
+		return setGoogleCallback(handleGoogleResponse);
+	}, [scriptReady, handleGoogleResponse]);
+
+	// Render once with the initial resolved theme.
+	useEffect(() => {
+		if (
+			!scriptReady ||
+			!buttonRef.current ||
+			!window.google?.accounts?.id ||
+			renderedRef.current
+		) {
 			return;
 		}
 
 		const container = buttonRef.current;
-		container.replaceChildren();
 
 		window.google.accounts.id.renderButton(container, {
 			theme: googleButtonTheme,
 			size: "large",
 			text: "continue_with",
 			shape: "pill",
-			width: Math.min(260, container.clientWidth || 260),
+			width: 260,
 			type: "standard",
 			logo_alignment: "left",
 		});
+
+		renderedRef.current = true;
+
+		// Wait for the iframe to be inserted before revealing the button.
+		const revealWhenReady = () => {
+			if (container.querySelector("iframe")) {
+				setButtonReady(true);
+				return true;
+			}
+			return false;
+		};
+
+		if (revealWhenReady()) return;
+
+		const observer = new MutationObserver(() => {
+			if (revealWhenReady()) observer.disconnect();
+		});
+
+		observer.observe(container, {
+			childList: true,
+			subtree: true,
+		});
+
+		return () => observer.disconnect();
 	}, [scriptReady, googleButtonTheme]);
 
 	return (
-		<div
-			ref={buttonRef}
-			className={`flex h-10 min-h-10 w-full min-w-0 items-center justify-center ${
-				disabled ? "pointer-events-none opacity-40" : ""
-			}`}
-			aria-disabled={disabled}
-		/>
+		<div className="flex h-10 min-h-10 w-full min-w-0 justify-center" aria-disabled={disabled}>
+			<div
+				ref={buttonRef}
+				className={`h-10 w-[260px] overflow-hidden ${
+					buttonReady ? "visible" : "invisible"
+				} ${disabled ? "pointer-events-none opacity-40" : ""}`}
+			/>
+		</div>
 	);
 }
