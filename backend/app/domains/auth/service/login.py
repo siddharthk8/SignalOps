@@ -14,6 +14,11 @@ from app.domains.auth.utils import (
 )
 
 
+# Cases:
+# - Existing user with a valid password → login succeeds.
+# - Existing user with an incorrect password → 401 Unauthorized.
+# - Google-only user with password_hash=None → 401 Unauthorized, without calling verify_password().
+# - Inactive user → login fails.
 async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
     exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -27,11 +32,22 @@ async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
     if not user:
         raise exception
 
+    # Google-only users may not have a password. So we need to check for password existence here.
+    if not user.password_hash:
+        auth_logger.warning(
+            "Password authentication failed: no password configured. user_id=%s",
+            user.id,
+        )
+        raise exception
+
     if not verify_password(form_data.password, user.password_hash):
         auth_logger.warning(
             "Authentication failed: invalid password. user_id=%s",
             user.id,
         )
+        raise exception
+
+    if not user.is_active:
         raise exception
 
     access_token = create_access_token({"sub": str(user.id), "tv": user.token_version})

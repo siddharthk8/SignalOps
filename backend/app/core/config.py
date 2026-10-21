@@ -45,6 +45,10 @@ class Settings(BaseSettings):
     redis_port: int = 6379
     redis_password: str | None = None
 
+    # Google SignIn
+    google_client_id: str
+    google_client_secret: str
+
     # Testing environment
     testing: bool = False
 

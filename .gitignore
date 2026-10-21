@@ -60,7 +60,7 @@ coverage/
 # =========================================================
 .env
 .env.*
-!.env.development
+.env.development
 !.env.example
 !.env.sample
 !.env.test

@@ -21,6 +21,7 @@ from app.db.core import Base
 
 if TYPE_CHECKING:
     from app.db.models.incident import Incident
+    from app.db.models.oauth_account import OAuthAccount
     from app.db.models.password_reset_token import PasswordResetToken
     from app.db.models.refresh_token import RefreshToken
     from app.db.models.source_app import SourceApp
@@ -40,7 +41,10 @@ class User(Base):
         nullable=False,
         index=True,
     )
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    # Nullable for accounts that use Google login only.
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=True)
+
     first_name: Mapped[str] = mapped_column(String(60), nullable=False)
     last_name: Mapped[str] = mapped_column(String(80), nullable=False)
     profile_image: Mapped[str | None] = mapped_column(String(200), nullable=True)
@@ -65,6 +69,11 @@ class User(Base):
         "PasswordResetToken",
         passive_deletes=True,
         back_populates="user",
+    )
+    oauth_accounts: Mapped[list[OAuthAccount]] = relationship(
+        "OAuthAccount",
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
 
     # datetime

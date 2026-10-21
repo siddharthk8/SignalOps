@@ -37,6 +37,14 @@ class UserRepository:
         await self.db.flush()
         user.id = db_user.id
 
+    async def save_google_user(self, email: str, first_name: str, last_name: str):
+        db_user = User(
+            first_name=first_name, last_name=last_name, email=email, password_hash=None
+        )
+        self.db.add(db_user)
+        await self.db.flush()
+        return db_user
+
     async def remove_user(self, user: User):
         await self.db.delete(user)
 
