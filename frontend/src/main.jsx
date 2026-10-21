@@ -27,6 +27,7 @@ import SourceAppsPage from "@/pages/protected/SourceApps";
 import EmailVerificationPage from "@/pages/public/EmailVerification";
 import ForgotPasswordPage from "@/pages/public/ForgotPassword";
 import LoginPage from "@/pages/public/Login";
+import PrivacyPolicy from "@/pages/public/PrivacyPolicy";
 import ResetPasswordPage from "@/pages/public/ResetPassword";
 import SignupPage from "@/pages/public/Signup";
 // redux store
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
 			{
 				index: true,
 				element: <App />,
+			},
+			{
+				path: "privacy",
+				element: <PrivacyPolicy />,
 			},
 			// Public routes
 			{
