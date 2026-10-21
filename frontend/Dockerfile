@@ -1,13 +1,14 @@
 # Build the Vite application
 FROM node:24.18.0-alpine3.23 AS builder
 
-# Build arguments from docker-compose
+ARG VITE_GOOGLE_CLIENT_ID
 ARG VITE_API_URL
 ARG ENV
 
-# Make them available to Vite during the build
-ENV VITE_API_URL=$VITE_API_URL
-ENV ENV=$ENV
+# Make variables available to Vite during the build
+ENV VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}
+ENV VITE_API_URL=${VITE_API_URL}
+ENV ENV=${ENV}
 
 WORKDIR /app
 
