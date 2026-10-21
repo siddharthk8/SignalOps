@@ -10,13 +10,6 @@ export default function Footer() {
 					. All rights reserved.
 				</span>
 
-				<a
-					href="/privacy"
-					className="text-t-muted hover:text-primary-600 transition-colors"
-				>
-					privacy policy
-				</a>
-
 				<span className="text-t-muted">
 					✨ Built with care by{" "}
 					<span className="text-t-primary font-dancing text-lg">Siddharth</span>

@@ -88,6 +88,18 @@ export type GetBatch = {
     created_at: string;
 };
 
+export type GetOAuthConnection = {
+    provider: string;
+};
+
+export type GetOAuthConnections = {
+    connections: Array<GetOAuthConnection>;
+};
+
+export type GoogleLoginRequest = {
+    credential: string;
+};
+
 export type HttpValidationError = {
     detail?: Array<ValidationError>;
 };
@@ -209,6 +221,7 @@ export type SourceAppModel = {
     name: string;
     app_type: string;
     created_at: string;
+    access_key?: string | null;
     readonly has_access_token: boolean;
 };
 
@@ -281,6 +294,7 @@ export type SourceAppModelWritable = {
     name: string;
     app_type: string;
     created_at: string;
+    access_key?: string | null;
 };
 
 export type HealthCheckData = {
@@ -338,7 +352,7 @@ export type GenerateSourceAppAccessTokenErrors = {
 export type GenerateSourceAppAccessTokenError = GenerateSourceAppAccessTokenErrors[keyof GenerateSourceAppAccessTokenErrors];
 
 export type GenerateSourceAppAccessTokenResponses = {
-    200: SourceAppAccessTokenGenerationResponse;
+    201: SourceAppAccessTokenGenerationResponse;
 };
 
 export type GenerateSourceAppAccessTokenResponse = GenerateSourceAppAccessTokenResponses[keyof GenerateSourceAppAccessTokenResponses];
@@ -449,6 +463,53 @@ export type GetSourceAppBatchesResponses = {
 };
 
 export type GetSourceAppBatchesResponse = GetSourceAppBatchesResponses[keyof GetSourceAppBatchesResponses];
+
+export type GoogleLoginData = {
+    body: GoogleLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/oauth/google';
+};
+
+export type GoogleLoginErrors = {
+    422: HttpValidationError;
+};
+
+export type GoogleLoginError = GoogleLoginErrors[keyof GoogleLoginErrors];
+
+export type GoogleLoginResponses = {
+    200: unknown;
+};
+
+export type GetOauthConnectionsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/oauth/oauth-connections';
+};
+
+export type GetOauthConnectionsResponses = {
+    200: GetOAuthConnections;
+};
+
+export type GetOauthConnectionsResponse = GetOauthConnectionsResponses[keyof GetOauthConnectionsResponses];
+
+export type LinkGoogleAccountData = {
+    body: GoogleLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/oauth/link-google';
+};
+
+export type LinkGoogleAccountErrors = {
+    422: HttpValidationError;
+};
+
+export type LinkGoogleAccountError = LinkGoogleAccountErrors[keyof LinkGoogleAccountErrors];
+
+export type LinkGoogleAccountResponses = {
+    201: unknown;
+};
 
 export type GetBatchData = {
     body?: never;

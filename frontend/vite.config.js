@@ -32,6 +32,9 @@ export default defineConfig({
 		host: "localhost",
 		port: 5173,
 		strictPort: true,
+		headers: {
+			"Cross-Origin-Opener-Policy": "same-origin-allow-popups", // For Google Signin to work.
+		},
 	},
 
 	// Used only by `vite preview`
@@ -39,5 +42,8 @@ export default defineConfig({
 		host: "localhost",
 		port: 4173,
 		strictPort: true,
+		headers: {
+			"Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+		},
 	},
 });

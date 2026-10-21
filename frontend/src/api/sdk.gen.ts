@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape, urlSearchParamsBodySerializer } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSourceAppData, CreateSourceAppErrors, CreateSourceAppResponses, CreateTokenData, CreateTokenErrors, CreateTokenResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DashboardOverviewData, DashboardOverviewResponses, DeleteCurrentUserData, DeleteCurrentUserResponses, DeleteProfileImageData, DeleteProfileImageResponses, DeleteSourceAppAccessTokenData, DeleteSourceAppAccessTokenErrors, DeleteSourceAppAccessTokenResponses, DeleteSourceAppData, DeleteSourceAppErrors, DeleteSourceAppResponses, ForgotPasswordData, ForgotPasswordErrors, ForgotPasswordResponses, GenerateSourceAppAccessTokenData, GenerateSourceAppAccessTokenErrors, GenerateSourceAppAccessTokenResponses, GetBatchData, GetBatchErrors, GetBatchResponses, GetCurrentUserData, GetCurrentUserResponses, GetNewAccessTokenData, GetNewAccessTokenErrors, GetNewAccessTokenResponses, GetSourceAppBatchesData, GetSourceAppBatchesErrors, GetSourceAppBatchesResponses, GetSourceAppData, GetSourceAppErrors, GetSourceAppResponses, GetSourceAppsData, GetSourceAppsErrors, GetSourceAppsResponses, HealthCheckData, HealthCheckResponses, IngestLogsData, IngestLogsErrors, IngestLogsResponses, MarkIncidentResolvedData, MarkIncidentResolvedErrors, MarkIncidentResolvedResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllRefreshTokensData, RevokeAllRefreshTokensResponses, RevokeRefreshTokenData, RevokeRefreshTokenErrors, RevokeRefreshTokenResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UploadProfileImageData, UploadProfileImageErrors, UploadProfileImageResponses, VerifyCreateUserEmailData, VerifyCreateUserEmailErrors, VerifyCreateUserEmailResponses, VersionCheckData, VersionCheckResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSourceAppData, CreateSourceAppErrors, CreateSourceAppResponses, CreateTokenData, CreateTokenErrors, CreateTokenResponses, CreateUserData, CreateUserErrors, CreateUserResponses, DashboardOverviewData, DashboardOverviewResponses, DeleteCurrentUserData, DeleteCurrentUserResponses, DeleteProfileImageData, DeleteProfileImageResponses, DeleteSourceAppAccessTokenData, DeleteSourceAppAccessTokenErrors, DeleteSourceAppAccessTokenResponses, DeleteSourceAppData, DeleteSourceAppErrors, DeleteSourceAppResponses, ForgotPasswordData, ForgotPasswordErrors, ForgotPasswordResponses, GenerateSourceAppAccessTokenData, GenerateSourceAppAccessTokenErrors, GenerateSourceAppAccessTokenResponses, GetBatchData, GetBatchErrors, GetBatchResponses, GetCurrentUserData, GetCurrentUserResponses, GetNewAccessTokenData, GetNewAccessTokenErrors, GetNewAccessTokenResponses, GetOauthConnectionsData, GetOauthConnectionsResponses, GetSourceAppBatchesData, GetSourceAppBatchesErrors, GetSourceAppBatchesResponses, GetSourceAppData, GetSourceAppErrors, GetSourceAppResponses, GetSourceAppsData, GetSourceAppsErrors, GetSourceAppsResponses, GoogleLoginData, GoogleLoginErrors, GoogleLoginResponses, HealthCheckData, HealthCheckResponses, IngestLogsData, IngestLogsErrors, IngestLogsResponses, LinkGoogleAccountData, LinkGoogleAccountErrors, LinkGoogleAccountResponses, MarkIncidentResolvedData, MarkIncidentResolvedErrors, MarkIncidentResolvedResponses, ResetPasswordData, ResetPasswordErrors, ResetPasswordResponses, RevokeAllRefreshTokensData, RevokeAllRefreshTokensResponses, RevokeRefreshTokenData, RevokeRefreshTokenErrors, RevokeRefreshTokenResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses, UploadProfileImageData, UploadProfileImageErrors, UploadProfileImageResponses, VerifyCreateUserEmailData, VerifyCreateUserEmailErrors, VerifyCreateUserEmailResponses, VersionCheckData, VersionCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -114,6 +114,43 @@ export const getSourceAppBatches = <ThrowOnError extends boolean = false>(option
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/source-apps/{source_app_id}/batches',
     ...options
+});
+
+/**
+ * Google Login
+ */
+export const googleLogin = <ThrowOnError extends boolean = false>(options: Options<GoogleLoginData, ThrowOnError>): RequestResult<GoogleLoginResponses, GoogleLoginErrors, ThrowOnError> => (options.client ?? client).post<GoogleLoginResponses, GoogleLoginErrors, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/v1/oauth/google',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get Oauth Connections
+ */
+export const getOauthConnections = <ThrowOnError extends boolean = false>(options?: Options<GetOauthConnectionsData, ThrowOnError>): RequestResult<GetOauthConnectionsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetOauthConnectionsResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/oauth/oauth-connections',
+    ...options
+});
+
+/**
+ * Link Google Account
+ */
+export const linkGoogleAccount = <ThrowOnError extends boolean = false>(options: Options<LinkGoogleAccountData, ThrowOnError>): RequestResult<LinkGoogleAccountResponses, LinkGoogleAccountErrors, ThrowOnError> => (options.client ?? client).post<LinkGoogleAccountResponses, LinkGoogleAccountErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/oauth/link-google',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });
 
 /**

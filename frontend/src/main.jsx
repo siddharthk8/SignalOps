@@ -1,7 +1,6 @@
 import "./index.css";
 
 import { QueryClientProvider } from "@tanstack/react-query";
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router";
@@ -162,11 +161,11 @@ const router = createBrowserRouter([
 client.setConfig(BASIC_API_CONFIG);
 
 createRoot(document.getElementById("root")).render(
-	<StrictMode>
-		<QueryClientProvider client={queryClient}>
-			<Provider store={store}>
-				<RouterProvider router={router} />
-			</Provider>
-		</QueryClientProvider>
-	</StrictMode>,
+	// <StrictMode>
+	<QueryClientProvider client={queryClient}>
+		<Provider store={store}>
+			<RouterProvider router={router} />
+		</Provider>
+	</QueryClientProvider>,
+	// </StrictMode>,
 );

@@ -2,12 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { useLocation } from "react-router";
 
 import { createToken, getCurrentUser } from "@/api";
 import AuthBgImage from "@/assets/images/auth-bg.jpg";
 import Button from "@/components/Button";
 import FormBottomLink from "@/components/Container/BottomLink";
 import FormMessage from "@/components/Form/FormMessage";
+import AuthLoginSignup from "@/components/Google/GoogleLoginSignup";
 import Input from "@/components/Input/Input";
 import PasswordInput from "@/components/Input/PasswordInput";
 import AuthMainLayout from "@/layouts/Form/AuthMainLayout";
@@ -24,52 +26,55 @@ export default function LoginPage() {
 		clearErrors,
 		formState: { errors },
 	} = useForm({ mode: "onSubmit" });
+	const location = useLocation();
+
+	// Check if the current pathname matches the screen
+	const screenIsActive = location.pathname === "/login";
 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
+	const handleLoginSuccess = async (loginResponse) => {
+		const tokenData = loginResponse.data;
+		if (!tokenData) {
+			throw new Error(COMMON_ERROR_MSG);
+		}
+		const userResponse = await queryClient.fetchQuery({
+			queryKey: ["currentUser"],
+			queryFn: () =>
+				getCurrentUser({
+					headers: {
+						Authorization: `Bearer ${tokenData.access_token}`,
+					},
+				}),
+		});
+		const user = userResponse.data;
+		if (!user) {
+			throw new Error(COMMON_ERROR_MSG);
+		}
+
+		dispatch(
+			setUser({
+				accessToken: tokenData.access_token,
+				refreshToken: tokenData.refresh_token,
+				id: user.id,
+				email: user.email,
+				firstName: user.first_name,
+				lastName: user.last_name,
+				profileImage: user.profile_image_path,
+			}),
+		);
+	};
+
 	const { mutate, isPending: isSubmitting } = useMutation({
-		mutationFn: ({ email, password }) => {
-			return createToken({
+		mutationFn: ({ email, password }) =>
+			createToken({
 				body: {
 					username: email,
 					password,
 				},
-			});
-		},
-		onSuccess: async (loginResponse) => {
-			const tokenData = loginResponse.data;
-			if (!tokenData) {
-				throw new Error(COMMON_ERROR_MSG);
-			}
-
-			const userResponse = await queryClient.fetchQuery({
-				queryKey: ["currentUser"],
-				queryFn: () =>
-					getCurrentUser({
-						headers: {
-							Authorization: `Bearer ${tokenData.access_token}`,
-						},
-					}),
-			});
-
-			const user = userResponse.data;
-			if (!user) {
-				throw new Error(COMMON_ERROR_MSG);
-			}
-
-			dispatch(
-				setUser({
-					accessToken: tokenData.access_token,
-					refreshToken: tokenData.refresh_token,
-					id: user.id,
-					email: user.email,
-					firstName: user.first_name,
-					lastName: user.last_name,
-					profileImage: user.profile_image_path,
-				}),
-			);
-		},
+			}),
+		onSuccess: handleLoginSuccess,
 		onError: (error) => {
 			if (!axios.isAxiosError(error)) {
 				setError("root", {
@@ -126,6 +131,17 @@ export default function LoginPage() {
 					>
 						Log in
 					</Button>
+
+					<div className="relative flex items-center">
+						<div className="border-border grow border-t" />
+						<span className="text-t-muted mx-4 shrink-0 text-xs">OR</span>
+						<div className="border-border grow border-t" />
+					</div>
+
+					<AuthLoginSignup
+						isActive={screenIsActive}
+						onLoginSuccess={handleLoginSuccess}
+					/>
 				</form>
 
 				<div className="flex flex-col items-center gap-2 py-4">
