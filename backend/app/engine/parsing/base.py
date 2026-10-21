@@ -100,18 +100,6 @@ class BaseParser(ABC):
 
             confidence = match_score * 0.70 + proximity * 0.30
 
-            # if event_type == GenericEventType.RESOURCE_NOT_FOUND:
-            #     print("\n RESOURCE_NOT_FOUND")
-            #     print("match_score : ", match_score)
-            #     print("proximity : ", proximity)
-            #     print("confidence : ", confidence)
-
-            # if event_type == GenericEventType.DATABASE_TIMEOUT:
-            #     print("\n DATABASE_TIMEOUT")
-            #     print("match_score : ", match_score)
-            #     print("proximity : ", proximity)
-            #     print("confidence : ", confidence)
-
             if confidence >= self.MIN_CONFIDENCE:
                 candidates.append(
                     (

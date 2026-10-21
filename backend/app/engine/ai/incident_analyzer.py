@@ -243,9 +243,6 @@ INPUT INCIDENTS:
 
                 if len(analyses_data) != len(incidents):
                     # print("analyses_data len:", len(analyses_data))
-                    # print("incidents len:", len(incidents))
-                    # print("analyses_data:\n", (analyses_data), "\n")
-                    # print("incidents:\n", (incidents), "\n")
 
                     raise ValueError(
                         f"Expected {len(incidents)} analyses, got {len(analyses_data)}"
