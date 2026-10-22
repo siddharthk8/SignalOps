@@ -1,215 +1,175 @@
 # SignalOps
 
-**AI-powered application log intelligence for turning operational noise into actionable incident insight.**
+**Turn application logs into actionable operational insights.**
 
-SignalOps transforms heterogeneous application logs into **semantic events**, detects operational signals, correlates related activity into **incidents**, and uses **Amazon Bedrock** to generate operational analysis.
+SignalOps is an AI-powered application log intelligence platform designed to help developers understand application behavior, detect operational issues, and investigate incidents.
 
-> **Stop reading logs. Start understanding systems.**
-
----
+It transforms raw application logs into structured semantic events, identifies meaningful signals, correlates related events into incidents, and uses AI-assisted analysis to provide contextual insights.
 
 ## Overview
 
-SignalOps is an application-focused log intelligence platform built around a simple idea:
+Traditional log management often requires developers to search through large volumes of raw log data to understand what went wrong.
 
-**Turn raw application output into structured operational understanding.**
+SignalOps aims to simplify this process through a structured intelligence pipeline that combines deterministic processing with AI-assisted reasoning.
 
-```text
-  ┌──────────────┐
-  │   Raw Logs   │
-  └──────┬───────┘
-         │
-         ▼
-┌──────────────────┐
-│ Semantic Events  │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│     Signals      │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│    Incidents     │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│   AI Analysis    │
-└──────────────────┘
+Key capabilities include:
+
+- **Log ingestion** — Receive application logs from supported clients.
+- **Semantic parsing** — Transform raw log records into structured events.
+- **Signal detection** — Identify meaningful operational conditions.
+- **Incident correlation** — Group related signals and events into incidents.
+- **AI-assisted analysis** — Generate contextual insights using Amazon Bedrock.
+- **Operational insights** — Help developers investigate application failures and understand potential causes.
+
+## How It Works
+
+```mermaid
+flowchart TD
+    A(["Application Logs"]) --> B["Log Ingestion"]
+    B --> C["Semantic Parsing"]
+    C --> D["Signal Detection"]
+    D --> E["Incident Correlation"]
+    E --> F["AI-Assisted Analysis"]
+    F --> G(["Operational Insights"])
+
+    classDef source fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef processing fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef intelligence fill:#f3e8ff,stroke:#9333ea,color:#581c87
+
+    class A,G source
+    class B,C,D,E processing
+    class F intelligence
 ```
 
-The pipeline follows a **deterministic-first approach**: known log formats and predictable operational patterns are handled through explicit parsers and rules. AI is introduced where semantic uncertainty or higher-level operational reasoning benefits from it.
+SignalOps follows a **deterministic-first** approach: explicit parsing and detection logic handle predictable operations, while AI provides contextual interpretation where it adds value.
 
----
+The pipeline represents the conceptual processing model rather than prescribing how individual stages are deployed or executed.
 
-## Architecture
+## Architecture at a Glance
 
 ```mermaid
 flowchart TB
+    DEV(["Developers"]) --> FE["React Frontend"]
+    CLIENT(["Applications and CLI Clients"]) --> API["FastAPI Backend"]
+    FE <--> API
 
-    User[User] --> UI[React + React Router]
-    UI --> API[FastAPI Backend]
-
-    subgraph Infrastructure
-        DB[(PostgreSQL)]
-        Redis[(Redis<br/>Rate Limiting)]
-        Bedrock[Amazon Bedrock]
-        SES[Amazon SES<br/>Email Delivery]
-        S3[Amazon S3<br/>Profile Images]
+    subgraph PIPELINE["Log Intelligence Pipeline"]
+        direction LR
+        ING["Log Ingestion"] --> PAR["Semantic Parsing"]
+        PAR --> DET["Signal Detection"]
+        DET --> COR["Incident Correlation"]
+        COR --> AI["AI-Assisted Analysis"]
     end
 
-    API --> DB
-    API --> Redis
-    API --> Bedrock
-    API --> SES
-    API --> S3
+    API --> ING
 
-    subgraph Intelligence Pipeline
-        Logs[Raw Logs]
-        Batch[Batch]
-        Parser[Parser Registry]
-        Rules[Rule Engine]
-        Fallback[AI Fallback]
-        Correlate[Correlation Engine]
-        Analyze[Incident Analysis]
-        Persist[Persisted Intelligence]
+    API <--> DB[("PostgreSQL")]
+    API <--> REDIS[("Redis")]
+    AI <--> BEDROCK["Amazon Bedrock"]
+    API --> AWS["AWS Integrations"]
 
-        Logs --> Batch
-        Batch --> Parser
+    classDef app fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef processing fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef intelligence fill:#f3e8ff,stroke:#9333ea,color:#581c87
+    classDef infrastructure fill:#f3f4f6,stroke:#6b7280,color:#111827
 
-        Parser --> Rules
-        Parser --> Fallback
-
-        Rules --> Correlate
-        Fallback --> Correlate
-
-        Correlate --> Analyze
-        Analyze --> Persist
-    end
-
-    API --> Logs
+    class FE,API app
+    class ING,PAR,DET,COR processing
+    class AI,BEDROCK intelligence
+    class DB,REDIS,AWS infrastructure
 ```
 
-### Core Design Principle
+The platform uses a React-based web interface, a FastAPI backend, PostgreSQL, Redis, and AWS integrations, including Amazon Bedrock.
 
-**Raw logs are evidence. Semantic events are the foundation for intelligence.**
-
-Raw logs are preserved for auditing and investigation, while downstream detection and correlation operate on normalized events rather than raw log strings.
-
----
-
-## Key Capabilities
-
-* Application log ingestion and persistence
-* Registry-based semantic parsing
-* AI-assisted fallback parsing for unknown formats
-* Rule-based operational signal detection
-* Context-aware incident correlation
-* Amazon Bedrock-powered incident analysis
-* Operational dashboards and investigation views
-* JWT authentication and Redis-backed rate limiting
-
----
+For detailed component relationships, data flows, and deployment design, see the [architecture documentation](docs/architecture.md).
 
 ## Technology Stack
 
-| Area               | Technology                      |
-| ------------------ | ------------------------------- |
-| **Backend**        | FastAPI, Python                 |
-| **Data**           | PostgreSQL, SQLAlchemy, Alembic |
-| **API**            | REST, OpenAPI                   |
-| **Frontend**       | React, Vite                     |
-| **State**          | Redux Toolkit, TanStack Query   |
-| **Styling**        | Tailwind CSS                    |
-| **AI**             | Amazon Bedrock                  |
-| **Infrastructure** | Docker, Redis                   |
-| **AWS Services**   | Bedrock, SES, S3                |
-| **Testing**        | Pytest                          |
-| **Tooling**        | Ruff, ESLint, Prettier          |
-
----
+| Component | Technology |
+|---|---|
+| Frontend | React, Vite, React Router |
+| State management | Redux Toolkit, TanStack Query |
+| Styling | Tailwind CSS |
+| Backend | Python, FastAPI |
+| Database and migrations | PostgreSQL, SQLAlchemy, Alembic |
+| Supporting infrastructure | Redis (optional during development) |
+| Authentication | JWT, Google Identity Services (GIS) Sign-In |
+| AI analysis | Amazon Bedrock |
+| Email services | Amazon SES |
+| Object storage | Amazon S3 |
+| Containerization | Docker |
+| Container image registry | Amazon Elastic Container Registry (Amazon ECR) |
+| Cloud infrastructure | Amazon Web Services (AWS) |
+| Testing and code quality | Pytest, Ruff, ESLint, Prettier |
 
 ## Repository Structure
 
 ```text
-SignalOps/
-├── backend/          # FastAPI backend and intelligence pipeline
-├── frontend/         # React application and generated API client
-├── docs/             # Architecture, ERD, screenshots, and project documentation
+.
+├── backend/
+├── frontend/
+├── docs/
+├── README.md
 ├── CONTRIBUTING.md
-├── SECURITY.md
-└── README.md
+└── SECURITY.md
 ```
 
----
+## Getting Started
 
-## Quick Start
+### Prerequisites
 
-SignalOps consists of a FastAPI backend and a React frontend.
+Ensure the following tools and services are available in your development environment:
 
-### Backend
+- **Git** — To clone and manage the repository.
+- **Python** — Use a version compatible with the backend dependencies.
+- **Node.js** — Use a version compatible with the frontend dependencies.
+- **PostgreSQL** — A running database instance for backend persistence.
+- **Redis** — Optional for development; configure it if required by the features or workflows you want to run
+- **AWS configuration** — Required for development workflows that use AWS integrations, such as Amazon Bedrock, S3 or SES.
 
-See the **[Backend README](backend/README.md)** for complete setup and configuration instructions.
+Install the package manager specified by the frontend configuration if it differs from npm.
+
+### Clone the Repository
 
 ```bash
-cd backend
-
-pip install -r requirements.txt
-alembic upgrade head
-uvicorn main:app --reload
+git clone https://github.com/siddharthk8/SignalOps.git
+cd SignalOps
 ```
 
-The API is available at:
+### Configure the Environment
 
-```text
-http://127.0.0.1:8000
-```
+Before starting the application:
 
-### Frontend
+1. Follow the instructions in the [backend setup guide](backend/README.md) to configure the backend environment, including the PostgreSQL connection.
+2. Follow the instructions in the [frontend setup guide](frontend/README.md) to configure the frontend environment.
+3. Configure Redis only if needed for the development workflows you intend to use.
+4. Configure AWS credentials and related settings.
 
-See the **[Frontend README](frontend/README.md)** for complete setup and development instructions.
+Refer to the backend and frontend setup guides for the exact environment variables and configuration steps.
 
-```bash
-cd frontend
+### Run the Application
 
-npm install
-npm run dev
-```
+Once the prerequisites are installed and both environments are configured, follow the backend and frontend READMEs for the exact commands.
 
-> **Configuration:** Backend environment variables and local configuration are documented in the [Backend README](backend/README.md).
+## Project Documentation
+
+| Document | Description |
+|---|---|
+| [Frontend documentation](frontend/README.md) | Frontend setup, configuration, development, and tooling |
+| [Backend documentation](backend/README.md) | Backend setup, configuration, APIs, database, and development |
+| [Architecture](docs/architecture.md) | System architecture, components, and data flows |
+| [Contributing](CONTRIBUTING.md) | Contribution guidelines |
+| [Security](SECURITY.md) | Security policy |
+
+## Engineering Principles
+
+- **Deterministic first:** Prefer predictable parsing and detection logic.
+- **AI where it adds value:** Use AI for contextual reasoning rather than replacing deterministic processing.
+- **Modular architecture:** Maintain clear boundaries between system responsibilities.
+- **Structured events:** Build operational intelligence on normalized data.
+- **Security and reliability:** Validate inputs, protect sensitive information, and handle failures explicitly.
+- **Maintainability:** Favor clear interfaces, testable logic, and focused changes.
 
 ---
 
-## Engineering Approach
-
-### Deterministic First
-Known formats and predictable scenarios are handled through explicit parsers and rules.
-
-### AI Assisted
-AI is used for semantic uncertainty and operational reasoning rather than replacing deterministic logic.
-
-### Semantic Core
-Detection and correlation operate on normalized events, providing a consistent foundation for downstream intelligence.
-
-### Modular Design
-Ingestion, parsing, detection, correlation, persistence, and AI analysis are separated into focused stages.
-
----
-
-## Project Status
-
-SignalOps is an actively developed engineering project exploring the combination of **semantic event processing, deterministic detection, incident correlation, and generative AI** for application-focused observability.
-
----
-
-## Documentation
-
-| Resource                              | Description                                               |
-| ------------------------------------- | --------------------------------------------------------- |
-| [Backend README](backend/README.md)   | Backend setup, architecture, API, migrations, and testing |
-| [Frontend README](frontend/README.md) | Frontend setup, architecture, API client, and development |
-| [Architecture](docs/architecture.md)  | Detailed system architecture and design decisions         |
-| [Contributing](CONTRIBUTING.md)       | Contribution guidelines                                   |
-| [Security](SECURITY.md)               | Security policy                                           |
+SignalOps turns application logs into structured signals, correlated incidents, and actionable operational understanding.

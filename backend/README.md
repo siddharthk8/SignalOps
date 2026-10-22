@@ -1,43 +1,40 @@
 # Backend
 
-This directory contains the FastAPI application that powers SignalOps. The backend is responsible for authentication, source application management, log ingestion, incident correlation, AI-assisted analysis, and the batch and dashboard APIs consumed by the frontend.
+The SignalOps backend is a FastAPI application responsible for authentication, source application management, log ingestion, incident correlation, AI-assisted analysis, and the APIs consumed by the frontend.
 
-It is the authoritative implementation of the product workflow: everything from login and ownership checks to log parsing, incident creation, and dashboard summaries happens here.
+It follows a modular monolith architecture, separating HTTP endpoints, business workflows, log-processing logic, and database access into dedicated modules.
 
-## Architecture Summary
+## Architecture Overview
 
-- Entry point: [main.py](main.py)
-- API router: `app/api/v1/router.py`
-- Core layers:
-	- `app/api` for HTTP endpoints
-	- `app/domains` for business workflows and request/response models
-	- `app/engine` for parsing, rule execution, correlation, and AI analysis
-	- `app/db` for SQLAlchemy models, repositories, and session management
-	- `app/core` for configuration, logging, exceptions, and rate limiting
+The main components are organized as follows:
 
-The codebase follows a hybrid DDD-style modular monolith: the HTTP layer is thin, business logic lives in domain services, and the pipeline is split into small, testable engine stages.
+- `main.py` — Application entry point.
+- `api/` — Versioned API routers and HTTP endpoints.
+- `domains/` — Business workflows, services, and domain schemas.
+- `engine/` — Log parsing, rule evaluation, signal detection, incident correlation, and AI analysis.
+- `db/` — SQLAlchemy models, repositories, and database session management.
+- `core/` — Configuration, logging, exceptions, and rate limiting.
+- `schemas/` — Shared data schemas.
+- `enums/` — Shared enumerations.
+- `shared/` — Common constants and utilities.
+- `workers/` — Background processing tasks, including SES feedback handling.
+
+The API layer handles HTTP requests and delegates business operations to domain services. The engine processes logs through dedicated pipeline stages, while repositories manage database access.
 
 ## Configuration
 
-SignalOps keeps backend configuration outside the repository.
+Backend configuration is managed through environment variables.
 
-Set `ENV_DIR` to your home directory so tools that need an explicit base path can resolve the config folder consistently across machines. The backend itself reads the final files from the user's home config directory:
+Before running the application, review `core/config.py` to understand how configuration is loaded and where to place the development `.env` file.
 
-- development: `~/.config/signalops/backend/.env.local`
-- production: `~/.config/signalops/backend/.env.production`
-
-Those are the actual runtime filenames. The repository also includes [backend/.env.example](.env.example) as a reference for the available variables and their intended values.
-
-The example file is intentionally descriptive. It shows the expected variables for backend code and container orchestration, but it is not the runtime file that the application loads.
+Use `.env.example` as a reference for the available configuration variables. Keep local environment files, credentials, and other secrets out of version control.
 
 ## Running Locally
 
-1. Set `ENV_DIR` to your home directory.
-2. Create `~/.config/signalops/backend`.
-3. Copy [backend/.env.example](.env.example) into that folder and rename it to `.env.local`.
-4. Optionally create `.env.production` in the same folder with production-ready values.
-
-Then install dependencies and start the service:
+1. Review `core/config.py` to identify the expected location and loading behavior of the development `.env` file.
+2. Create your local configuration using `.env.example` as a reference.
+3. Ensure PostgreSQL is running and the database connection settings are configured correctly.
+4. Install dependencies, apply database migrations, and start the application.
 
 ```bash
 cd backend
@@ -46,81 +43,98 @@ alembic upgrade head
 uvicorn main:app --reload
 ```
 
-The API is served at `http://127.0.0.1:8000` by default.
+The API is available at `http://127.0.0.1:8000` by default.
 
-## Database And Migrations
+## Database and Migrations
 
-- SQLAlchemy uses an async engine and async session factory.
-- Alembic handles schema migrations.
-- The default test and local configuration assumes PostgreSQL.
+SignalOps uses SQLAlchemy with an asynchronous database engine and session management. Alembic manages database schema migrations, and PostgreSQL is the expected database for local development.
 
-Typical migration commands:
+Apply migrations with:
 
 ```bash
 cd backend
 alembic upgrade head
 ```
 
-## API Surface
+## API Overview
 
-All routes are mounted under `/api/v1`.
+API routes are mounted under `/api/v1`.
 
-- `GET /health` checks the database connection.
-- `POST /auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/logout-all`, `/auth/forgot-password`, `/auth/reset-password` manage sessions.
-- `POST /users` creates an account.
-- `GET/PATCH/DELETE /users/me` manages the current user.
-- `POST/DELETE /users/me/profile-image` uploads or deletes the profile image.
-- `POST /source-apps` creates a source application.
-- `GET /source-apps` lists the current user’s source applications.
-- `GET /source-apps/{id}/batches` lists batches for a source app.
-- `POST /logs` ingests a batch of logs and runs the pipeline.
-- `GET /batches/{id}` returns the full batch payload.
-- `GET /dashboard` returns the user’s summary metrics.
-- `POST /incidents/{id}/resolve` marks an incident as resolved.
+The main API areas include:
+
+- **Authentication:** Login, token refresh, logout, password reset, and session revocation.
+- **Users:** Account creation, profile management, password changes, and account deletion.
+- **OAuth:** Google sign-in and account linking.
+- **Source applications:** Application registration, token management, and batch listing.
+- **Logs and batches:** Log ingestion and batch retrieval.
+- **Incidents:** Incident management and resolution.
+- **Dashboard:** Summary metrics for the authenticated user.
+
+For the implemented routes and HTTP methods, refer to `api/v1/endpoints/`.
 
 ## Ingestion Pipeline
 
-`POST /logs` is the entry point for the operational pipeline.
+The pipeline begins when a user posts a batch of logs to `/api/v1/logs`.
 
-1. Raw logs are persisted with a batch record.
-2. Logs are parsed through the source-app registry.
-3. Any unresolved logs are sent to the Bedrock-backed fallback parser.
-4. Domain rules and generic rules create signals.
-5. Signals are correlated into incidents.
-6. Incidents are analyzed by the AI incident analyzer.
-7. All persisted changes are committed at the end of the pipeline.
+```mermaid
+sequenceDiagram
+    participant UI as Frontend
+    participant API as FastAPI
+    participant DB as PostgreSQL
+    participant PARSE as Parsing Stage
+    participant AI as AI Stage
+    participant RULE as Rule Engine
+    participant CORR as Correlation Engine
 
-The endpoint returns the incident analysis payload that the UI renders in batch details and related views.
+    UI->>API: POST /api/v1/logs
+    API->>DB: Persist batch and raw logs
 
-## How The Pieces Fit Together
+    API->>PARSE: Parse logs using source-app registry
+    PARSE->>AI: Normalize unresolved logs when needed
+    AI-->>PARSE: Return normalized events
+    PARSE->>DB: Persist semantic events
 
-- Routers expose HTTP endpoints only and keep request handling lightweight.
-- Domain services enforce ownership and orchestrate business workflows.
-- Repositories isolate database queries and writes.
-- The engine layer handles the log pipeline, from parsing to incident analysis.
-- SQLAlchemy models represent the persisted batch, event, signal, incident, and user data.
+    API->>RULE: Evaluate domain and generic rules
+    RULE->>DB: Persist signals
 
-## Authentication Model
+    API->>CORR: Correlate signals into incidents
+    CORR->>DB: Persist incidents
 
-- Access tokens are JWTs.
-- Refresh tokens are stored in hashed form.
-- The `token_version` claim is checked on every request, which allows password changes and logout-all operations to invalidate older sessions.
-- Protected endpoints use the `CurrentUser` dependency and ownership checks before reading or mutating user-owned data.
+    API->>AI: Analyze correlated incidents
+    AI->>DB: Persist AI analysis when available
+
+    API->>DB: Commit transaction
+    API-->>UI: Return processing result
+```
+
+The pipeline is organized into dedicated stages under `engine/pipeline/stages/`, coordinated by `engine/pipeline/orchestration.py`.
+
+Its main responsibilities are:
+
+1. **Parsing:** Registered parsers extract structured information from incoming logs.
+2. **AI fallback:** Unresolved logs can be normalized using the AI-backed fallback parser.
+3. **Rule evaluation:** Domain-specific and generic rules identify signals.
+4. **Correlation:** Related signals are grouped into incidents.
+5. **AI analysis:** Correlated incidents are analyzed to generate additional insights.
+6. **Persistence:** Pipeline results are stored for retrieval through the API.
+
+Parsing logic and patterns are located under `engine/parsing/`, while correlation and incident analysis are implemented under `engine/correlation/` and `engine/ai/`.
+
+## Authentication and Data Access
+
+The backend uses JWT access tokens and refresh tokens stored in hashed form.
+
+Token-version checks support session invalidation, including operations such as password changes and logging out all sessions. Protected endpoints use authentication dependencies and ownership checks to restrict access to user-owned resources.
 
 ## Testing
 
-Backend tests live in `backend/tests` and use `pytest` with async HTTP client fixtures.
+Backend tests are located in `backend/tests/` and use `pytest`.
+
+Run the test suite with:
 
 ```bash
 cd backend
 pytest
 ```
 
-The test suite covers:
-
-- authentication and password resets
-- user CRUD and profile image uploads
-- source app CRUD and pagination
-- log ingestion and batch retrieval
-- incident resolution
-- dashboard metrics
+Tests may cover authentication, user management, source applications, log ingestion, batch retrieval, incident resolution, and dashboard functionality, depending on the implemented test suite.
