@@ -1,22 +1,25 @@
-# Contributing
+# Contributing to SignalOps
 
-Thank you for improving SignalOps. This repository is organized as a backend FastAPI application, a frontend React application, and a set of deployment files and docs that describe the full workflow.
+Thank you for contributing to SignalOps. The project consists of a FastAPI backend, a React frontend, and supporting documentation and deployment workflows.
 
 ## Before You Start
 
-- Read the root [README](README.md) and the [architecture notes](docs/architecture.md).
-- Use Python 3.12 for the backend and Node 24 for the frontend.
-- Keep local environment files outside the repository in `~/.config/signalops/backend`.
+- Read the root [README](README.md) and [Architecture Documentation](docs/architecture.md).
+- Use Python 3.12 for backend development and Node.js 24 for frontend development.
+- Review `backend/core/config.py` to understand how backend environment configuration is loaded and where to place your local development `.env` file.
+- Never commit secrets, credentials, or local environment files.
 
 ## Development Workflow
 
-1. Create a focused branch for the change.
-2. Make the smallest implementation change that solves the problem.
-3. Update docs if the API, workflow, or deployment behavior changes.
-4. Run the relevant tests and linters.
-5. Open a pull request with a clear description of the behavior change.
+1. Create a focused branch for your change.
+2. Implement the smallest change that solves the problem.
+3. Update relevant documentation when API behavior, application workflows, or deployment processes change.
+4. Run the relevant tests, linters, and build checks.
+5. Open a pull request describing the change and its impact.
 
 ## Backend Checks
+
+Run backend tests and lint checks:
 
 ```bash
 cd backend
@@ -24,7 +27,11 @@ pytest
 ruff check .
 ```
 
+Ensure the required database and environment configuration are available when running tests.
+
 ## Frontend Checks
+
+Run frontend linting and build checks:
 
 ```bash
 cd frontend
@@ -32,24 +39,38 @@ npm run lint
 npm run build
 ```
 
-If you change the API schema, regenerate the client with `npm run openapi-ts`.
+If the backend API schema changes, regenerate the OpenAPI client from the `frontend` directory:
 
-## Code Style
+```bash
+npm run openapi-ts
+```
 
-- Preserve the existing layer boundaries: routers should stay thin, services should own workflow logic, and repositories should own queries.
-- Keep authorization checks in the domain services or dependency layer, not in the frontend.
-- Favor clear names over clever code.
-- Avoid introducing unrelated refactors in the same change.
+Ensure the backend is running and accessible at the schema URL configured for client generation.
+
+## Code Style and Architecture
+
+- Keep API endpoints focused on HTTP handling.
+- Place business workflows in domain services.
+- Keep database queries and persistence logic in repositories.
+- Keep log parsing, rule evaluation, correlation, and AI analysis within the engine layer.
+- Enforce authentication and authorization on the backend; frontend route protection is not a substitute for server-side checks.
+- Prefer clear, consistent names and focused changes.
+- Avoid unrelated refactoring.
 
 ## Testing Expectations
 
 - Add or update tests when behavior changes.
-- Prefer integration-style tests for request/response flows and focused unit tests for parsing and rule logic.
-- When a change affects the pipeline, verify the batch and incident views still produce the expected persisted data.
+- Use focused unit tests for parsing, rules, and other isolated logic.
+- Use integration tests for important API and database workflows where appropriate.
+- For ingestion pipeline changes, verify persisted batches, events, signals, incidents, and analysis results as applicable.
+- For authentication or authorization changes, verify relevant access-control and session behavior.
 
 ## Pull Requests
 
-- Summarize what changed and why.
-- Call out any migration, environment, or deployment impact.
-- Link to the relevant issue if one exists.
-- Mention any manual verification performed.
+A good pull request should:
+
+- Explain what changed and why.
+- Summarize relevant tests and checks performed.
+- Identify database migrations, environment changes, or deployment impacts.
+- Link to a related issue when available.
+- Mention any manual verification that was necessary.

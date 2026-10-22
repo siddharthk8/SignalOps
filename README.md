@@ -49,7 +49,7 @@ The pipeline represents the conceptual processing model rather than prescribing 
 
 ```mermaid
 flowchart TB
-    DEV(["Developers"]) --> FE["React Frontend"]
+    DEV(["Users"]) --> FE["React Frontend"]
     CLIENT(["Applications and CLI Clients"]) --> API["FastAPI Backend"]
     FE <--> API
 
