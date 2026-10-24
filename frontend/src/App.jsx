@@ -25,7 +25,7 @@ function App() {
 	}, [location]);
 
 	return (
-		<div>
+		<div className="bg-bg">
 			<HeroSection />
 			<PhilosophySection />
 			<FeaturesSection />

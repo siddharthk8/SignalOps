@@ -1,6 +1,6 @@
 # SignalOps
 
-**Turn application logs into actionable operational insights.**
+> **Turn application logs into actionable operational insights.**
 
 SignalOps is an AI-powered application log intelligence platform designed to help developers understand application behavior, detect operational issues, and investigate incidents.
 
