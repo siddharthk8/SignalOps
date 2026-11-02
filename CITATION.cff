@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use SignalOps in your research or projects, please cite it."
+title: "SignalOps: Application Log Intelligence Platform"
+type: software
+
+authors:
+  - family-names: "Kumar"
+    given-names: "Siddharth"
+
+abstract: >-
+  SignalOps is an AI-powered web application for application log
+  intelligence and operational analysis. It helps developers
+  understand application behavior, identify operational issues,
+  and investigate incidents by transforming raw application logs
+  into structured semantic events.
+
+  Through a structured processing pipeline, SignalOps performs
+  semantic parsing, signal detection, and incident correlation
+  to organize related events into meaningful operational incidents.
+  It also integrates AI-assisted analysis using Amazon Bedrock
+  to provide contextual insights that support troubleshooting
+  and incident investigation.
+
+license: GPL-3.0-only
+repository-code: "https://github.com/siddharthk8/SignalOps"
