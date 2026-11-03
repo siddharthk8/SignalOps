@@ -18,10 +18,12 @@ from app.core.exceptions import (
     validation_exception_handler,
 )
 from app.db.core import engine
+from app.shared.email_checker import load_disposable_domains
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await load_disposable_domains()
     yield  # app runs here
     # shutdown logic
     await engine.dispose()

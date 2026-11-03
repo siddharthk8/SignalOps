@@ -6,7 +6,6 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.templating import Jinja2Templates
 from PIL import Image, ImageOps
 from pwdlib import PasswordHash
-from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -127,32 +126,6 @@ def mask_email_for_log(email: str) -> str:
         masked_local = local[:2] + "*" * (len(local) - 2)
 
     return f"{masked_local}@{domain}"
-
-
-# email
-ALLOWED_EMAIL_DOMAINS = {
-    "gmail.com",
-    "googlemail.com",
-    "outlook.com",
-    "hotmail.com",
-    "live.com",
-    "yahoo.com",
-    "yahoo.co.in",
-    "icloud.com",
-    "me.com",
-    "proton.me",
-    "protonmail.com",
-}
-
-
-def is_registration_email_valid(email: EmailStr) -> bool:
-    normalized_email = str(email).strip().lower()
-    domain = normalized_email.rsplit("@", 1)[-1]
-
-    if domain in ALLOWED_EMAIL_DOMAINS:
-        return True
-
-    return False
 
 
 templates = Jinja2Templates(directory="templates")

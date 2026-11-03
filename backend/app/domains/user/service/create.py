@@ -15,16 +15,27 @@ from app.domains.auth.utils import (
 from app.domains.user.schemas import UserCreate, UserCreationOTPStep, UserPrivate
 from app.domains.user.utils import (
     get_otp_hash,
-    is_registration_email_valid,
     mask_email_for_log,
     send_registration_otp_email,
     verify_otp,
 )
+from app.shared.email_checker import check_email
 
 
 async def create_user_otp(
     data: UserCreationOTPStep, background_tasks: BackgroundTasks, db: AsyncSession
 ):
+    try:
+        valid_email, result = await check_email(str(data.email))
+    except RuntimeError:
+        raise HTTPException(
+            status_code=503,
+            detail="Email verification service temporarily unavailable, please retry.",
+        ) from None
+
+    if not valid_email:
+        raise HTTPException(status_code=400, detail=result)
+
     user_repo = UserRepository(db)
     email_suppression_repo = EmailSuppressionRepository(db)
 
@@ -32,12 +43,6 @@ async def create_user_otp(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User registration is not allowed for this email address.",
-        )
-
-    if not is_registration_email_valid(data.email):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Please use an email address from a recognized email provider.",
         )
 
     if await user_repo.check_exists_by_email(data.email):
