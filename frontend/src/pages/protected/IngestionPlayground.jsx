@@ -11,8 +11,7 @@ import FormMessage from "@/components/Form/FormMessage";
 import authenticatedClient from "@/core/api/customClient";
 import { handleServerErrorOnMutate } from "@/shared/utils/handleServerErrorOnMutate";
 
-const SAMPLE_PAYLOAD = (sourceAppId) => ({
-	source_app_id: Number(sourceAppId),
+const SAMPLE_PAYLOAD = () => ({
 	logs: [
 		"FORMAT-1: log message...",
 		{
@@ -33,10 +32,7 @@ export default function IngestionPlayload() {
 	const navigate = useNavigate();
 	const { sourceAppId } = useParams();
 
-	const defaultJson = useMemo(
-		() => JSON.stringify(SAMPLE_PAYLOAD(sourceAppId), null, 4),
-		[sourceAppId],
-	);
+	const defaultJson = useMemo(() => JSON.stringify(SAMPLE_PAYLOAD(), null, 4), []);
 
 	const {
 		register,
@@ -176,15 +172,7 @@ export default function IngestionPlayload() {
 							<p className="text-error mt-2 text-sm">{errors.payload.message}</p>
 						)}
 
-						<div className="border-border mt-6 flex items-center justify-between border-t pt-6">
-							<div className="text-t-muted text-sm">
-								The
-								<span className="bg-muted mx-1 rounded px-1.5 py-0.5 font-mono">
-									source_app_id
-								</span>
-								is automatically replaced with the current application ID.
-							</div>
-
+						<div className="border-border mt-6 flex items-center justify-end border-t pt-6">
 							<Button
 								type="submit"
 								loading={isPending}

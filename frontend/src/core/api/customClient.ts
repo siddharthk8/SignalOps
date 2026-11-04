@@ -38,7 +38,8 @@ authenticatedClient.instance.interceptors.response.use(
 
 		if (
 			status === 401 &&
-			message === "Access token expired." &&
+			(message === "Access token expired." ||
+				message === "Could not validate credentials.") &&
 			originalRequest &&
 			!originalRequest._retry
 		) {
