@@ -32,9 +32,9 @@ function BatchHeader({ batchId, createdAt }) {
 							</span>
 						</div>
 
-						<h1 className="font-['Space_Grotesk'] text-4xl font-semibold tracking-tight">
+						{/* <h1 className="font-['Space_Grotesk'] text-4xl font-semibold tracking-tight">
 							#{batchId}
-						</h1>
+						</h1> */}
 
 						<p className="text-t-muted mt-3 max-w-2xl text-sm leading-6">
 							Semantic intelligence, extracted entities, AI analyses, and security

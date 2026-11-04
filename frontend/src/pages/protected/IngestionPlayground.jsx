@@ -63,7 +63,7 @@ export default function IngestionPlayload() {
 			queryClient.invalidateQueries({
 				queryKey: ["batches", sourceAppId],
 			});
-			navigate(-1);
+			navigate(`/source-apps/${sourceAppId}/batches`);
 		},
 		onError: (error) => {
 			handleServerErrorOnMutate(error, setError);
@@ -142,6 +142,14 @@ export default function IngestionPlayload() {
 					</div>
 
 					<div className="p-6">
+						<div className="border-warning/30 bg-warning/5 mb-4 flex items-start gap-2 rounded-lg border p-3">
+							<p className="text-t-muted text-sm">
+								<strong className="text-warning">Submission limit:</strong> Each
+								submission can contain a maximum of <strong>500 logs</strong>.
+								Please do not exceed this limit.
+							</p>
+						</div>
+
 						<textarea
 							{...register("payload", {
 								required: "Payload is required.",

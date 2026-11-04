@@ -4,9 +4,9 @@ import { createColumnHelper } from "@tanstack/react-table";
 const sourceAppColumnHelper = createColumnHelper<SourceAppModel>();
 
 export const sourceAppTableColumns = [
-	sourceAppColumnHelper.accessor("id", {
-		header: "ID",
-	}),
+	// sourceAppColumnHelper.accessor("id", {
+	// 	header: "ID",
+	// }),
 	sourceAppColumnHelper.accessor("name", {
 		header: "Name",
 		cell: ({ getValue }) => {
@@ -15,6 +15,9 @@ export const sourceAppTableColumns = [
 	}),
 	sourceAppColumnHelper.accessor("app_type", {
 		header: "App Type",
+		cell: ({ getValue }) => {
+			return getValue().replace(/-app$/, "");
+		},
 	}),
 	sourceAppColumnHelper.accessor(
 		(row) =>
@@ -25,7 +28,7 @@ export const sourceAppTableColumns = [
 			}),
 		{
 			id: "createdDate",
-			header: "Created Date",
+			header: "Creation Date",
 		},
 	),
 	sourceAppColumnHelper.accessor(
@@ -36,7 +39,7 @@ export const sourceAppTableColumns = [
 			}),
 		{
 			id: "createdTime",
-			header: "Created Time",
+			header: "Creation Time",
 		},
 	),
 ];
@@ -44,11 +47,11 @@ export const sourceAppTableColumns = [
 const batchColumnHelper = createColumnHelper<Batch>();
 
 export const batchColumns = [
-	batchColumnHelper.accessor("id", {
-		header: "Batch ID",
-	}),
+	// batchColumnHelper.accessor("id", {
+	// 	header: "Batch ID",
+	// }),
 	batchColumnHelper.accessor("log_count", {
-		header: "Logs",
+		header: "Total Logs",
 	}),
 	batchColumnHelper.accessor("created_at", {
 		header: "Created At",

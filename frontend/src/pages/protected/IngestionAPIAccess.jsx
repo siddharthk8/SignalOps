@@ -577,6 +577,16 @@ console.log(response.data);`;
 								Each request includes the source application ID and an array of
 								logs. Entries can be strings or structured log objects.
 							</p>
+
+							<div className="border-warning/30 bg-warning/5 mt-3 flex items-start gap-2 rounded-lg border p-3">
+								<AlertTriangle size={16} className="text-warning mt-0.5 shrink-0" />
+								<p className="text-sm">
+									<strong className="text-warning">Submission limit:</strong> Each
+									API request can contain a maximum of <strong>500 logs</strong>.
+									If you have more logs to submit, split them into multiple
+									requests.
+								</p>
+							</div>
 						</div>
 					</div>
 				</section>
