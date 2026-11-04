@@ -22,7 +22,7 @@ from app.domains.auth.utils import (
 async def create_token(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
     exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Could not validate credentials.",
         headers={"WWW-Authenticate": "Bearer"},
     )
 

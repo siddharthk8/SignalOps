@@ -18,7 +18,7 @@ class SignalRepository:
         result = query.scalars().all()
         return result
 
-    async def save(self, *, signals: list[Signal]) -> None:
+    async def save(self, *, signals: list[Signal], batch_id: int) -> None:
         signal_models: list[ORMSignal] = []
 
         for signal in signals:
@@ -29,6 +29,7 @@ class SignalRepository:
             if signal.entity:
                 signal_payload["entity_id"] = signal.entity.id
 
+            signal_payload["batch_id"] = batch_id
             signal_model = ORMSignal(**signal_payload)
             signal_models.append(signal_model)
 

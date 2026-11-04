@@ -63,7 +63,7 @@ async def google_login(data: GoogleLoginRequest, db: AsyncSession):
             if user is None:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Could not validate credentials",
+                    detail="Could not validate credentials.",
                     headers={"WWW-Authenticate": "Bearer"},
                 )
 
@@ -93,7 +93,7 @@ async def google_login(data: GoogleLoginRequest, db: AsyncSession):
         if not user.is_active:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
+                detail="Could not validate credentials.",
                 headers={"WWW-Authenticate": "Bearer"},
             )
 

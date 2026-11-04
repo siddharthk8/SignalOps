@@ -10,8 +10,11 @@ from app.db.core import Base
 
 if TYPE_CHECKING:
     from app.db.models.ai_analysis import AIAnalysis
+    from app.db.models.entity import Entity
     from app.db.models.event import Event
+    from app.db.models.incident import Incident
     from app.db.models.log import Log
+    from app.db.models.signal import Signal
     from app.db.models.source_app import SourceApp
 
 
@@ -31,6 +34,15 @@ class Batch(Base):
     )
     logs: Mapped[list[Log]] = relationship(
         "Log", passive_deletes=True, back_populates="batch"
+    )
+    entities: Mapped[list[Entity]] = relationship(
+        "Entity", passive_deletes=True, back_populates="batch"
+    )
+    incidents: Mapped[list[Incident]] = relationship(
+        "Incident", passive_deletes=True, back_populates="batch"
+    )
+    signals: Mapped[list[Signal]] = relationship(
+        "Signal", passive_deletes=True, back_populates="batch"
     )
     events: Mapped[list[Event]] = relationship(
         "Event", passive_deletes=True, back_populates="batch"

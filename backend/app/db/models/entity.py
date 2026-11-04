@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Integer, String
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
 
 if TYPE_CHECKING:
+    from app.db.models.batch import Batch
     from app.db.models.event import Event
     from app.db.models.signal import Signal
 
@@ -26,7 +27,15 @@ class Entity(Base):
     token_id: Mapped[str | None] = mapped_column(String(60), nullable=True)
     request_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
+    # FK
+    batch_id: Mapped[int] = mapped_column(
+        ForeignKey("batches.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
     # relationships
+    batch: Mapped[Batch] = relationship(
+        "Batch", passive_deletes=True, back_populates="entities"
+    )
     event: Mapped[Event] = relationship(
         "Event", passive_deletes=True, back_populates="entity"
     )

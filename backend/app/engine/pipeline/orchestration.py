@@ -27,8 +27,8 @@ class LogPipeline:
 
         self.parsing_stage = ParsingStage(db, batch_orm)
         self.ai_stage = AIStage(db, batch_orm)
-        self.rule_stage = RuleStage(db)
-        self.correlation_stage = CorrelationStage(db, current_user)
+        self.rule_stage = RuleStage(db, batch_orm)
+        self.correlation_stage = CorrelationStage(db, batch_orm, current_user)
 
     async def process(self, logs: LogsField) -> list[IncidentAnalysis]:
         source_app = SourceAppType(self.source_app_orm.app_type)

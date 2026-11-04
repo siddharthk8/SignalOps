@@ -1,6 +1,6 @@
 [project]
 name = "signalops-backend"
-version = "2.3.3"
+version = "2.3.4"
 
 [tool.fastapi]
 entrypoint = "main:app"

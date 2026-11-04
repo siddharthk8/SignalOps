@@ -23,6 +23,7 @@ from app.enums.incident import IncidentStatus, IncidentType
 
 if TYPE_CHECKING:
     from app.db.models.ai_analysis import AIAnalysis
+    from app.db.models.batch import Batch
     from app.db.models.user import User
 
 
@@ -61,8 +62,14 @@ class Incident(Base):
         nullable=False,
         index=True,
     )
+    batch_id: Mapped[int] = mapped_column(
+        ForeignKey("batches.id", ondelete="CASCADE"), nullable=False, index=True
+    )
 
     # relationships
+    batch: Mapped[Batch] = relationship(
+        "Batch", passive_deletes=True, back_populates="incidents"
+    )
     user: Mapped[User] = relationship(
         "User", passive_deletes=True, back_populates="incidents"
     )

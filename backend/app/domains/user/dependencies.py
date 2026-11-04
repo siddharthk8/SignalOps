@@ -30,7 +30,7 @@ async def get_current_active_user(
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Could not validate credentials.",
         headers={
             "WWW-Authenticate": "Bearer"
         },  # this header should be returned with 401, as per OpenAPI standards.
@@ -108,7 +108,7 @@ async def get_current_user_or_access_token(
     if secret_access_key.startswith(settings.source_app_access_token_prefix):
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
+            detail="Could not validate API credentials.",  # Keep API in text
             headers={"WWW-Authenticate": "Bearer"},
         )
 

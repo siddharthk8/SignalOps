@@ -8,11 +8,12 @@ from sqlalchemy import CheckConstraint, DateTime, Enum, Float, ForeignKey, Integ
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.core import Base
-from app.db.models.event_signal import EventSignal
 from app.enums.signal import AllSignalType
 
 if TYPE_CHECKING:
+    from app.db.models.batch import Batch
     from app.db.models.entity import Entity
+    from app.db.models.event_signal import EventSignal
 
 
 class Signal(Base):
@@ -34,8 +35,14 @@ class Signal(Base):
     entity_id: Mapped[int | None] = mapped_column(
         ForeignKey("entities.id", ondelete="CASCADE"), nullable=True
     )
+    batch_id: Mapped[int] = mapped_column(
+        ForeignKey("batches.id", ondelete="CASCADE"), nullable=False, index=True
+    )
 
     # relationships
+    batch: Mapped[Batch] = relationship(
+        "Batch", passive_deletes=True, back_populates="signals"
+    )
     entity: Mapped[Entity | None] = relationship(
         "Entity", passive_deletes=True, back_populates="signals"
     )

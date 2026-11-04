@@ -50,7 +50,7 @@ class EventRepository:
             entity_id = None
 
             if any(value is not None for _, value in event.entity):
-                entity_model = await entity_repo.save(event.entity)
+                entity_model = await entity_repo.save(event.entity, batch_id)
                 entity_id = entity_model.id
 
             event_model = Event(

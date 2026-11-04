@@ -25,11 +25,12 @@ class EntityRepository:
         result = query.scalar_one_or_none()
         return result
 
-    async def save(self, entity: Entity) -> ORMEntity:
+    async def save(self, entity: Entity, batch_id: int) -> ORMEntity:
         entity_payload = entity.model_dump(exclude={"id", "ip_address"})
         if entity.ip_address:
             entity_payload["ip_address"] = str(entity.ip_address)
 
+        entity_payload["batch_id"] = batch_id
         pre_existing_entity = await self._check_exists(entity_payload)
         if pre_existing_entity is not None:
             return pre_existing_entity

@@ -85,6 +85,7 @@ class IncidentRepository:
         self,
         *,
         user_id: UUID,
+        batch_id: int,
         incidents: list[Incident],
     ) -> None:
         incident_models: list[ORMIncident] = []
@@ -102,6 +103,7 @@ class IncidentRepository:
             incident_payload["severity"] = incident.severity.value
             incident_payload["status"] = incident.status.value
             incident_payload["user_id"] = user_id
+            incident_payload["batch_id"] = batch_id
 
             incident_model = ORMIncident(**incident_payload)
             incident_models.append(incident_model)

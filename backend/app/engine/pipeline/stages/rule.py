@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db.models.batch import Batch
 from app.db.repositories.signal import SignalRepository
 from app.engine.rules.category.generic import GenericRule
 from app.engine.rules.registery import RULE_REGISTRY
@@ -9,8 +10,9 @@ from app.schemas.signal import Signal
 
 
 class RuleStage:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession, batch_orm: Batch):
         self.db = db
+        self.batch_orm = batch_orm
         self.generic_rule = GenericRule()
         self.signal_repo = SignalRepository(db)
 
@@ -26,6 +28,6 @@ class RuleStage:
         signals.extend(self.generic_rule.evaluate(events))
 
         # save signals in db
-        await self.signal_repo.save(signals=signals)
+        await self.signal_repo.save(signals=signals, batch_id=self.batch_orm.id)
 
         return signals
