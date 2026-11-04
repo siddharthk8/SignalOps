@@ -480,6 +480,32 @@ console.log(response.data);`;
 					</div>
 
 					<div className="space-y-5 p-5 sm:p-6">
+						{/* Payload information */}
+						<div className="border-border rounded-lg border p-4">
+							<h3 className="text-sm font-semibold">Request payload</h3>
+							<p className="text-t-muted mt-1 text-sm leading-6">
+								Each request must include the source application ID and a{" "}
+								<code className="bg-muted rounded px-1.5 py-0.5 text-xs">logs</code>{" "}
+								array containing either plain-text log messages or structured JSON
+								log objects, or a combination of both.
+							</p>
+
+							<div className="border-warning/30 bg-warning/5 mt-3 flex items-start gap-2 rounded-lg border p-3">
+								<AlertTriangle size={16} className="text-warning mt-0.5 shrink-0" />
+								<div className="text-sm">
+									<p className="text-warning font-semibold">Submission limits</p>
+									<ul className="text-t-muted mt-2 list-inside list-disc space-y-1">
+										<li>Maximum 100 logs per request.</li>
+										<li>Maximum 500 characters per log message.</li>
+									</ul>
+									<p className="text-t-muted mt-2">
+										If you have more than 100 logs to submit, split them into
+										multiple requests.
+									</p>
+								</div>
+							</div>
+						</div>
+
 						{/* Endpoint */}
 						<div>
 							<label className="text-t-muted mb-2 block text-xs font-semibold tracking-wide uppercase">
@@ -567,25 +593,6 @@ console.log(response.data);`;
 								<pre className="bg-muted/10 max-h-[520px] overflow-auto p-4 text-xs leading-6">
 									<code>{code}</code>
 								</pre>
-							</div>
-						</div>
-
-						{/* Payload information */}
-						<div className="border-border rounded-lg border p-4">
-							<h3 className="text-sm font-semibold">Request payload</h3>
-							<p className="text-t-muted mt-1 text-sm">
-								Each request includes the source application ID and an array of
-								logs. Entries can be strings or structured log objects.
-							</p>
-
-							<div className="border-warning/30 bg-warning/5 mt-3 flex items-start gap-2 rounded-lg border p-3">
-								<AlertTriangle size={16} className="text-warning mt-0.5 shrink-0" />
-								<p className="text-sm">
-									<strong className="text-warning">Submission limit:</strong> Each
-									API request can contain a maximum of <strong>500 logs</strong>.
-									If you have more logs to submit, split them into multiple
-									requests.
-								</p>
 							</div>
 						</div>
 					</div>

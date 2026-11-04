@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Code2, Send, Upload } from "lucide-react";
+import { AlertTriangle, Code2, Send, Upload } from "lucide-react";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
@@ -142,12 +142,26 @@ export default function IngestionPlayload() {
 					</div>
 
 					<div className="p-6">
-						<div className="border-warning/30 bg-warning/5 mb-4 flex items-start gap-2 rounded-lg border p-3">
-							<p className="text-t-muted text-sm">
-								<strong className="text-warning">Submission limit:</strong> Each
-								submission can contain a maximum of <strong>500 logs</strong>.
-								Please do not exceed this limit.
-							</p>
+						<div className="border-warning/30 bg-warning/5 mb-4 flex items-start gap-3 rounded-lg border p-4">
+							<AlertTriangle size={18} className="text-warning mt-0.5 shrink-0" />
+
+							<div className="text-sm">
+								<p className="text-warning font-semibold">Submission limits</p>
+
+								<ul className="text-t-muted mt-2 list-inside list-disc space-y-1">
+									<li>Maximum 100 logs per submission.</li>
+									<li>Maximum 500 characters per log message.</li>
+								</ul>
+
+								<p className="text-t-muted mt-2 leading-5">
+									The{" "}
+									<code className="bg-muted rounded px-1 py-0.5 text-xs">
+										logs
+									</code>{" "}
+									array supports plain-text messages, structured JSON log objects,
+									or a combination of both.
+								</p>
+							</div>
 						</div>
 
 						<textarea
