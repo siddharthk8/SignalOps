@@ -12,7 +12,7 @@ if TESTING:
     BASE_DIR = Path(__file__).resolve().parents[2]
     ENV_FILE = BASE_DIR / ".env.test"
 elif ENV == "production":
-    ENV_FILE = Path("/etc/signalops/backend.env")
+    ENV_FILE = None  # Production environment variables are injected into the container by Docker Compose.
 else:
     BASE_DIR = Path.home() / ".config" / "signalops" / "backend"
     ENV_FILE = BASE_DIR / ".env.local"
